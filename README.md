@@ -10,7 +10,7 @@
 一套**零依赖**的原生 Web Components 组件库：**142 个组件 · 15 套 UI 风格（各含浅色 / 深色）**，
 每个组件都配有「预览 / AI 提示词 / 设计说明 / 代码」，可以直接把提示词交给 AI Agent 生成同风格界面。
 
-**🔗 在线预览：https://7015725.github.io/ui-catalog/**　·　回归测试页：[/test.html](https://7015725.github.io/ui-catalog/test.html)
+🔗 **在线预览：[7015725.github.io/ui-catalog](https://7015725.github.io/ui-catalog/)**　·　回归测试页：[test.html](https://7015725.github.io/ui-catalog/test.html)
 
 ![组件画廊](docs/screenshots/gallery.webp)
 
