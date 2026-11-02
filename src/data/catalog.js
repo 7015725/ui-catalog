@@ -16,8 +16,9 @@ import { moreCatalog2 } from './catalog-more2.js';
 import { moreCatalog3 } from './catalog-more3.js';
 import { motionCatalog } from './catalog-motion.js';
 import { motionCatalog2 } from './catalog-motion2.js';
+import { funCatalog } from './catalog-fun.js';
 
-export const CATS = ['表单', '展示', '图表', '导航', '反馈', '浮层', '动效', '视觉'];
+export const CATS = ['表单', '展示', '图表', '导航', '反馈', '浮层', '动效', '视觉', '趣味'];
 
 const baseCatalog = [
   /* ---------------- 表单 ---------------- */
@@ -737,4 +738,4 @@ const baseCatalog = [
   }
 ];
 
-export const catalog = baseCatalog.concat(moreCatalog, moreCatalog2, moreCatalog3, motionCatalog, motionCatalog2);
+export const catalog = baseCatalog.concat(moreCatalog, moreCatalog2, moreCatalog3, motionCatalog, motionCatalog2, funCatalog);

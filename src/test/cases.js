@@ -730,3 +730,89 @@ describe('动效与视觉（第二批）', () => {
     expect(s[0].innerHTML).toBe(s[1].innerHTML);
   });
 });
+
+/* ---------------- 趣味组件 ---------------- */
+describe('趣味组件', () => {
+  it('ui-knob 是 slider：方向键 / Home / End 按 step 调节并夹在范围内', async (host) => {
+    await put(host, '<ui-knob label="温度" min="16" max="30" step="0.5" value="24" unit="°C"></ui-knob>');
+    const d = host.querySelector('[role="slider"]');
+    expect(d.getAttribute('aria-valuenow')).toBe('24');
+    d.focus(); key('ArrowUp');
+    expect(d.getAttribute('aria-valuetext')).toBe('24.5°C');
+    key('End'); expect(d.getAttribute('aria-valuenow')).toBe('30');
+    key('ArrowUp'); expect(d.getAttribute('aria-valuenow')).toBe('30');
+    key('Home'); expect(d.getAttribute('aria-valuenow')).toBe('16');
+  });
+
+  it('ui-emoji-rate 是 radiogroup：漫游 tabindex，方向键选中并派发 change', async (host) => {
+    await put(host, '<ui-emoji-rate value="2"></ui-emoji-rate>');
+    const rs = host.querySelectorAll('[role="radio"]');
+    expect(rs[1].getAttribute('aria-checked')).toBe('true');
+    expect(Array.from(rs).filter((r) => r.tabIndex === 0).length).toBe(1);
+    let got = 0;
+    host.querySelector('ui-emoji-rate').addEventListener('change', (e) => { got = e.detail.value; });
+    rs[1].focus(); key('ArrowRight');
+    expect(got).toBe(3);
+    expect(document.activeElement).toBe(rs[2]);
+  });
+
+  it('ui-pattern-lock 键盘选点：跨过中间点自动补上，确认后比对答案', async (host) => {
+    await put(host, '<ui-pattern-lock answer="1-2-3-5-7"></ui-pattern-lock>');
+    const dots = host.querySelectorAll('.ui-pl__dot');
+    let res = '';
+    host.querySelector('ui-pattern-lock').addEventListener('success', (e) => { res = e.detail.pattern; });
+    [1, 3, 7].forEach((n) => dots[n - 1].dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 0 })));
+    host.querySelector('.ui-pl__kb .ok').click();
+    expect(res).toBe('1-2-3-5-7');
+  });
+
+  it('ui-sortable 键盘：空格拿起、↓ 移动、空格放下，派发新顺序', async (host) => {
+    await put(host, '<ui-sortable items="甲,乙,丙"></ui-sortable>');
+    let order = null;
+    host.querySelector('ui-sortable').addEventListener('change', (e) => { order = e.detail.order.join(''); });
+    host.querySelector('.ui-sort__h').focus();
+    key(' '); key('ArrowDown'); key(' ');
+    expect(order).toBe('乙甲丙');
+    expect(document.activeElement.getAttribute('aria-label')).toBe('移动：甲');
+    expect(host.querySelectorAll('.ui-sort__n')[1].textContent).toBe('2');
+  });
+
+  it('ui-battery 是 meter，按电量取色，充电写进 valuetext', async (host) => {
+    await put(host, '<ui-battery level="15" charging></ui-battery><ui-battery level="140"></ui-battery>');
+    const m = host.querySelectorAll('[role="meter"]');
+    expect(m[0].getAttribute('aria-valuetext')).toBe('15%，充电中');
+    expect(m[0].style.getPropertyValue('--bc')).toBe('var(--ui-danger)');
+    expect(m[1].getAttribute('aria-valuenow')).toBe('100');
+  });
+
+  it('ui-pull-lamp 灯绳是 switch，点击切换并派发 change', async (host) => {
+    await put(host, '<ui-pull-lamp></ui-pull-lamp>');
+    const sw = host.querySelector('[role="switch"]');
+    let on = null;
+    host.querySelector('ui-pull-lamp').addEventListener('change', (e) => { on = e.detail.on; });
+    await withReduced(async () => { click(sw); });
+    expect(on).toBe(true);
+    expect(sw.getAttribute('aria-checked')).toBe('true');
+  });
+
+  it('ui-reactions 再次点击取消，人数归零时移除', async (host) => {
+    await put(host, '<ui-reactions items="👍:1,🎉:2" mine="👍"></ui-reactions>');
+    host.querySelector('[data-e="👍"]').click();
+    expect(host.querySelector('[data-e="👍"]')).toBe(null);
+    host.querySelector('[data-e="🎉"]').click();
+    expect(host.querySelector('[data-e="🎉"]').getAttribute('aria-pressed')).toBe('true');
+    expect(host.querySelector('[data-e="🎉"] b').textContent).toBe('3');
+  });
+
+  it('ui-word-cloud 权重最大的词排在中间', async (host) => {
+    await put(host, '<ui-word-cloud words="a:1,b:2,c:9,d:3,e:4"></ui-word-cloud>');
+    const li = Array.from(host.querySelectorAll('.ui-wc li')).map((x) => x.textContent);
+    expect(li[Math.floor(li.length / 2)]).toBe('c');
+  });
+
+  it('ui-flip-clock 倒计时按 时:分:秒 渲染 6 位数字', async (host) => {
+    await put(host, '<ui-flip-clock countdown="3725"></ui-flip-clock>');
+    expect(host.querySelectorAll('.ui-fc__d').length).toBe(6);
+    expect(host.querySelector('.ui-fc .ui-sr').textContent).toBe('剩余 01:02:05');
+  });
+});

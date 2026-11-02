@@ -94,7 +94,9 @@ main{min-width:0;container-type:inline-size;container-name:gallery}
   ui-search,ui-option-cards,ui-sparkline,ui-bar-chart,ui-donut,ui-heatmap,ui-banner,ui-profile,
   ui-multi-select,ui-cascader,ui-transfer,ui-input-group,ui-comment,ui-calendar,ui-line-chart,ui-funnel,ui-context-menu,
   ui-marquee,ui-aurora,ui-particles,ui-pattern,ui-glass-card,ui-mesh-gradient,ui-starfield,ui-grid-beam,ui-meteors,ui-snow,
-  ui-image-compare,ui-wave,ui-grid-wave,ui-spring-drag,ui-cursor-trail,ui-swap,ui-parallax,ui-expand){
+  ui-image-compare,ui-wave,ui-grid-wave,ui-spring-drag,ui-cursor-trail,ui-swap,ui-parallax,ui-expand,
+  ui-scratch,ui-slot-machine,ui-memory-game,ui-piano,ui-gift-box,ui-music-player,ui-weather,ui-sticky-notes,
+  ui-signature,ui-slide-verify,ui-sortable,ui-reactions,ui-radar,ui-word-cloud){
   display:block;flex:1 1 100%;min-width:0}
 .stage > div{max-width:100%}
 

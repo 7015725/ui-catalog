@@ -2,12 +2,12 @@
 
 [![test](https://github.com/7015725/ui-catalog/actions/workflows/test.yml/badge.svg)](https://github.com/7015725/ui-catalog/actions/workflows/test.yml)
 ![零依赖](https://img.shields.io/badge/依赖-0-brightgreen)
-![组件](https://img.shields.io/badge/组件-142-4f7cff)
+![组件](https://img.shields.io/badge/组件-167-4f7cff)
 ![风格](https://img.shields.io/badge/UI%20风格-15-8b5cf6)
 ![无障碍](https://img.shields.io/badge/WCAG-AA-15803d)
 [![MIT](https://img.shields.io/badge/license-MIT-lightgrey)](./LICENSE)
 
-一套**零依赖**的原生 Web Components 组件库：**142 个组件 · 15 套 UI 风格（各含浅色 / 深色）**，
+一套**零依赖**的原生 Web Components 组件库：**167 个组件 · 15 套 UI 风格（各含浅色 / 深色）**，
 每个组件都配有「预览 / AI 提示词 / 设计说明 / 代码」，可以直接把提示词交给 AI Agent 生成同风格界面。
 
 🔗 **在线预览：[7015725.github.io/ui-catalog](https://7015725.github.io/ui-catalog/)**　·　回归测试页：[test.html](https://7015725.github.io/ui-catalog/test.html)
@@ -29,14 +29,15 @@
 
 | 分类 | 数量 | 例子 |
 |---|---|---|
-| 表单 | 24 | 按钮、输入框、多选下拉、级联、穿梭框、验证码、密码强度、拖拽上传 |
-| 展示 | 20 | 卡片、表格（窄屏变卡片）、时间线、轮播、日程月历、评论、价格卡 |
-| 图表 | 7 | 折线、柱状、环形、仪表盘、漏斗、热力日历、迷你趋势（纯 SVG / CSS） |
+| 表单 | 30 | 按钮、输入框、多选下拉、级联、穿梭框、验证码、手写签名、旋钮、手势密码、滑块验证、长按确认 |
+| 展示 | 22 | 卡片、表格（窄屏变卡片）、时间线、轮播、日程月历、评论、拖拽排序、表情回应 |
+| 图表 | 9 | 折线、柱状、环形、仪表盘、漏斗、热力日历、雷达图、词云（纯 SVG / CSS） |
 | 导航 | 8 | 标签页、步骤条、顶部导航（容器窄时折叠）、侧边菜单、目录锚点 |
 | 反馈 | 11 | 提示条、进度、环形进度、结果页、通知、倒计时、公告横幅 |
 | 浮层 | 12 | 对话框、抽屉、下拉菜单、命令面板（Ctrl/⌘ + K）、右键菜单、气泡确认 |
 | 动效 | 30 | 滚动入场、打字机、数字滚动、卡片堆叠、翻牌、弹性拖拽、图标变形… |
 | 视觉 | 30 | 3D 倾斜、光标聚光、流光边框、极光、粒子、镭射卡、前后对比、放大镜… |
+| 趣味 | 15 | 刮刮卡、大转盘、老虎机、3D 骰子、抛硬币、翻页时钟、翻牌配对、迷你钢琴、拆礼盒、拉绳台灯、播放器、天气卡、便利贴墙、虚拟摇杆 |
 
 ## 在你的项目里使用（无需下载、无需构建）
 
@@ -130,6 +131,8 @@ src/
     motion3.js             动效：expand / orbit / ping / swap / hover / split-flap / checkmark / scroll-hint / spring-drag / grid-wave
     effects2.js            视觉：glass-card / neon-text / grain / mesh-gradient / glitch / holo / wave / starfield / grid-beam / border-beam
     effects3.js            视觉：meteors / image-compare / lens / image-filter / text-3d / gooey / cursor-trail / cube / ribbon / snow
+    fun.js                 趣味：scratch / lucky-wheel / slot-machine / dice / flip-clock / pull-lamp / coin-flip / memory-game / piano / gift-box / music-player / weather / battery / sticky-notes / joystick
+    fun2.js                趣味控件：signature / knob / pattern-lock / slide-verify / emoji-rate / hold-button / sortable / reactions / radar / word-cloud
     index.js               统一注册 + 类表（供生成属性文档）
   data/
     catalog.js             ★ 唯一数据源：demo + AI 提示词 + 设计说明（第一批）
@@ -138,6 +141,7 @@ src/
     catalog-more3.js       第四批组件元数据
     catalog-motion.js      「动效」「视觉」第一批（各 10 个）
     catalog-motion2.js     「动效」「视觉」第二批（各 20 个）
+    catalog-fun.js         「趣味」分类 + 趣味控件（25 个）
 scripts/
   check.mjs                跨平台语法检查（npm run check）
   run-tests.mjs            无头浏览器跑全部回归用例（npm test，CI 同款）
@@ -159,6 +163,9 @@ docs/screenshots/          README 用的截图与动图
 3. **只做装饰，不改语义**：逐字动画、数字滚动、打字机都把完整文本放在视觉隐藏节点里给读屏；无限滚动的副本 `aria-hidden` 且不可 Tab。
 
 动效曲线也是 token：`--ui-ease`（入场 / 位移）、`--ui-spring`（回弹）。
+
+「趣味」分类（抽奖、小游戏、拟物小玩具）同样遵守这三条：所有手势都有按钮或键盘替代（刮刮卡有「直接揭开」，钢琴可用 A–K 弹奏，手势密码可逐点选择），
+抽奖类组件的结果应由服务端决定，前端用 `spin(index)` 之类的方法只负责展示。
 
 ## 内联事件（自定义事件也能写在标签上）
 
@@ -311,7 +318,7 @@ register('ui-toast', UIToast, '.ui-toast{background:var(--ui-panel);border:var(-
 
 ## 测试
 
-零依赖回归测试页：`/test.html`（73 条用例：属性渲染、键盘与焦点、浮层开关、数据兜底、无障碍、15 套风格对比度、减少动效与动画循环清理）。
+零依赖回归测试页：`/test.html`（82 条用例：属性渲染、键盘与焦点、浮层开关、数据兜底、无障碍、15 套风格对比度、减少动效与动画循环清理）。
 
 ```bash
 npm run check        # 语法检查（Windows / macOS / Linux 通用）
@@ -323,8 +330,8 @@ npm test             # 无头浏览器跑完全部用例（需要 playwright：n
 
 ## 当前状态
 
-- **142 个组件**全部可渲染、可交互；画廊逐个点击所有控件 + 键盘操作，无报错
-- **73 条回归用例**全部通过（GitHub Actions 每次推送自动运行）
+- **167 个组件**全部可渲染、可交互；画廊逐个点击所有控件 + 键盘操作，无报错
+- **82 条回归用例**全部通过（GitHub Actions 每次推送自动运行）
 - **15 套风格 × 浅色 / 深色 × 3 种屏宽**（360 / 820 / 1440）：无横向溢出、无组件溢出卡片
 - **无障碍**：axe-core 扫描画廊与风格页，30 种风格组合均为 0 个问题；文字对比度全部 ≥ 4.5:1（WCAG AA）
 - **动效**：全部尊重 `prefers-reduced-motion` 与 `data-motion="reduce"`；动画循环离开视口 / 标签页隐藏时暂停，组件移除时清理

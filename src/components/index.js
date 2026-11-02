@@ -34,6 +34,8 @@ import * as M2 from './motion2.js';
 import * as M3 from './motion3.js';
 import * as E2 from './effects2.js';
 import * as E3 from './effects3.js';
+import './fun.js';
+import './fun2.js';
 
 export { cssRegistry } from './base.js';
 import { classRegistry } from './base.js';
