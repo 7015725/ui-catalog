@@ -27,7 +27,7 @@ jobs:
 
       - name: 启动开发服务器
         run: |
-          node dev-server.mjs > server.log 2>&1 &
+          node dev-server.mjs --no-watch > "$RUNNER_TEMP/server.log" 2>&1 &
           for i in $(seq 1 30); do curl -sf http://127.0.0.1:5173/ > /dev/null && break; sleep 1; done
 
       - name: 回归测试（test.html）

@@ -2,7 +2,7 @@
 // 零依赖开发服务器：静态文件 + 实时刷新（Live Reload）
 //   - 改 .css  → 不刷新页面，直接热替换样式
 //   - 改其它文件（.js / .html …）→ 自动刷新页面，并保留滚动位置
-// 用法：node dev-server.mjs [--port 5173] [--open]
+// 用法：node dev-server.mjs [--port 5173] [--open] [--no-watch]
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -14,7 +14,7 @@ const args = process.argv.slice(2);
 const argPort = args.includes('--port') ? Number(args[args.indexOf('--port') + 1]) : 0;
 let port = argPort || Number(process.env.PORT) || 5173;
 const shouldOpen = args.includes('--open');
-const IGNORE = /(^|[\\/])(node_modules|\.git|dist|build)([\\/]|$)|\.(swp|tmp|temp)$|~$/;
+const IGNORE = /(^|[\\/])(node_modules|\.git|dist|build)([\\/]|$)|\.(swp|tmp|temp|log)$|~$/;
 
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
@@ -93,16 +93,31 @@ function onChange(name) {
     broadcast(cssOnly ? 'css' : 'reload');
   }, 80);
 }
-try {
-  fs.watch(ROOT, { recursive: true }, (_e, name) => onChange(name && String(name)));
-} catch {
-  // 老版本 Node 在 Linux 上不支持 recursive：逐个目录监听
-  const walk = dir => {
-    fs.watch(dir, (_e, name) => onChange(name && path.relative(ROOT, path.join(dir, String(name)))));
-    for (const d of fs.readdirSync(dir, { withFileTypes: true }))
-      if (d.isDirectory() && !IGNORE.test(d.name)) walk(path.join(dir, d.name));
-  };
-  walk(ROOT);
+const noWatch = args.includes('--no-watch') || process.env.UI_NO_WATCH === '1';
+/* macOS / Windows 的 recursive 监听由系统原生支持，开销很小；
+   Linux 上 Node 的 recursive 会遍历整棵目录（包括 node_modules），文件多时会卡住服务器，
+   所以 Linux 改为逐个目录监听，并跳过 node_modules / .git 等目录 */
+function watchTree(dir) {
+  try {
+    fs.watch(dir, (_e, name) => {
+      if (!name) return;
+      const full = path.join(dir, String(name));
+      onChange(path.relative(ROOT, full));
+      /* 新建的子目录也要补上监听 */
+      try { if (fs.statSync(full).isDirectory() && !IGNORE.test(full) && !watched.has(full)) watchTree(full); } catch {}
+    });
+    watched.add(dir);
+  } catch { return; }
+  for (const d of fs.readdirSync(dir, { withFileTypes: true }))
+    if (d.isDirectory() && !IGNORE.test(d.name) && !d.name.startsWith('.')) watchTree(path.join(dir, d.name));
+}
+const watched = new Set();
+if (!noWatch) {
+  if (process.platform === 'linux') watchTree(ROOT);
+  else {
+    try { fs.watch(ROOT, { recursive: true }, (_e, name) => onChange(name && String(name))); }
+    catch { watchTree(ROOT); }
+  }
 }
 
 server.on('error', e => {
@@ -111,7 +126,7 @@ server.on('error', e => {
 });
 server.listen(port, '127.0.0.1', () => {
   const url = `http://127.0.0.1:${port}`;
-  console.log(`\n  UI 组件库开发服务器已启动（实时刷新已开启）\n  ➜ 画廊:   ${url}/\n  ➜ 测试页: ${url}/test.html\n  按 Ctrl+C 停止\n`);
+  console.log(`\n  UI 组件库开发服务器已启动（${noWatch ? "实时刷新已关闭" : "实时刷新已开启"}）\n  ➜ 画廊:   ${url}/\n  ➜ 测试页: ${url}/test.html\n  按 Ctrl+C 停止\n`);
   if (shouldOpen) {
     const cmd = process.platform === 'win32' ? `start "" "${url}"` : process.platform === 'darwin' ? `open ${url}` : `xdg-open ${url}`;
     exec(cmd);
