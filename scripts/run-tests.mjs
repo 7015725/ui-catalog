@@ -14,7 +14,23 @@ page.on('pageerror', (e) => errors.push(e.message));
 page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
 
 await page.goto(base + '/test.html');
-await page.waitForFunction(() => !document.getElementById('done').hidden, null, { timeout: 120000 });
+try {
+  await page.waitForFunction(() => !document.getElementById('done').hidden, null, { timeout: 120000 });
+} catch (e) {
+  /* 超时：打印卡在哪一条、已完成多少、控制台报错，方便定位 */
+  const info = await page.evaluate(() => ({
+    progress: (document.getElementById('progress') || {}).textContent,
+    pass: (document.getElementById('pass') || {}).textContent,
+    fail: (document.getElementById('fail') || {}).textContent,
+    rows: document.querySelectorAll('#list .row').length,
+    last: Array.from(document.querySelectorAll('#list .row')).slice(-2).map((r) => r.innerText.replace(/\s+/g, ' ').trim())
+  })).catch(() => ({}));
+  console.log('✕ test.html 未在 120 秒内跑完', JSON.stringify(info, null, 1));
+  errors.forEach((x) => console.log('  ! 控制台错误：' + x));
+  console.log('  浏览器版本：' + browser.version());
+  await browser.close();
+  process.exit(1);
+}
 
 const pass = await page.innerText('#pass');
 const fail = await page.innerText('#fail');

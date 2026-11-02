@@ -22,7 +22,7 @@ jobs:
 
       - name: 安装无头浏览器
         run: |
-          npm i --no-save playwright@1.48.2
+          npm i --no-save playwright@1.63.0
           npx playwright install --with-deps chromium
 
       - name: 启动开发服务器
