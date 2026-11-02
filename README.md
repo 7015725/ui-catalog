@@ -1,6 +1,64 @@
 # UI 组件库 · 画廊
 
-一套**零依赖**的原生 Web Components 组件库，附带一个把「预览 / AI 提示词 / 设计说明 / 代码」放在同一张卡片里的展示页。
+[![test](https://github.com/7015725/ui-catalog/actions/workflows/test.yml/badge.svg)](https://github.com/7015725/ui-catalog/actions/workflows/test.yml)
+![零依赖](https://img.shields.io/badge/依赖-0-brightgreen)
+![组件](https://img.shields.io/badge/组件-142-4f7cff)
+![风格](https://img.shields.io/badge/UI%20风格-15-8b5cf6)
+![无障碍](https://img.shields.io/badge/WCAG-AA-15803d)
+[![MIT](https://img.shields.io/badge/license-MIT-lightgrey)](./LICENSE)
+
+一套**零依赖**的原生 Web Components 组件库：**142 个组件 · 15 套 UI 风格（各含浅色 / 深色）**，
+每个组件都配有「预览 / AI 提示词 / 设计说明 / 代码」，可以直接把提示词交给 AI Agent 生成同风格界面。
+
+**🔗 在线预览：https://7015725.github.io/ui-catalog/**　·　回归测试页：[/test.html](https://7015725.github.io/ui-catalog/test.html)
+
+![组件画廊](docs/screenshots/gallery.webp)
+
+<table>
+<tr>
+<td width="50%"><b>15 套 UI 风格</b>：同一套组件，只切换 <code>data-style</code> / <code>data-theme</code><br><img src="docs/screenshots/styles.webp" alt="UI 风格页"></td>
+<td width="50%"><b>深色 + 赛博风格</b>：视觉效果分类<br><img src="docs/screenshots/dark.webp" alt="深色模式"></td>
+</tr>
+<tr>
+<td><b>动效</b>：30 个动画组件，全部尊重「减少动态效果」<br><img src="docs/screenshots/motion.webp" alt="动效演示"></td>
+<td><b>视觉效果</b>：30 个，颜色随风格自动变化<br><img src="docs/screenshots/effects.webp" alt="视觉效果演示"></td>
+</tr>
+</table>
+
+![手机端自适应](docs/screenshots/mobile.webp)
+
+| 分类 | 数量 | 例子 |
+|---|---|---|
+| 表单 | 24 | 按钮、输入框、多选下拉、级联、穿梭框、验证码、密码强度、拖拽上传 |
+| 展示 | 20 | 卡片、表格（窄屏变卡片）、时间线、轮播、日程月历、评论、价格卡 |
+| 图表 | 7 | 折线、柱状、环形、仪表盘、漏斗、热力日历、迷你趋势（纯 SVG / CSS） |
+| 导航 | 8 | 标签页、步骤条、顶部导航（容器窄时折叠）、侧边菜单、目录锚点 |
+| 反馈 | 11 | 提示条、进度、环形进度、结果页、通知、倒计时、公告横幅 |
+| 浮层 | 12 | 对话框、抽屉、下拉菜单、命令面板（Ctrl/⌘ + K）、右键菜单、气泡确认 |
+| 动效 | 30 | 滚动入场、打字机、数字滚动、卡片堆叠、翻牌、弹性拖拽、图标变形… |
+| 视觉 | 30 | 3D 倾斜、光标聚光、流光边框、极光、粒子、镭射卡、前后对比、放大镜… |
+
+## 在你的项目里使用（无需下载、无需构建）
+
+仓库是公开的，可以直接通过 jsDelivr CDN 引用。引入一个样式文件 + 一个脚本，就能用全部组件：
+
+```html
+<!-- 1. 设计变量（颜色 / 圆角 / 阴影 / 15 套风格） -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/7015725/ui-catalog@v1.0.0/src/styles/tokens.css">
+<!-- 2. 注册全部组件 -->
+<script type="module" src="https://cdn.jsdelivr.net/gh/7015725/ui-catalog@v1.0.0/src/components/index.js"></script>
+
+<!-- 3. 选一套风格和明暗，然后直接写标签 -->
+<html data-style="nord" data-theme="light">
+  <ui-button variant="primary">保存</ui-button>
+  <ui-input label="用户名" placeholder="请输入"></ui-input>
+  <ui-line-chart labels="1月,2月,3月" series='[{"name":"营收","data":[12,18,26]}]'></ui-line-chart>
+</html>
+```
+
+- `@v1.0.0` 是固定版本（推荐，永久缓存、不会突然变化）；想始终用最新代码可以换成 `@main`（CDN 缓存最长约 12 小时）。
+- 只想要一部分组件时，把 `components/index.js` 换成具体文件，例如 `components/form.js`、`components/charts2.js`。
+- 函数式 API 会挂在 `window` 上：`uiToast()`、`uiNotify()`、`uiConfetti()`。
 
 ## 为什么是零依赖
 
@@ -82,6 +140,9 @@ src/
     catalog-motion2.js     「动效」「视觉」第二批（各 20 个）
 scripts/
   check.mjs                跨平台语法检查（npm run check）
+  run-tests.mjs            无头浏览器跑全部回归用例（npm test，CI 同款）
+docs/screenshots/          README 用的截图与动图
+.github/workflows/test.yml 每次推送自动跑语法检查 + 回归测试
     styles.js              风格预设的元信息（含代表色 swatch）
     style-guides.js        每套风格的 AI 提示词 + 设计说明（风格页展示；提示词末尾自动附上从 tokens.css 实时读取的变量值）
 ```
@@ -251,54 +312,26 @@ register('ui-toast', UIToast, '.ui-toast{background:var(--ui-panel);border:var(-
 ## 测试
 
 零依赖回归测试页：`/test.html`（73 条用例：属性渲染、键盘与焦点、浮层开关、数据兜底、无障碍、15 套风格对比度、减少动效与动画循环清理）。
-`npm run check` 对 `src` 下所有 JS 做语法检查（Windows / macOS / Linux 通用）。
 
 ```bash
-python3 -m http.server 5173
-# 打开 http://127.0.0.1:5173/test.html
+npm run check        # 语法检查（Windows / macOS / Linux 通用）
+npm start            # 另开一个终端启动服务器后：
+npm test             # 无头浏览器跑完全部用例（需要 playwright：npx playwright install chromium）
 ```
 
-- `src/test/harness.js` —— `describe / it / expect` + 独立沙箱（每条用例一个 host，结束整体移除，顺便触发组件的 detached 清理）
-- `src/test/cases.js` —— 25 条用例：属性解析、键盘流程、ARIA 角色、浮层开关、数据渲染与兜底、主题隔离
-- 页面实时显示 `通过 / 失败 / 耗时`，并把 `{ pass, fail, total, ms }` 挂到 `window.__testResult`，便于外部自动化抓取
-
-当前 **25 / 25 通过，约 900ms**。
-
-> 测试真实抓到两个 bug：
-> 1. **`ui-popover` 点外部不关闭** —— `Layer` 原来用 60ms 时间窗挡「打开它的那次点击」，改成**比较事件引用**后精确解决（不再有副作用）。
-> 2. **`.ui-modal-mask` 的 `display:grid` 覆盖了 UA 的 `[hidden]{display:none}`** —— 关闭状态下遮罩仍存在并拦截点击。补 `.ui-modal-mask[hidden]{display:none}`，并加专门用例防回归。
+每次推送到 GitHub，[GitHub Actions](https://github.com/7015725/ui-catalog/actions) 会自动跑一遍以上流程，结果显示在 README 顶部的 test 徽章上。
 
 ## 当前状态
 
-已验证（Playwright 实测，34 个组件 / 6 个分类）：
-
-- 基础 27 个组件渲染、文案、默认态正确
-- 下拉菜单：面板 `top:592 / side:top`（下方空间不足自动翻上）、选中后关闭、`-` 分隔线与 `!` 危险项解析正确
-- 日期选择：月历 31 格、`‹` 切到 2026 年 9 月、点 15 号后 `value` 变为 `2026-09-15` 并关闭
-- 树形：8 节点 2 分支、默认展开 src、点箭头折叠、选中高亮唯一
-- 文字提示：`text` 正确、`pointer-events:none`
-- Toast：深色反色底、单条/堆叠/1.8s 自动消失
-- **数据表格**：3 列 3 行，首行 `订单 A / 已完成 / 128`，`caption` 渲染为表格标题
-- **折叠面板**：3 项，点第 2 项后状态为 `false,true,false` —— 单开模式自动收起第 1 项
-- **分段控制器**：点「月」后 `value="月"`、`aria-checked` 与焦点同步
-- **评分**：点第 5 颗星 → `value="5"`、5 个实心星、右侧文本 `5/5`
-- **对话框**：`open=true`、焦点落在面板内、`role=dialog`/`aria-modal`、`body.overflow=hidden`、Tab 被锁在面板内；关闭后 `overflow` 复原且焦点回到触发按钮
-- **抽屉**：右侧滑入、焦点在面板内、Tab 锁定；关闭后焦点归还
-- **气泡卡片**：点击打开且内含按钮可交互，点外部自动关闭
-- 页面无 console 报错；4 套风格同页并存互不污染
-
-键盘与 ARIA（Playwright 实测，全部用合成 KeyboardEvent 驱动，非鼠标）：
-
-- 下拉菜单：`↓` 打开→焦点落在「编辑」→`↓`「复制链接」→`End`「删除」→`Esc` 关闭、`aria-expanded` 回到 false、焦点回到触发器
-- 日期选择：打开后焦点在 `2026-10-31` 且 roving tabindex 只有一个；`→` 跨月到 `11-01`（标题同步）；`PageDown`→12 月；`↓`→`12-08`；`Enter` 写回 `value` 并关闭；焦点回到触发器；`←` 每次精确退 1 天
-- 树形：`src`→`↓` `components`→`→` 展开（`aria-expanded=true`）→`←` 折叠→`Enter` 选中→`End` 跳末项
-- 标签页：`→` 从「概览」切到「配置」，`aria-selected` 与焦点同步
-- 角色齐全：`role=switch`、`role=progressbar`(valuenow 62/100)、`role=status`、alert 的 `[status, alert]`、`input[aria-describedby]`、`role=tree`、`role=tooltip`
-- 页面无 console 报错
+- **142 个组件**全部可渲染、可交互；画廊逐个点击所有控件 + 键盘操作，无报错
+- **73 条回归用例**全部通过（GitHub Actions 每次推送自动运行）
+- **15 套风格 × 浅色 / 深色 × 3 种屏宽**（360 / 820 / 1440）：无横向溢出、无组件溢出卡片
+- **无障碍**：axe-core 扫描画廊与风格页，30 种风格组合均为 0 个问题；文字对比度全部 ≥ 4.5:1（WCAG AA）
+- **动效**：全部尊重 `prefers-reduced-motion` 与 `data-motion="reduce"`；动画循环离开视口 / 标签页隐藏时暂停，组件移除时清理
+- **无泄漏**：反复切换分类、搜索后，浮层节点与 body 子节点数量不增长；页面内无重复 id
 
 尚未做：
 
-- 多选树（父子联动）、日期区间选择、级联选择
+- 多选树（父子联动）、日期区间选择
 - 虚拟滚动（树 / 表格大数据量）
-- 视觉回归（截图对比）与 CI 接入
-- `prefers-reduced-motion` 的全局降级
+- 视觉回归（截图像素对比）

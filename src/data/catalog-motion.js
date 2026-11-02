@@ -338,7 +338,7 @@ export const motionCatalog = [
     demo:
       '<ui-aurora height="200" style="width:100%">' +
       '<div style="font-size:24px;font-weight:800;color:var(--ui-text)">下一代设计系统</div>' +
-      '<p style="margin:6px 0 14px;font-size:13px;color:var(--ui-text)">82+ 组件 · 15 套风格 · 全部可换肤</p>' +
+      '<p style="margin:6px 0 14px;font-size:13px;color:var(--ui-text)">140+ 组件 · 15 套风格 · 全部可换肤</p>' +
       '<ui-button variant="primary" shape="pill">开始使用</ui-button></ui-aurora>',
     ai:
       '【组件】极光背景 <ui-aurora>\n' +
