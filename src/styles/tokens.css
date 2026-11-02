@@ -1,0 +1,414 @@
+/* =========================================================
+   Design Tokens  —— 两层：主题(颜色) + 风格(形态)
+   组件 CSS 只允许使用 var(--ui-*)，禁止写死颜色/圆角/阴影
+   叠加顺序：:root → dark → style → style+dark
+   ========================================================= */
+:root, [data-theme="light"]{
+  color-scheme: light;
+  --ui-bg:#f6f7fb; --ui-panel:#ffffff; --ui-panel-2:#f1f3f9;
+  --ui-text:#1b1f2a; --ui-sub:#666d7a; --ui-line:#e6e8f0;
+  --ui-brand:#245cff; --ui-brand-ink:#ffffff; --ui-brand-soft:#eef2ff;
+  --ui-ok:#15803d; --ui-ok-soft:#dcfce7;
+  --ui-warn:#b45309; --ui-warn-soft:#fef3c7;
+  --ui-danger:#b91c1c; --ui-danger-soft:#fee2e2;
+
+  --ui-font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --ui-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+
+  --ui-radius-sm:8px; --ui-radius:10px; --ui-radius-lg:14px; --ui-radius-pill:999px;
+  --ui-border-w:1px;
+  --ui-ctl-h:40px;
+  --ui-gap:10px;
+  --ui-motion:.18s;
+  /* 动效曲线：ease 用于入场/位移，spring 用于回弹（磁吸、弹出） */
+  --ui-ease:cubic-bezier(.2,.7,.2,1);
+  --ui-spring:cubic-bezier(.34,1.56,.64,1);
+  --ui-blur:0px;
+  --ui-shadow-sm:0 1px 2px rgba(16,24,40,.06);
+  --ui-shadow:0 1px 2px rgba(16,24,40,.04), 0 8px 24px rgba(16,24,40,.06);
+  --ui-ring:0 0 0 3px var(--ui-brand-soft);
+  /* 实心语义色（ok / warn / danger 做底色）上的文字色 */
+  --ui-on-color:#ffffff;
+}
+
+[data-theme="dark"]{
+  color-scheme: dark;
+  --ui-bg:#0f1218; --ui-panel:#171b23; --ui-panel-2:#1d222c;
+  --ui-text:#e6e9f0; --ui-sub:#93a0b4; --ui-line:#242a35;
+  --ui-brand:#6b9bff; --ui-brand-ink:#0f1218; --ui-brand-soft:#1c2740;
+  --ui-ok:#4ade80; --ui-ok-soft:#14301f;
+  --ui-warn:#fbbf24; --ui-warn-soft:#3a2a08;
+  --ui-danger:#f87171; --ui-danger-soft:#3a1414;
+  --ui-shadow-sm:0 1px 2px rgba(0,0,0,.5);
+  --ui-shadow:0 1px 2px rgba(0,0,0,.45), 0 12px 32px rgba(0,0,0,.45);
+  --ui-on-color:#0f1218;
+}
+
+/* ---------- 风格 1：Neo Brutalism ---------- */
+[data-style="brutal"]{
+  --ui-font:var(--ui-mono);
+  --ui-radius-sm:0px; --ui-radius:0px; --ui-radius-lg:0px;
+  --ui-border-w:2px;
+  --ui-line:#12141a;
+  --ui-brand:#ffd84d; --ui-brand-ink:#12141a; --ui-brand-soft:#fff0a8;
+  --ui-shadow-sm:3px 3px 0 var(--ui-line);
+  --ui-shadow:6px 6px 0 var(--ui-line);
+  --ui-ctl-h:42px;
+  --ui-sub:#666d7a;
+}
+[data-style="brutal"][data-theme="dark"]{
+  --ui-line:#e8ebf2; --ui-bg:#14161c; --ui-panel:#1b1e26; --ui-panel-2:#22262f;
+  --ui-text:#f2f4f8; --ui-sub:#a9b4c6; --ui-brand-soft:#3a3419;
+  --ui-shadow-sm:3px 3px 0 var(--ui-line);
+  --ui-shadow:6px 6px 0 var(--ui-line);
+}
+
+/* ---------- 风格 2：Glassmorphism ---------- */
+[data-style="glass"]{
+  --ui-panel:rgba(255,255,255,.62);
+  --ui-panel-2:rgba(255,255,255,.42);
+  --ui-line:rgba(255,255,255,.7);
+  --ui-sub:#5a6478;
+  --ui-radius-sm:10px; --ui-radius:14px; --ui-radius-lg:22px;
+  --ui-blur:16px;
+  --ui-shadow-sm:0 1px 2px rgba(31,45,80,.08);
+  --ui-shadow:0 8px 32px rgba(31,45,80,.14);
+  --ui-ring:0 0 0 3px rgba(79,124,255,.22);
+  --ui-brand:#245cff;
+}
+[data-style="glass"][data-theme="dark"]{
+  --ui-panel:rgba(30,36,48,.55); --ui-panel-2:rgba(30,36,48,.34);
+  --ui-line:rgba(255,255,255,.14); --ui-bg:#0b0e14; --ui-sub:#9aa6bb;
+  --ui-brand:#6b9bff;
+}
+
+/* ---------- 风格 3：Mono / 工程极简 ---------- */
+[data-style="mono"]{
+  --ui-font:var(--ui-mono);
+  --ui-radius-sm:4px; --ui-radius:5px; --ui-radius-lg:7px;
+  --ui-shadow-sm:none; --ui-shadow:none;
+  --ui-brand:#111318; --ui-brand-ink:#ffffff; --ui-brand-soft:#eceff4;
+  --ui-line:#d6dae2;
+  --ui-sub:#666d7a;
+}
+[data-style="mono"][data-theme="dark"]{
+  --ui-brand:#f4f6fa; --ui-brand-ink:#111318; --ui-brand-soft:#232833;
+  --ui-line:#2c323d;
+  --ui-sub:#93a0b4;
+}
+
+/* ---------- 风格 4：Neumorphism 新拟态 ---------- */
+[data-style="neumorph"]{
+  --ui-bg:#e4e8ef; --ui-panel:#e4e8ef; --ui-panel-2:#dbe0e8;
+  --ui-text:#2d3445; --ui-sub:#5a6272; --ui-line:#cfd5df;
+  --ui-brand:#2d43ff; --ui-brand-ink:#ffffff; --ui-brand-soft:#d9ddfb;
+  --ui-radius-sm:12px; --ui-radius:14px; --ui-radius-lg:22px;
+  --ui-border-w:0px;
+  --ui-shadow-sm:4px 4px 9px #c4c9d3, -4px -4px 9px #ffffff;
+  --ui-shadow:9px 9px 20px #c2c7d1, -9px -9px 20px #ffffff;
+  --ui-ring:0 0 0 3px rgba(91,108,255,.25);
+  --ui-ok:#137538;
+  --ui-warn:#a54c08;
+}
+[data-style="neumorph"][data-theme="dark"]{
+  --ui-bg:#262a33; --ui-panel:#262a33; --ui-panel-2:#20242c;
+  --ui-text:#e3e7ef; --ui-sub:#8f99ad; --ui-line:#333845;
+  --ui-brand:#8f9bff; --ui-brand-ink:#14172a; --ui-brand-soft:#30365a;
+  --ui-shadow-sm:4px 4px 9px #1b1e24, -4px -4px 9px #31363f;
+  --ui-shadow:9px 9px 20px #1a1d23, -9px -9px 20px #323741;
+  --ui-ok:#4ade80;
+  --ui-warn:#fbbf24;
+}
+
+/* ---------- 风格 5：Claymorphism 黏土 ---------- */
+[data-style="clay"]{
+  --ui-bg:#f4f0ff; --ui-panel:#ffffff; --ui-panel-2:#f3effc;
+  --ui-text:#2a2342; --ui-sub:#6f678b; --ui-line:#e6e0f5;
+  --ui-brand:#6540ff; --ui-brand-ink:#ffffff; --ui-brand-soft:#ece6ff;
+  --ui-font:ui-rounded,"SF Pro Rounded","Nunito","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --ui-radius-sm:14px; --ui-radius:18px; --ui-radius-lg:28px;
+  --ui-border-w:0px; --ui-ctl-h:42px;
+  --ui-shadow-sm:0 6px 14px rgba(124,92,255,.14), inset 0 -3px 0 rgba(42,35,66,.07), inset 0 2px 0 rgba(255,255,255,.7);
+  --ui-shadow:0 16px 34px rgba(124,92,255,.18), inset 0 -5px 0 rgba(42,35,66,.05), inset 0 3px 0 rgba(255,255,255,.9);
+  --ui-ring:0 0 0 4px rgba(124,92,255,.22);
+}
+[data-style="clay"][data-theme="dark"]{
+  --ui-bg:#191628; --ui-panel:#262140; --ui-panel-2:#2e284d;
+  --ui-text:#efeaff; --ui-sub:#a59cc8; --ui-line:#3a335f;
+  --ui-brand:#a48dff; --ui-brand-ink:#16122b; --ui-brand-soft:#352c62;
+  --ui-shadow-sm:0 6px 14px rgba(0,0,0,.4), inset 0 -3px 0 rgba(0,0,0,.25), inset 0 2px 0 rgba(255,255,255,.08);
+  --ui-shadow:0 16px 34px rgba(0,0,0,.45), inset 0 -5px 0 rgba(0,0,0,.22), inset 0 3px 0 rgba(255,255,255,.07);
+}
+
+/* ---------- 风格 6：Material You ---------- */
+[data-style="material"]{
+  --ui-bg:#fef7ff; --ui-panel:#ffffff; --ui-panel-2:#f3edf7;
+  --ui-text:#1d1b20; --ui-sub:#49454f; --ui-line:#cac4d0;
+  --ui-brand:#6750a4; --ui-brand-ink:#ffffff; --ui-brand-soft:#eaddff;
+  --ui-ok:#146c2e; --ui-ok-soft:#c4eed0;
+  --ui-font:"Roboto","Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --ui-radius-sm:8px; --ui-radius:12px; --ui-radius-lg:16px;
+  --ui-motion:.2s cubic-bezier(.2,0,0,1);
+  --ui-shadow-sm:0 1px 2px rgba(0,0,0,.18), 0 1px 3px 1px rgba(0,0,0,.08);
+  --ui-shadow:0 1px 2px rgba(0,0,0,.2), 0 2px 6px 2px rgba(0,0,0,.1);
+  --ui-ring:0 0 0 3px rgba(103,80,164,.24);
+}
+[data-style="material"][data-theme="dark"]{
+  --ui-bg:#141218; --ui-panel:#1d1b20; --ui-panel-2:#2b2930;
+  --ui-text:#e6e0e9; --ui-sub:#cac4d0; --ui-line:#49454f;
+  --ui-brand:#d0bcff; --ui-brand-ink:#381e72; --ui-brand-soft:#4f378b;
+  --ui-ok:#7fd99a; --ui-ok-soft:#0f3a1d;
+  --ui-shadow-sm:0 1px 2px rgba(0,0,0,.5), 0 1px 3px 1px rgba(0,0,0,.3);
+  --ui-shadow:0 1px 2px rgba(0,0,0,.5), 0 2px 6px 2px rgba(0,0,0,.3);
+}
+
+/* ---------- 风格 7：Cyber Neon 赛博霓虹 ---------- */
+[data-style="cyber"]{
+  --ui-bg:#f4f5fb; --ui-panel:#ffffff; --ui-panel-2:#f0f1fa;
+  --ui-text:#14152b; --ui-sub:#5d6187; --ui-line:#d6d9ef;
+  --ui-brand:#bd18a0; --ui-brand-ink:#ffffff; --ui-brand-soft:#fde4f8;
+  --ui-font:var(--ui-mono);
+  --ui-radius-sm:2px; --ui-radius:3px; --ui-radius-lg:4px;
+  --ui-shadow-sm:0 0 0 1px rgba(226,31,191,.12);
+  --ui-shadow:0 0 0 1px rgba(226,31,191,.18), 0 8px 26px rgba(226,31,191,.12);
+  --ui-ring:0 0 0 2px var(--ui-brand), 0 0 14px rgba(226,31,191,.45);
+}
+[data-style="cyber"][data-theme="dark"]{
+  --ui-bg:#07080f; --ui-panel:#0d0f1d; --ui-panel-2:#121531;
+  --ui-text:#e6f6ff; --ui-sub:#7f8bb6; --ui-line:#232954;
+  --ui-brand:#00eaff; --ui-brand-ink:#03121a; --ui-brand-soft:#06293a;
+  --ui-ok:#3dff8f; --ui-ok-soft:#06301a;
+  --ui-warn:#ffe14d; --ui-warn-soft:#332a05;
+  --ui-danger:#ff3d7f; --ui-danger-soft:#3a0a1d;
+  --ui-shadow-sm:0 0 0 1px rgba(0,234,255,.18), 0 0 10px rgba(0,234,255,.12);
+  --ui-shadow:0 0 0 1px rgba(0,234,255,.28), 0 0 26px rgba(0,234,255,.16);
+  --ui-ring:0 0 0 2px var(--ui-brand), 0 0 16px rgba(0,234,255,.55);
+}
+
+/* ---------- 风格 8：Paper 纸张编辑 ---------- */
+[data-style="paper"]{
+  --ui-bg:#f5efe3; --ui-panel:#fffcf5; --ui-panel-2:#f0e9db;
+  --ui-text:#2b2620; --ui-sub:#716656; --ui-line:#ddd2bf;
+  --ui-brand:#ac442d; --ui-brand-ink:#fffcf5; --ui-brand-soft:#f5e1d8;
+  --ui-font:Georgia,"Songti SC","Noto Serif SC","SimSun",serif;
+  --ui-radius-sm:2px; --ui-radius:3px; --ui-radius-lg:4px;
+  --ui-shadow-sm:none;
+  --ui-shadow:0 1px 0 #ddd2bf, 0 10px 24px -14px rgba(60,40,20,.25);
+}
+[data-style="paper"][data-theme="dark"]{
+  --ui-bg:#1b1813; --ui-panel:#24201a; --ui-panel-2:#2c271f;
+  --ui-text:#ece3d4; --ui-sub:#a89a84; --ui-line:#3b342a;
+  --ui-brand:#e0805f; --ui-brand-ink:#1b1813; --ui-brand-soft:#3b261d;
+  --ui-shadow:0 1px 0 #3b342a, 0 10px 24px -14px rgba(0,0,0,.6);
+}
+
+/* ---------- 风格 9：Retro 98 复古桌面 ---------- */
+[data-style="retro"]{
+  --ui-bg:#c0c0c0; --ui-panel:#c0c0c0; --ui-panel-2:#ffffff;
+  --ui-text:#000000; --ui-sub:#3a3a3a; --ui-line:#808080;
+  --ui-brand:#000080; --ui-brand-ink:#ffffff; --ui-brand-soft:#c9c9f2;
+  --ui-ok:#005a00; --ui-ok-soft:#c8e6c8;
+  --ui-font:Tahoma,"MS Sans Serif","SimSun","Microsoft YaHei",sans-serif;
+  --ui-radius-sm:0px; --ui-radius:0px; --ui-radius-lg:0px; --ui-radius-pill:0px;
+  --ui-motion:0s;
+  --ui-shadow-sm:inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+  --ui-shadow:inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px #808080, inset 2px 2px #ffffff;
+  --ui-ring:0 0 0 1px #000, 0 0 0 2px #fff;
+  --ui-warn:#7c3906;
+  --ui-danger:#981717;
+}
+[data-style="retro"][data-theme="dark"]{
+  --ui-bg:#2b2b2b; --ui-panel:#3a3a3a; --ui-panel-2:#1c1c1c;
+  --ui-text:#f2f2f2; --ui-sub:#bdbdbd; --ui-line:#6c6c6c;
+  --ui-brand:#9c9cff; --ui-brand-ink:#0b0b2a; --ui-brand-soft:#2c2c66;
+  --ui-ok:#5fd35f; --ui-ok-soft:#163016;
+  --ui-shadow-sm:inset -1px -1px #000, inset 1px 1px #7a7a7a, inset -2px -2px #222, inset 2px 2px #555;
+  --ui-shadow:inset -1px -1px #000, inset 1px 1px #555, inset -2px -2px #222, inset 2px 2px #7a7a7a;
+  --ui-warn:#fbbf24;
+  --ui-danger:#f98282;
+}
+
+/* =========================================================
+   风格微调：少量「只靠变量表达不了」的形态差异
+   仍然只引用 var(--ui-*)，按 [data-style] 作用域生效（支持局部换肤）
+   ========================================================= */
+[data-style="material"] .ui-btn{border-radius:var(--ui-radius-pill)}
+[data-style="material"] .ui-btn--default{background:transparent;box-shadow:none;border-color:var(--ui-line);color:var(--ui-brand)}
+
+[data-style="neumorph"] .ui-btn:active:not(:disabled){box-shadow:inset 3px 3px 7px rgba(0,0,0,.14), inset -3px -3px 7px rgba(255,255,255,.6);transform:none}
+[data-style="neumorph"] .ui-input,[data-style="neumorph"] .ui-textarea,[data-style="neumorph"] .ui-select,
+[data-style="neumorph"] .ui-num__box,[data-style="neumorph"] .ui-ti__box,[data-style="neumorph"] .ui-otp input{
+  box-shadow:inset 3px 3px 7px rgba(0,0,0,.12), inset -3px -3px 7px rgba(255,255,255,.55)}
+[data-style="neumorph"][data-theme="dark"] .ui-input,[data-style="neumorph"][data-theme="dark"] .ui-textarea,
+[data-style="neumorph"][data-theme="dark"] .ui-select,[data-style="neumorph"][data-theme="dark"] .ui-num__box,
+[data-style="neumorph"][data-theme="dark"] .ui-ti__box,[data-style="neumorph"][data-theme="dark"] .ui-otp input{
+  box-shadow:inset 3px 3px 7px rgba(0,0,0,.35), inset -3px -3px 7px rgba(255,255,255,.04)}
+
+[data-style="clay"] .ui-btn:active:not(:disabled){transform:translateY(2px) scale(.98)}
+
+[data-style="cyber"] .ui-btn--primary{text-transform:uppercase;letter-spacing:.06em}
+[data-style="cyber"][data-theme="dark"] .ui-btn--primary{box-shadow:0 0 14px rgba(0,234,255,.5)}
+[data-style="cyber"] .ui-card__t,[data-style="cyber"] .ui-modal__t{letter-spacing:.06em}
+
+[data-style="paper"] .ui-card__hd,[data-style="paper"] .ui-modal__hd{border-bottom-style:solid}
+[data-style="paper"] .ui-card__t{font-style:italic}
+
+[data-style="retro"] .ui-btn:active:not(:disabled){transform:none;box-shadow:inset 1px 1px #0a0a0a, inset -1px -1px #fff, inset 2px 2px #808080}
+[data-style="retro"] .ui-card__hd,[data-style="retro"] .ui-modal__hd,[data-style="retro"] .ui-drawer__hd{
+  background:linear-gradient(90deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 40%,#1084d0));border-bottom:0}
+[data-style="retro"] .ui-card__hd *,[data-style="retro"] .ui-modal__hd *,[data-style="retro"] .ui-drawer__hd *{color:var(--ui-brand-ink)}
+[data-style="retro"] .ui-input,[data-style="retro"] .ui-textarea,[data-style="retro"] .ui-select{
+  box-shadow:inset 1px 1px #808080, inset -1px -1px #fff, inset 2px 2px #0a0a0a;border-color:transparent}
+
+/* 黄色品牌色上不能再放黄色文字：浅底场景改用正文色保证对比度 */
+[data-style="brutal"] .ui-tag--brand,[data-style="brutal"] .ui-badge--brand,
+[data-style="brutal"] .ui-chips button[aria-pressed="true"],[data-style="brutal"] .ui-ti__chip,
+[data-style="brutal"] .ui-btn--soft,[data-style="brutal"] .ui-btn--outline,[data-style="brutal"] .ui-btn--text,
+[data-style="brutal"] .ui-menu button[aria-current="page"],[data-style="brutal"] .ui-nb__links a[aria-current="page"],
+[data-style="brutal"] .ui-tabs button.on,[data-style="brutal"] .ui-seg button.on,[data-style="brutal"] .ui-list__av,[data-style="brutal"] .ui-result--info .ui-result__ico,
+[data-style="brutal"] .ui-pick__chip,[data-style="brutal"] .ui-cal__e,[data-style="brutal"] .ui-up__t b,[data-style="brutal"] .ui-oc__p,
+[data-style="brutal"] .ui-bn button[aria-current="page"],[data-style="brutal"] .ui-cm__tag,[data-style="brutal"] .ui-anchor a[aria-current],
+[data-style="brutal"] .ui-sug mark,[data-style="brutal"] .ui-pmenu button:hover,[data-style="brutal"] .ui-pmenu button:focus-visible,
+[data-style="brutal"] .ui-cmd__it[aria-selected="true"],[data-style="brutal"] .ui-ms-list li,[data-style="brutal"] .ui-cas-col li[aria-selected="true"],
+[data-style="brutal"] .ui-cal__hd button:hover,[data-style="brutal"] .ui-pw__eye:hover,[data-style="brutal"] .ui-ntf__a{color:var(--ui-text)}
+[data-style="brutal"] .ui-btn--outline{border-color:var(--ui-line)}
+/* 无边框风格里，上传区仍需要可见的虚线轮廓 */
+[data-style="neumorph"] .ui-up,[data-style="clay"] .ui-up{border:2px dashed var(--ui-line)}
+
+/* =========================================================
+   第三批风格
+   ========================================================= */
+
+/* ---------- 风格 10：Nord 北欧冷调 ---------- */
+[data-style="nord"]{
+  --ui-bg:#eceff4; --ui-panel:#ffffff; --ui-panel-2:#e5e9f0;
+  --ui-text:#2e3440; --ui-sub:#4c566a; --ui-line:#d8dee9;
+  --ui-brand:#48678c; --ui-brand-ink:#ffffff; --ui-brand-soft:#dde6f2;
+  --ui-ok:#4b7337; --ui-ok-soft:#e3eedb;
+  --ui-warn:#8e5f16; --ui-warn-soft:#f6ecd6;
+  --ui-danger:#a14852; --ui-danger-soft:#f5dfe1;
+  --ui-radius-sm:6px; --ui-radius:8px; --ui-radius-lg:12px;
+  --ui-shadow-sm:0 1px 2px rgba(46,52,64,.08);
+  --ui-shadow:0 1px 3px rgba(46,52,64,.06), 0 10px 28px rgba(46,52,64,.08);
+  --ui-ring:0 0 0 3px rgba(94,129,172,.25);
+}
+[data-style="nord"][data-theme="dark"]{
+  --ui-bg:#2e3440; --ui-panel:#3b4252; --ui-panel-2:#434c5e;
+  --ui-text:#eceff4; --ui-sub:#b6bfd0; --ui-line:#4c566a;
+  --ui-brand:#9ccbd8; --ui-brand-ink:#2e3440; --ui-brand-soft:#3b5262;
+  --ui-ok:#a3be8c; --ui-ok-soft:#3a4a3a;
+  --ui-warn:#ebcb8b; --ui-warn-soft:#4d4434;
+  --ui-danger:#dba291; --ui-danger-soft:#523b3a;
+  --ui-shadow-sm:0 1px 2px rgba(0,0,0,.25);
+  --ui-shadow:0 1px 3px rgba(0,0,0,.2), 0 12px 30px rgba(0,0,0,.25);
+}
+
+/* ---------- 风格 11：Luxury 黑金 ---------- */
+[data-style="luxury"]{
+  --ui-bg:#f7f4ee; --ui-panel:#fffdf9; --ui-panel-2:#f1ece2;
+  --ui-text:#1c1a17; --ui-sub:#70685b; --ui-line:#e3dccd;
+  --ui-brand:#7f632a; --ui-brand-ink:#ffffff; --ui-brand-soft:#f3ead6;
+  --ui-font:"Didot","Bodoni 72","Playfair Display",Georgia,"Songti SC","Noto Serif SC","SimSun",serif;
+  --ui-radius-sm:1px; --ui-radius:2px; --ui-radius-lg:3px;
+  --ui-motion:.3s ease;
+  --ui-shadow-sm:0 1px 2px rgba(28,26,23,.06);
+  --ui-shadow:0 18px 40px -22px rgba(28,26,23,.35);
+  --ui-ring:0 0 0 2px var(--ui-brand-soft), 0 0 0 3px var(--ui-brand);
+}
+[data-style="luxury"][data-theme="dark"]{
+  --ui-bg:#0c0c0b; --ui-panel:#151411; --ui-panel-2:#1e1c17;
+  --ui-text:#f2ead9; --ui-sub:#a59a83; --ui-line:#2e2a22;
+  --ui-brand:#d4af6a; --ui-brand-ink:#121110; --ui-brand-soft:#2d2618;
+  --ui-shadow-sm:0 1px 2px rgba(0,0,0,.5);
+  --ui-shadow:0 0 0 1px rgba(212,175,106,.12), 0 18px 40px -20px rgba(0,0,0,.8);
+}
+
+/* ---------- 风格 12：Bauhaus 包豪斯 ---------- */
+[data-style="bauhaus"]{
+  --ui-bg:#f2eee5; --ui-panel:#ffffff; --ui-panel-2:#ebe6db;
+  --ui-text:#111111; --ui-sub:#555049; --ui-line:#111111;
+  --ui-brand:#c42319; --ui-brand-ink:#ffffff; --ui-brand-soft:#fbe0dc;
+  --ui-ok:#1f4fd1; --ui-ok-soft:#dde6fb;
+  --ui-warn:#946100; --ui-warn-soft:#fff0bf;
+  --ui-font:"Helvetica Neue",Helvetica,Arial,"PingFang SC","Microsoft YaHei",sans-serif;
+  --ui-radius-sm:0px; --ui-radius:0px; --ui-radius-lg:0px;
+  --ui-border-w:2px; --ui-ctl-h:42px;
+  --ui-shadow-sm:none; --ui-shadow:none;
+  --ui-ring:0 0 0 3px #f2b705;
+}
+[data-style="bauhaus"][data-theme="dark"]{
+  --ui-bg:#121212; --ui-panel:#1b1b1b; --ui-panel-2:#252525;
+  --ui-text:#f2eee5; --ui-sub:#b5ae9f; --ui-line:#f2eee5;
+  --ui-brand:#ff4c41; --ui-brand-ink:#111111; --ui-brand-soft:#3d1512;
+  --ui-ok:#6b93ff; --ui-ok-soft:#18254a;
+  --ui-warn:#f2b705; --ui-warn-soft:#3a2d05;
+}
+
+/* ---------- 风格 13：Candy 糖果 ---------- */
+[data-style="candy"]{
+  --ui-bg:#fff5fa; --ui-panel:#ffffff; --ui-panel-2:#fff0f7;
+  --ui-text:#4a2b3f; --ui-sub:#8c6279; --ui-line:#ffd3e7;
+  --ui-brand:#c91060; --ui-brand-ink:#ffffff; --ui-brand-soft:#ffe1ef;
+  --ui-ok:#117a4d; --ui-ok-soft:#d6f6e7;
+  --ui-warn:#a15c00; --ui-warn-soft:#fff0d1;
+  --ui-danger:#c4262c; --ui-danger-soft:#ffe1e2;
+  --ui-font:ui-rounded,"SF Pro Rounded","Nunito","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --ui-radius-sm:12px; --ui-radius:16px; --ui-radius-lg:24px;
+  --ui-border-w:2px; --ui-ctl-h:42px;
+  --ui-shadow-sm:0 3px 0 #ffd3e7;
+  --ui-shadow:0 5px 0 #ffd3e7, 0 14px 30px rgba(240,69,143,.12);
+  --ui-ring:0 0 0 4px rgba(240,69,143,.22);
+}
+[data-style="candy"][data-theme="dark"]{
+  --ui-bg:#22181f; --ui-panel:#2e202b; --ui-panel-2:#382835;
+  --ui-text:#ffe9f4; --ui-sub:#cba1b8; --ui-line:#4c3247;
+  --ui-brand:#ff7eb6; --ui-brand-ink:#2a1020; --ui-brand-soft:#4a2440;
+  --ui-ok:#5fe0a4; --ui-ok-soft:#173a2b;
+  --ui-warn:#ffc266; --ui-warn-soft:#3f2f14;
+  --ui-danger:#ff7a7f; --ui-danger-soft:#431c22;
+  --ui-shadow-sm:0 3px 0 #150e14;
+  --ui-shadow:0 5px 0 #150e14, 0 14px 30px rgba(0,0,0,.35);
+}
+
+/* ---------- 风格 14：Terminal 终端 ---------- */
+[data-style="terminal"]{
+  --ui-bg:#f2f6ef; --ui-panel:#fbfdf9; --ui-panel-2:#e8f0e3;
+  --ui-text:#0f2a12; --ui-sub:#4b6a4e; --ui-line:#b5cbb1;
+  --ui-brand:#11771c; --ui-brand-ink:#ffffff; --ui-brand-soft:#dbefd8;
+  --ui-ok:#12733a;
+  --ui-font:var(--ui-mono);
+  --ui-radius-sm:0px; --ui-radius:0px; --ui-radius-lg:0px; --ui-radius-pill:0px;
+  --ui-shadow-sm:none; --ui-shadow:none;
+  --ui-ring:0 0 0 2px var(--ui-brand);
+}
+[data-style="terminal"][data-theme="dark"]{
+  --ui-bg:#040904; --ui-panel:#081108; --ui-panel-2:#0d190d;
+  --ui-text:#b8ffb2; --ui-sub:#5fae5c; --ui-line:#1c3a1c;
+  --ui-brand:#33ff66; --ui-brand-ink:#021004; --ui-brand-soft:#0e2d13;
+  --ui-ok:#33ff66; --ui-ok-soft:#0e2d13;
+  --ui-warn:#ffd033; --ui-warn-soft:#2e2608;
+  --ui-danger:#ff5c5c; --ui-danger-soft:#331010;
+  --ui-shadow:0 0 0 1px #1c3a1c, 0 0 24px rgba(51,255,102,.08);
+  --ui-ring:0 0 0 2px var(--ui-brand), 0 0 12px rgba(51,255,102,.5);
+}
+
+/* ---------- 第三批风格微调 ---------- */
+[data-style="luxury"] .ui-btn{letter-spacing:.12em;text-transform:uppercase;font-size:12.5px}
+[data-style="luxury"] .ui-btn--primary{background:linear-gradient(135deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 55%,#f5e1a4) 50%,var(--ui-brand));border-color:var(--ui-brand)}
+[data-style="luxury"] .ui-card__t,[data-style="luxury"] .ui-modal__t,[data-style="luxury"] .ui-price__n{letter-spacing:.14em;text-transform:uppercase;font-weight:500}
+
+[data-style="bauhaus"] .ui-btn{font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+[data-style="bauhaus"] .ui-card__hd,[data-style="bauhaus"] .ui-modal__hd{border-bottom-style:solid;border-bottom-width:2px}
+[data-style="bauhaus"] .ui-card__t{font-weight:800;text-transform:uppercase}
+[data-style="bauhaus"] .ui-avatar,[data-style="bauhaus"] .ui-ag > span{background:var(--ui-ok)}
+[data-style="bauhaus"] .ui-ag > span:nth-child(3n+2){background:var(--ui-brand)}
+[data-style="bauhaus"] .ui-ag > span:nth-child(3n+3){background:#f2b705;color:#111}
+[data-style="bauhaus"] .ui-ag > span.ui-ag__more{background:var(--ui-panel-2);color:var(--ui-text)}
+
+[data-style="candy"] .ui-btn:active:not(:disabled){transform:translateY(3px);box-shadow:none}
+[data-style="candy"] .ui-btn--primary{box-shadow:0 4px 0 color-mix(in srgb,var(--ui-brand) 70%,#000)}
+
+[data-style="terminal"] .ui-btn::before{content:"> ";opacity:.6}
+[data-style="terminal"] .ui-btn--circle::before,[data-style="terminal"] .ui-btn--loading::before{content:none}
+[data-style="terminal"][data-theme="dark"]{text-shadow:0 0 6px rgba(51,255,102,.25)}
+[data-style="terminal"][data-theme="dark"] .ui-btn--primary{box-shadow:0 0 14px rgba(51,255,102,.45);text-shadow:none}

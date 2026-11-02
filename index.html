@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" data-style="aurora">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6f7fb">
+<title>UI 组件库 · 预览 / 提示词 / 代码</title>
+<link rel="stylesheet" href="./src/styles/tokens.css">
+<link rel="stylesheet" href="./src/styles/app.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <span class="mark">◈</span>
+    <div>
+      <h1>UI 组件库</h1>
+      <p>预览 · AI 提示词 · 代码</p>
+    </div>
+  </div>
+  <div class="tools">
+    <div class="seg" id="viewSeg">
+      <button data-view="gallery" class="on">组件</button>
+      <button data-view="styles">UI 风格</button>
+    </div>
+    <input id="search" class="ui-input" type="search" placeholder="搜索组件…" aria-label="搜索组件">
+    <select id="styleSel" class="ui-select" aria-label="切换 UI 风格"></select>
+    <button id="motionBtn" class="ghost" aria-pressed="true" title="减少动态效果时，所有动画立即完成或静止">✨ 动效</button>
+    <button id="themeBtn" class="ghost">🌙 暗色</button>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="side" id="nav" aria-label="组件分类"></nav>
+  <main id="main"></main>
+</div>
+
+<script type="module" src="./src/app.js"></script>
+</body>
+</html>

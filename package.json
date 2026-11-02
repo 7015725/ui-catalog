@@ -1,0 +1,13 @@
+{
+  "name": "ui-gallery",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "node dev-server.mjs --open",
+    "start": "node dev-server.mjs",
+    "serve:py": "python3 -m http.server 5173",
+    "test": "echo \"先 npm run dev，再打开 http://127.0.0.1:5173/test.html\"",
+    "check": "node scripts/check.mjs"
+  }
+}
