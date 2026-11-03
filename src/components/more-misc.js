@@ -106,11 +106,11 @@ ui-bottom-nav{display:block;width:100%}
 `;
 
 export class UIBottomNav extends UIElement {
-  static props = { items: { default: '[]' }, active: { default: '0' } };
+  static props = { items: { default: '[]' }, active: { default: '0' }, label: { default: '底部导航' } };
   template(p) {
     const list = parseArr(p.items);
     if (!list) return jsonErr('items');
-    return '<nav class="ui-bn" aria-label="底部导航">' + list.map((it, i) =>
+    return '<nav class="ui-bn" aria-label="' + esc(p.label) + '">' + list.map((it, i) =>
       '<button type="button" data-i="' + i + '"' + (String(i) === p.active ? ' aria-current="page"' : '') + '>' +
       '<span class="ui-bn__i" aria-hidden="true">' + esc(it.icon || '•') + '</span>' + esc(it.label) +
       (it.badge ? '<span class="ui-bn__b" aria-label="' + esc(it.badge) + ' 条未读">' + esc(it.badge) + '</span>' : '') + '</button>'

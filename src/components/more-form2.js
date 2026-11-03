@@ -192,10 +192,10 @@ ui-search{display:block;width:100%}
 `;
 
 export class UISearch extends QuietElement {
-  static props = { placeholder: { default: '搜索…' }, suggestions: { default: '' }, value: { default: '' }, shortcut: { default: '/' } };
+  static props = { placeholder: { default: '搜索…' }, suggestions: { default: '' }, value: { default: '' }, shortcut: { default: '/' }, label: { default: '' } };
   template(p) {
     const id = this._id || (this._id = 'ui-search-' + (++uid));
-    return '<div class="ui-search" role="search">' +
+    return '<div class="ui-search" role="search" aria-label="' + esc(p.label || p.placeholder) + '">' +
       '<span class="ui-search__ico" aria-hidden="true">⌕</span>' +
       '<input class="ui-input" type="search" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="' + id + '-l" ' +
       'placeholder="' + esc(p.placeholder) + '" value="' + esc(p.value) + '" aria-label="' + esc(p.placeholder) + '">' +

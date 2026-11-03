@@ -5,6 +5,7 @@
 import './../components/index.js';
 import { toast } from './../components/overlay.js';
 import { describe, it, expect, put, tick } from './harness.js';
+import { templates, TPL_CATS } from './../data/templates.js';
 
 const key = (k) => document.activeElement.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true }));
 const click = (el) => el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
@@ -814,5 +815,119 @@ describe('趣味组件', () => {
     await put(host, '<ui-flip-clock countdown="3725"></ui-flip-clock>');
     expect(host.querySelectorAll('.ui-fc__d').length).toBe(6);
     expect(host.querySelector('.ui-fc .ui-sr').textContent).toBe('剩余 01:02:05');
+  });
+});
+
+/* ---------------- 界面模板 + Canvas 绘制组件 ---------------- */
+
+describe('界面模板', () => {
+  it('模板数据完整：id 唯一、分类合法、根节点带 .t-<id>、CSS 只用变量', async () => {
+    const ids = new Set();
+    templates.forEach((t) => {
+      expect(ids.has(t.id)).toBe(false);
+      ids.add(t.id);
+      expect(TPL_CATS.indexOf(t.cat) > -1).toBe(true);
+      ['name', 'brief', 'html', 'css', 'ai'].forEach((k) => expect(!!t[k]).toBe(true));
+      expect(t.design.when.length > 0 && t.design.avoid.length > 0).toBe(true);
+      expect(t.html).toContain('t-' + t.id);
+      expect(t.ai).toContain('【操作逻辑】');
+      /* 模板样式里不允许写死十六进制颜色（全部走 var(--ui-*)） */
+      expect(/#[0-9a-f]{3,6}\b/i.test(t.css)).toBe(false);
+    });
+    expect(templates.length).toBe(13);
+  });
+
+  it('每个模板挂载后 init 不报错，并且用到的组件都已注册', async (host) => {
+    for (const t of templates) {
+      await put(host, t.html);
+      t.uses.forEach((tag) => expect(!!customElements.get(tag)).toBe(true));
+      const root = host.querySelector('.t-' + t.id);
+      expect(!!root).toBe(true);
+      t.init(root);
+    }
+  });
+
+  it('电商模板：加购后底部导航角标 +1', async (host) => {
+    const t = templates.find((x) => x.id === 'shop');
+    await put(host, t.html);
+    t.init(host.querySelector('.t-shop'));
+    click(host.querySelector('[data-add]'));
+    await tick(0);
+    expect(JSON.parse(host.querySelector('ui-bottom-nav').getAttribute('items'))[2].badge).toBe('3');
+  });
+
+  it('邮件模板：打开未读邮件后未读数 -1', async (host) => {
+    const t = templates.find((x) => x.id === 'mail');
+    await put(host, t.html);
+    t.init(host.querySelector('.t-mail'));
+    click(host.querySelector('[data-mail="1"]'));
+    expect(host.querySelector('[data-folder="收件箱"] [data-cnt]').textContent).toBe('1');
+    expect(host.querySelector('[data-rs]').textContent).toContain('CI');
+  });
+
+  it('ui-bottom-nav 的 label 写到 nav 的 aria-label', async (host) => {
+    await put(host, '<ui-bottom-nav label="电商底部导航" items=\'[{"icon":"🏠","label":"首页"}]\'></ui-bottom-nav>');
+    expect(host.querySelector('nav').getAttribute('aria-label')).toBe('电商底部导航');
+  });
+
+  it('ui-search 的 search 区域有可区分的名称', async (host) => {
+    await put(host, '<ui-search placeholder="搜索邮件"></ui-search>');
+    expect(host.querySelector('[role="search"]').getAttribute('aria-label')).toBe('搜索邮件');
+  });
+});
+
+describe('Canvas 绘制组件', () => {
+  const ready = async (host, html) => { await put(host, html); await tick(30); return host.firstElementChild; };
+
+  it('ui-cv-dash 键盘选中告警点位并派单处理', async (host) => {
+    const d = await ready(host, '<ui-cv-dash></ui-cv-dash>');
+    const cv = d.querySelector('canvas');
+    expect(cv.getAttribute('role')).toBe('application');
+    let done = '';
+    d.addEventListener('resolve', (e) => { done = e.detail.name; });
+    cv.focus();
+    for (let i = 0; i < 4; i++) key('ArrowRight');
+    key('Enter');
+    expect(done).toBe('中心医院');
+    expect(d.sites[3].st).toBe('ok');
+    expect(d.querySelector('.ui-cv-sr').textContent).toContain('已派单');
+  });
+
+  it('ui-cv-game 状态机：开始 → 暂停 → 返回菜单', async (host) => {
+    const g = await ready(host, '<ui-cv-game></ui-cv-game>');
+    const seen = [];
+    g.addEventListener('scene', (e) => seen.push(e.detail.scene));
+    g.querySelector('canvas').focus();
+    key('Enter');
+    key('p');
+    key('ArrowDown');
+    key('Enter');
+    expect(seen.join('>')).toBe('play>pause>menu');
+  });
+
+  it('ui-cv-board 新建 / 切换 / 删除便签，删除时连带删除连线', async (host) => {
+    const b = await ready(host, '<ui-cv-board></ui-cv-board>');
+    expect(b.nodes.length).toBe(5);
+    b.addNote();
+    expect(b.nodes.length).toBe(6);
+    b.querySelector('canvas').focus();
+    key(']');
+    expect(b.sel.text).toBe('用户调研');
+    const edges = b.edges.length;
+    key('Delete');
+    expect(b.nodes.length).toBe(5);
+    expect(b.edges.length).toBe(edges - 1);
+  });
+
+  it('Canvas 组件在风格切换后重新读取变量', async (host) => {
+    host.setAttribute('data-style', 'brutal');
+    const b = await ready(host, '<ui-cv-board></ui-cv-board>');
+    const before = b.tk.brand;
+    host.setAttribute('data-style', 'cyber');
+    host.setAttribute('data-theme', 'dark');
+    await tick(10);
+    expect(b.tk.brand === before).toBe(false);
+    host.removeAttribute('data-style');
+    host.removeAttribute('data-theme');
   });
 });

@@ -6,6 +6,7 @@ import { componentClasses } from './components/index.js';
 import { catalog, CATS } from './data/catalog.js';
 import { styles } from './data/styles.js';
 import { styleGuides } from './data/style-guides.js';
+import { templates, TPL_CATS, TPL_BASE_CSS } from './data/templates.js';
 
 const nav = document.getElementById('nav');
 const main = document.getElementById('main');
@@ -17,18 +18,21 @@ const viewSeg = document.getElementById('viewSeg');
 
 const layout = document.querySelector('.layout');
 const STORE = 'ui-gallery:state';
-const state = { view: 'gallery', cat: '全部', q: '', theme: 'light', style: 'aurora', motion: 'on' };
+const state = { view: 'gallery', cat: '全部', tcat: '全部', q: '', theme: 'light', style: 'aurora', motion: 'on' };
+const VIEWS = ['gallery', 'styles', 'templates'];
 
 /* 记住上次的视图/风格/主题（实时刷新后不丢失）；存储不可用时静默降级 */
 try {
   const saved = JSON.parse(localStorage.getItem(STORE) || '{}');
-  ['view', 'cat', 'theme', 'style', 'motion'].forEach(function (k) { if (typeof saved[k] === 'string') state[k] = saved[k]; });
+  ['view', 'cat', 'tcat', 'theme', 'style', 'motion'].forEach(function (k) { if (typeof saved[k] === 'string') state[k] = saved[k]; });
 } catch (e) { /* 忽略 */ }
 if (!styles.some(function (s) { return s.id === state.style; })) state.style = 'aurora';
 if (state.cat !== '全部' && CATS.indexOf(state.cat) < 0) state.cat = '全部';
+if (state.tcat !== '全部' && TPL_CATS.indexOf(state.tcat) < 0) state.tcat = '全部';
+if (VIEWS.indexOf(state.view) < 0) state.view = 'gallery';
 function save() {
   try {
-    localStorage.setItem(STORE, JSON.stringify({ view: state.view, cat: state.cat, theme: state.theme, style: state.style, motion: state.motion }));
+    localStorage.setItem(STORE, JSON.stringify({ view: state.view, cat: state.cat, tcat: state.tcat, theme: state.theme, style: state.style, motion: state.motion }));
   } catch (e) { /* 忽略 */ }
 }
 
@@ -206,6 +210,104 @@ function styleFrame(s) {
     '</section>';
 }
 
+/* ---- 界面模板页 ---- */
+/* 模板样式统一注入一次（公共骨架 + 各模板的作用域样式） */
+(function injectTplCss() {
+  const el = document.createElement('style');
+  el.setAttribute('data-tpl', '');
+  el.textContent = TPL_BASE_CSS + templates.map(function (t) { return t.css; }).join('\n');
+  document.head.appendChild(el);
+})();
+
+/* init 方法的源码 → 独立的 function，去掉对象里的缩进，放进「代码」面板 */
+function fnSource(fn) {
+  const src = fn.toString().replace(/^init\s*\(/, 'function init(');
+  const lines = src.split('\n');
+  const ind = lines.slice(1).filter(function (l) { return l.trim(); })
+    .reduce(function (m, l) { return Math.min(m, l.match(/^ */)[0].length); }, 99);
+  const cut = ind === 99 ? 0 : ind;
+  return lines.map(function (l, i) { return i ? l.slice(Math.min(cut, l.match(/^ */)[0].length)) : l; }).join('\n');
+}
+
+function tplAI(t) {
+  return t.ai +
+    '\n【依赖组件】' + t.uses.join('、') +
+    '\n【组件库】ui-catalog 零依赖 Web Components：引入 tokens.css + components/index.js；换风格只改 <html> 上的 data-style / data-theme，模板样式只能用 var(--ui-*) 变量';
+}
+
+function tplCode(t) {
+  return '<!-- 页面结构 -->\n' + formatHtml(t.html) +
+    '\n\n/* 公共骨架样式（所有模板共用） */' + TPL_BASE_CSS +
+    '\n/* 模板样式 */' + t.css +
+    '\n\n// 操作逻辑：页面挂载后调用一次，参数是这一页的根节点\n' +
+    (t.init ? fnSource(t.init) + '\ninit(document.querySelector(\'.t-' + t.id + '\'));' : '// （无）') +
+    '\n\n// 依赖组件：' + t.uses.join(', ');
+}
+
+function paneTplDesign(t) {
+  const g = t.design;
+  const li = (arr) => (arr || []).map((x) => '<li>' + esc(x) + '</li>').join('');
+  return '<div class="pane__bar"><span>Design Note</span></div>' +
+    '<p style="margin:0 0 8px">' + esc(g.purpose) + '</p>' +
+    '<h4>适合</h4><ul>' + li(g.when) + '</ul>' +
+    '<h4 style="margin-top:10px">不适合</h4><ul>' + li(g.avoid) + '</ul>' +
+    (g.tips && g.tips.length ? '<h4 style="margin-top:10px">落地要点</h4><ul>' + li(g.tips) + '</ul>' : '');
+}
+
+const VW = [['桌面', ''], ['平板', '768'], ['手机', '390']];
+function tplFrame(t) {
+  if (t.frame === 'phone') {
+    return '<div class="tphone"><div class="tphone__sb" aria-hidden="true"><span>9:41</span><span>▂▄▆ 5G ▭</span></div>' + t.html + '</div>';
+  }
+  return '<div class="tbrowser' + (t.fit ? ' tbrowser--fit' : '') + '"><div class="tbrowser__bar" aria-hidden="true"><i></i><i></i><i></i><span>' + esc(t.url || 'example.com') + '</span></div>' +
+    '<div class="tbrowser__vp"><div class="tbrowser__page" data-page>' + t.html + '</div></div></div>';
+}
+
+function tplCardHTML(t) {
+  const web = t.frame !== 'phone';
+  return '<article class="card tcard' + (web ? ' tcard--web' : '') + '" data-card="tpl-' + t.id + '" aria-labelledby="t-tpl-' + t.id + '">' +
+    '<div class="card__hd"><h2 id="t-tpl-' + t.id + '">' + esc(t.name) +
+    '<code>' + (web ? (t.cat === 'JS 绘制' ? 'Canvas' : '响应式 Web') : '移动端 · 375 宽') + '</code></h2>' +
+    '<span class="cat">' + esc(t.cat) + '</span></div>' +
+    '<div class="tcard__bar"><span>' + esc(t.brief) + '</span>' +
+    (web ? '<div class="tvw" role="group" aria-label="' + esc(t.name) + ' 预览宽度">' + VW.map(function (v, i) {
+      return '<button data-vw="' + v[1] + '" aria-pressed="' + (i === 0) + '">' + v[0] + '</button>';
+    }).join('') + '</div>' : '') + '</div>' +
+    '<div class="tstage">' + tplFrame(t) + '</div>' +
+    '<div class="card__tabs">' +
+    '<button class="on" data-pane="ai">AI 提示词</button>' +
+    '<button data-pane="design">设计说明</button>' +
+    '<button data-pane="code">代码</button></div>' +
+    '<div class="pane" data-body="ai"><div class="pane__bar"><span>Prompt for Agent</span>' +
+    '<button class="copy" data-copy="tpl-ai" data-id="' + t.id + '">复制</button></div><pre>' + esc(tplAI(t)) + '</pre></div>' +
+    '<div class="pane" data-body="design" hidden>' + paneTplDesign(t) + '</div>' +
+    '<div class="pane" data-body="code" hidden><div class="pane__bar"><span>HTML + CSS + JS</span>' +
+    '<button class="copy" data-copy="tpl-code" data-id="' + t.id + '">复制代码</button></div><pre>' + esc(tplCode(t)) + '</pre></div>' +
+    '</article>';
+}
+
+/* 挂载后执行每个模板的操作逻辑；等组件完成首次渲染（微任务）再绑定 */
+function mountTemplates() {
+  setTimeout(function () {
+    templates.forEach(function (t) {
+      const root = main.querySelector('[data-card="tpl-' + t.id + '"] .t-' + t.id);
+      if (root && t.init && !root.dataset.ready) {
+        root.dataset.ready = '1';
+        try { t.init(root); } catch (e) { console.error('[模板 ' + t.id + '] init 出错', e); }
+      }
+    });
+  }, 0);
+}
+
+function filteredTpl() {
+  const q = state.q.trim().toLowerCase();
+  return templates.filter(function (t) {
+    if (state.tcat !== '全部' && t.cat !== state.tcat) return false;
+    if (!q) return true;
+    return (t.name + ' ' + t.brief + ' ' + t.cat + ' ' + t.ai).toLowerCase().indexOf(q) > -1;
+  });
+}
+
 /* ---- 渲染 ---- */
 function filtered() {
   const q = state.q.trim().toLowerCase();
@@ -218,10 +320,14 @@ function filtered() {
 }
 
 function renderNav() {
-  const cats = ['全部'].concat(CATS);
-  nav.innerHTML = '<div class="t">分类</div>' + cats.map(function (c) {
-    const n = c === '全部' ? catalog.length : catalog.filter(function (x) { return x.cat === c; }).length;
-    return '<button data-cat="' + c + '"' + (c === state.cat ? ' class="on"' : '') + '>' +
+  const tpl = state.view === 'templates';
+  const src = tpl ? templates : catalog;
+  const cur = tpl ? state.tcat : state.cat;
+  const cats = ['全部'].concat(tpl ? TPL_CATS : CATS);
+  nav.setAttribute('aria-label', tpl ? '模板分类' : '组件分类');
+  nav.innerHTML = '<div class="t">' + (tpl ? '模板类型' : '分类') + '</div>' + cats.map(function (c) {
+    const n = c === '全部' ? src.length : src.filter(function (x) { return x.cat === c; }).length;
+    return '<button data-cat="' + c + '"' + (c === cur ? ' class="on"' : '') + '>' +
       c + '<span class="n"> ' + n + '</span></button>';
   }).join('');
 }
@@ -237,6 +343,17 @@ function render() {
     return;
   }
   nav.hidden = false;
+  if (state.view === 'templates') {
+    const tl = filteredTpl();
+    main.innerHTML = tl.length
+      ? '<p class="hint">' + (state.tcat === '全部' ? '全部模板' : state.tcat) + ' · ' + tl.length + ' 个' +
+        (state.q ? '（搜索「' + esc(state.q) + '」）' : '') +
+        ' · 整页布局 + 操作逻辑，全部用组件库拼成，切换风格 / 明暗会一起变；预览可以直接点、滑、拖。</p>' +
+        '<div class="grid tgrid">' + tl.map(tplCardHTML).join('') + '</div>'
+      : '<p class="none">没有匹配的模板，换个关键词试试～</p>';
+    mountTemplates();
+    return;
+  }
   const list = filtered();
   main.innerHTML = list.length
     ? '<p class="hint">' + (state.cat === '全部' ? '全部' : state.cat) + ' · ' + list.length + ' 个组件' +
@@ -249,11 +366,11 @@ function render() {
 nav.addEventListener('click', function (e) {
   let b = e.target.closest('[data-cat]');
   if (!b) return;
-  state.cat = b.dataset.cat;
+  if (state.view === 'templates') state.tcat = b.dataset.cat; else state.cat = b.dataset.cat;
   save();
   renderNav();
   render();
-  b = nav.querySelector('[data-cat="' + state.cat + '"]');
+  b = nav.querySelector('[data-cat="' + (state.view === 'templates' ? state.tcat : state.cat) + '"]');
   if (b && b.scrollIntoView) b.scrollIntoView({ block: 'nearest', inline: 'center' });
 });
 
@@ -265,17 +382,23 @@ search.addEventListener('input', function () {
 viewSeg.addEventListener('click', function (e) {
   const b = e.target.closest('[data-view]');
   if (!b) return;
+  if (state.view === b.dataset.view) return;
   state.view = b.dataset.view;
   save();
   syncView();
   window.scrollTo({ top: 0 });
+  renderNav();
   render();
 });
 
 function syncView() {
   viewSeg.querySelectorAll('button').forEach(function (x) {
     x.classList.toggle('on', x.dataset.view === state.view);
+    x.setAttribute('aria-pressed', String(x.dataset.view === state.view));
   });
+  const ph = state.view === 'templates' ? '搜索模板…' : '搜索组件…';
+  search.placeholder = ph;
+  search.setAttribute('aria-label', ph.replace('…', ''));
 }
 
 function applyStyle(id) {
@@ -335,6 +458,17 @@ main.addEventListener('click', function (e) {
     return;
   }
 
+  /* 浏览器框：切换预览宽度（桌面 / 平板 / 手机），模板内部用容器查询自适应 */
+  const vw = e.target.closest('[data-vw]');
+  if (vw) {
+    const card = vw.closest('.tcard');
+    card.querySelectorAll('[data-vw]').forEach(function (b) { b.setAttribute('aria-pressed', String(b === vw)); });
+    const page = card.querySelector('[data-page]');
+    page.style.maxWidth = vw.dataset.vw ? vw.dataset.vw + 'px' : '';
+    card.classList.toggle('tcard--narrow', !!vw.dataset.vw);
+    return;
+  }
+
   const tab = e.target.closest('[data-pane]');
   if (tab) {
     const card = tab.closest('.card, .sframe');
@@ -350,6 +484,11 @@ main.addEventListener('click', function (e) {
 
   const cp = e.target.closest('[data-copy]');
   if (!cp) return;
+  if (cp.dataset.copy === 'tpl-ai' || cp.dataset.copy === 'tpl-code') {
+    const t = templates.find(function (x) { return x.id === cp.dataset.id; });
+    if (t) copy(cp.dataset.copy === 'tpl-ai' ? tplAI(t) : tplCode(t), cp);
+    return;
+  }
   if (cp.dataset.copy === 'style-ai') {
     const st = styles.find(function (x) { return x.id === cp.dataset.id; });
     if (st) copy(styleAI(st), cp);

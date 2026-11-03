@@ -36,6 +36,7 @@ import * as E2 from './effects2.js';
 import * as E3 from './effects3.js';
 import './fun.js';
 import './fun2.js';
+import './canvas-ui.js';
 
 export { cssRegistry } from './base.js';
 import { classRegistry } from './base.js';

@@ -4,11 +4,12 @@
 ![零依赖](https://img.shields.io/badge/依赖-0-brightgreen)
 ![组件](https://img.shields.io/badge/组件-167-4f7cff)
 ![风格](https://img.shields.io/badge/UI%20风格-15-8b5cf6)
+![模板](https://img.shields.io/badge/界面模板-13-f59e0b)
 ![无障碍](https://img.shields.io/badge/WCAG-AA-15803d)
 [![MIT](https://img.shields.io/badge/license-MIT-lightgrey)](./LICENSE)
 
-一套**零依赖**的原生 Web Components 组件库：**167 个组件 · 15 套 UI 风格（各含浅色 / 深色）**，
-每个组件都配有「预览 / AI 提示词 / 设计说明 / 代码」，可以直接把提示词交给 AI Agent 生成同风格界面。
+一套**零依赖**的原生 Web Components 组件库：**167 个组件 · 15 套 UI 风格（各含浅色 / 深色）· 13 个界面模板**，
+每个组件和模板都配有「预览 / AI 提示词 / 设计说明 / 代码」，可以直接把提示词交给 AI Agent 生成同风格界面。
 
 🔗 **在线预览：[7015725.github.io/ui-catalog](https://7015725.github.io/ui-catalog/)**　·　回归测试页：[test.html](https://7015725.github.io/ui-catalog/test.html)
 
@@ -133,6 +134,7 @@ src/
     effects3.js            视觉：meteors / image-compare / lens / image-filter / text-3d / gooey / cursor-trail / cube / ribbon / snow
     fun.js                 趣味：scratch / lucky-wheel / slot-machine / dice / flip-clock / pull-lamp / coin-flip / memory-game / piano / gift-box / music-player / weather / battery / sticky-notes / joystick
     fun2.js                趣味控件：signature / knob / pattern-lock / slide-verify / emoji-rate / hold-button / sortable / reactions / radar / word-cloud
+    canvas-ui.js           Canvas 绘制界面：ui-cv-dash（数据大屏）/ ui-cv-game（游戏菜单 + HUD）/ ui-cv-board（白板画布）
     index.js               统一注册 + 类表（供生成属性文档）
   data/
     catalog.js             ★ 唯一数据源：demo + AI 提示词 + 设计说明（第一批）
@@ -142,6 +144,11 @@ src/
     catalog-motion.js      「动效」「视觉」第一批（各 10 个）
     catalog-motion2.js     「动效」「视觉」第二批（各 20 个）
     catalog-fun.js         「趣味」分类 + 趣味控件（25 个）
+    templates.js           ★ 界面模板入口（字段说明见文件头）：TPL_CATS 分类 + 全部模板
+    templates-shared.js    模板共用骨架样式（屏幕 / 滚动区 / 区块标题 / 横滑 / 占位图）
+    templates-app.js       移动 APP 模板（6 个）
+    templates-web.js       Web 页面模板（4 个）
+    templates-canvas.js    JS 绘制模板（3 个）
 scripts/
   check.mjs                跨平台语法检查（npm run check）
   run-tests.mjs            无头浏览器跑全部回归用例（npm test，CI 同款）
@@ -150,6 +157,26 @@ docs/screenshots/          README 用的截图与动图
     styles.js              风格预设的元信息（含代表色 swatch）
     style-guides.js        每套风格的 AI 提示词 + 设计说明（风格页展示；提示词末尾自动附上从 tokens.css 实时读取的变量值）
 ```
+
+## 界面模板（整页布局 + 操作逻辑）
+
+顶栏切到「界面模板」，可以看到 13 个整页模板。和组件卡片一样，每个模板都有 **AI 提示词 / 设计说明 / 代码** 三个标签页，
+预览可以直接点、滑、拖、用键盘操作。模板全部用组件库拼成，切换风格和明暗时整页一起变。
+
+| 类型 | 预览方式 | 模板 |
+|---|---|---|
+| 移动 APP（6） | 手机框，375 宽，内容区独立滚动 + 底部导航 | 电商首页、外卖 / 本地生活、社交动态、银行 / 理财、健身健康、智能家居 |
+| Web 页面（4） | 浏览器框，可切换 桌面 / 平板 / 手机 宽度 | 后台仪表盘、产品落地页、内容门户 / 博客、邮件 / 三栏工作台 |
+| JS 绘制（3） | 浏览器框，界面主体画在 `<canvas>` 上 | 监控数据大屏、游戏菜单 / HUD、白板 / 画布编辑器 |
+
+- **提示词**按「页面目标 → 整体结构（从上到下）→ 响应式 → 操作逻辑 → 状态 → 无障碍 → 约束」写，末尾自动附上依赖组件清单。
+- **代码**面板 = 页面 HTML + 公共骨架样式 + 模板样式 + `init(root)` 操作逻辑，复制即可运行（需要引入 tokens.css 和 components/index.js）。
+- **Web 模板用容器查询**（`@container tpl`）做自适应，所以放进侧栏、弹窗或任意宽度的容器都能正确响应，不依赖屏幕宽度。
+- **Canvas 模板**从 `getComputedStyle` 读取 `--ui-*` 变量，监听 `data-style / data-theme` 变化自动重画；按设备像素比绘制；
+  画布可聚焦，所有操作都有键盘方式，状态变化写进 `aria-live`；离开视口时停止动画循环。
+
+新增一个模板：在对应的 `templates-*.js` 里加一个对象（`id / name / cat / frame / brief / uses / html / css / init / ai / design`），
+根节点写 `class="t-screen t-<id>"`，样式都以 `.t-<id>` 开头、只用 `var(--ui-*)`。回归测试会检查这些约定。
 
 ## 动效与视觉效果
 
@@ -318,7 +345,7 @@ register('ui-toast', UIToast, '.ui-toast{background:var(--ui-panel);border:var(-
 
 ## 测试
 
-零依赖回归测试页：`/test.html`（82 条用例：属性渲染、键盘与焦点、浮层开关、数据兜底、无障碍、15 套风格对比度、减少动效与动画循环清理）。
+零依赖回归测试页：`/test.html`（92 条用例：界面模板数据约定与操作逻辑、Canvas 组件键盘操作与换肤、属性渲染、键盘与焦点、浮层开关、数据兜底、无障碍、15 套风格对比度、减少动效与动画循环清理）。
 
 ```bash
 npm run check        # 语法检查（Windows / macOS / Linux 通用）
@@ -331,9 +358,10 @@ npm test             # 无头浏览器跑完全部用例（需要 playwright：n
 ## 当前状态
 
 - **167 个组件**全部可渲染、可交互；画廊逐个点击所有控件 + 键盘操作，无报错
-- **82 条回归用例**全部通过（GitHub Actions 每次推送自动运行）
+- **13 个界面模板**：逐个操作过所有交互（筛选、排序、加购、折叠侧栏、窄屏抽屉、列表 → 详情、Canvas 派单 / 游戏状态机 / 便签编辑连线），无报错
+- **92 条回归用例**全部通过（GitHub Actions 每次推送自动运行）
 - **15 套风格 × 浅色 / 深色 × 3 种屏宽**（360 / 820 / 1440）：无横向溢出、无组件溢出卡片
-- **无障碍**：axe-core 扫描画廊与风格页，30 种风格组合均为 0 个问题；文字对比度全部 ≥ 4.5:1（WCAG AA）
+- **无障碍**：axe-core 扫描画廊与风格页，30 种风格组合均为 0 个问题；界面模板页 15 套风格 × 浅色 / 深色 × 桌面 / 手机共 47 种组合（含 best-practice 规则）均为 0 个问题；文字对比度全部 ≥ 4.5:1（WCAG AA）
 - **动效**：全部尊重 `prefers-reduced-motion` 与 `data-motion="reduce"`；动画循环离开视口 / 标签页隐藏时暂停，组件移除时清理
 - **无泄漏**：反复切换分类、搜索后，浮层节点与 body 子节点数量不增长；页面内无重复 id
 

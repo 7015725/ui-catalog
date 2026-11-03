@@ -233,7 +233,7 @@ export const moreCatalog2 = [
     demo: `<div style="width:100%;max-width:360px;margin:0 auto;border:var(--ui-border-w) solid var(--ui-line);border-radius:var(--ui-radius-lg);overflow:hidden;background:var(--ui-bg)"><div style="height:70px;display:grid;place-items:center;font-size:12px;color:var(--ui-sub)">页面内容</div><ui-bottom-nav active="0" items='[{"icon":"🏠","label":"首页"},{"icon":"🧭","label":"发现"},{"icon":"💬","label":"消息","badge":"3"},{"icon":"👤","label":"我的"}]'></ui-bottom-nav></div>`,
     ai:
       '【组件】底部标签栏 <ui-bottom-nav>\n' +
-      '【属性】items 为 JSON 数组 { icon, label, badge? }；active 当前索引\n' +
+      '【属性】items 为 JSON 数组 { icon, label, badge? }；active 当前索引；label 导航的无障碍名称（默认「底部导航」，同页有多个时要各不相同）\n' +
       '【交互】点击切换，aria-current="page" 标出当前；派发 change，detail = { index }\n' +
       '【视觉】当前项品牌色 + 图标上浮 2px + 顶部 3px 指示条；未读角标红底白字带面板色描边；底部留 env(safe-area-inset-bottom)\n' +
       '【约束】1) 3-5 个入口；2) 图标 + 文字同时出现；3) 只放一级入口，不放操作按钮',
