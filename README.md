@@ -13,6 +13,8 @@
 
 🔗 **在线预览：[7015725.github.io/ui-catalog](https://7015725.github.io/ui-catalog/)**　·　回归测试页：[test.html](https://7015725.github.io/ui-catalog/test.html)
 
+📐 **贡献前必读：[约束、要求与验收标准](docs/SPEC.md)**（新增组件 / 风格 / 模板都按它做、按它验）
+
 ![组件画廊](docs/screenshots/gallery.webp)
 
 <table>
