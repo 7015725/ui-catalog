@@ -48,9 +48,9 @@
 
 ```html
 <!-- 1. 设计变量（颜色 / 圆角 / 阴影 / 15 套风格） -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/7015725/ui-catalog@v1.0.0/src/styles/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/7015725/ui-catalog@v1.1.0/src/styles/tokens.css">
 <!-- 2. 注册全部组件 -->
-<script type="module" src="https://cdn.jsdelivr.net/gh/7015725/ui-catalog@v1.0.0/src/components/index.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/7015725/ui-catalog@v1.1.0/src/components/index.js"></script>
 
 <!-- 3. 选一套风格和明暗，然后直接写标签 -->
 <html data-style="nord" data-theme="light">
@@ -60,7 +60,7 @@
 </html>
 ```
 
-- `@v1.0.0` 是固定版本（推荐，永久缓存、不会突然变化）；想始终用最新代码可以换成 `@main`（CDN 缓存最长约 12 小时）。
+- `@v1.1.0` 是固定版本（推荐，永久缓存、不会突然变化）；想始终用最新代码可以换成 `@main`（CDN 缓存最长约 12 小时）。
 - 只想要一部分组件时，把 `components/index.js` 换成具体文件，例如 `components/form.js`、`components/charts2.js`。
 - 函数式 API 会挂在 `window` 上：`uiToast()`、`uiNotify()`、`uiConfetti()`。
 
@@ -146,6 +146,8 @@ src/
     catalog-motion.js      「动效」「视觉」第一批（各 10 个）
     catalog-motion2.js     「动效」「视觉」第二批（各 20 个）
     catalog-fun.js         「趣味」分类 + 趣味控件（25 个）
+    styles.js              风格预设的元信息（含代表色 swatch）
+    style-guides.js        每套风格的 AI 提示词 + 设计说明（风格页展示；提示词末尾自动附上从 tokens.css 实时读取的变量值）
     templates.js           ★ 界面模板入口（字段说明见文件头）：TPL_CATS 分类 + 全部模板
     templates-shared.js    模板共用骨架样式（屏幕 / 滚动区 / 区块标题 / 横滑 / 占位图）
     templates-app.js       移动 APP 模板（6 个）
@@ -156,8 +158,6 @@ scripts/
   run-tests.mjs            无头浏览器跑全部回归用例（npm test，CI 同款）
 docs/screenshots/          README 用的截图与动图
 .github/workflows/test.yml 每次推送自动跑语法检查 + 回归测试
-    styles.js              风格预设的元信息（含代表色 swatch）
-    style-guides.js        每套风格的 AI 提示词 + 设计说明（风格页展示；提示词末尾自动附上从 tokens.css 实时读取的变量值）
 ```
 
 ## 界面模板（整页布局 + 操作逻辑）
@@ -208,6 +208,7 @@ docs/screenshots/          README 用的截图与动图
 ## 三条硬约定
 
 1. **组件 CSS 只允许 `var(--ui-*)`。** 写死颜色/圆角/阴影会让换肤立刻失效，这是整套方案的地基。
+   少数拟物 / 场景组件（硬币、钢琴、星空等）需要表现材质本身的颜色，统一登记在 `src/test/cases.js` 的 `MATERIAL_TAGS` 白名单里，回归测试会拦下名单外的写死颜色。
 2. **内容走 `<slot></slot>`。** 基类会在微任务里快照原始子节点，再搬进占位处。
 3. **属性即 props。** 在类上声明 `static props`，就会自动出现在文档的「可用属性」里。
 
@@ -294,7 +295,7 @@ export class UIToast extends UIElement {
 register('ui-toast', UIToast, '.ui-toast{background:var(--ui-panel);border:var(--ui-border-w) solid var(--ui-line);border-radius:var(--ui-radius)}');
 ```
 
-2. 在 `src/components/index.js` 里加进 `componentClasses`。
+2. 在 `src/components/index.js` 里 `import` 这个文件（`register()` 会自动登记到类表，不必手写 `componentClasses`）。
 3. 在 `src/data/catalog.js` 里加一条 `{ id, tag, name, cat, brief, demo, ai, design }`。
 
 画廊会自动出现新卡片，代码面板会自动带上属性和 CSS。
@@ -308,7 +309,8 @@ register('ui-toast', UIToast, '.ui-toast{background:var(--ui-panel);border:var(-
 [data-style="paper"][data-theme="dark"] { --ui-bg: #14130f; --ui-panel: #1c1a15; }
 ```
 
-再往 `src/data/styles.js` 里加一条描述，风格页就会自动把它和前 4 套并排展示。
+再往 `src/data/styles.js` 里加一条描述、往 `src/data/style-guides.js` 里加提示词和设计说明，风格页就会自动展示它。
+新风格必须为全部 token 赋值（含辅助色 `--ui-accent`），完整清单见 [docs/SPEC.md](docs/SPEC.md) 第 2.3 和 3.2 节。
 
 ## 提示词的写法（给 Agent 用）
 
@@ -347,7 +349,7 @@ register('ui-toast', UIToast, '.ui-toast{background:var(--ui-panel);border:var(-
 
 ## 测试
 
-零依赖回归测试页：`/test.html`（92 条用例：界面模板数据约定与操作逻辑、Canvas 组件键盘操作与换肤、属性渲染、键盘与焦点、浮层开关、数据兜底、无障碍、15 套风格对比度、减少动效与动画循环清理）。
+零依赖回归测试页：`/test.html`（95 条用例：颜色约定（写死颜色白名单）、界面模板数据约定与操作逻辑、Canvas 组件键盘操作与换肤、属性渲染、键盘与焦点、浮层开关、数据兜底、无障碍、15 套风格对比度、减少动效与动画循环清理）。
 
 ```bash
 npm run check        # 语法检查（Windows / macOS / Linux 通用）
@@ -361,7 +363,7 @@ npm test             # 无头浏览器跑完全部用例（需要 playwright：n
 
 - **167 个组件**全部可渲染、可交互；画廊逐个点击所有控件 + 键盘操作，无报错
 - **13 个界面模板**：逐个操作过所有交互（筛选、排序、加购、折叠侧栏、窄屏抽屉、列表 → 详情、Canvas 派单 / 游戏状态机 / 便签编辑连线），无报错
-- **92 条回归用例**全部通过（GitHub Actions 每次推送自动运行）
+- **95 条回归用例**全部通过（GitHub Actions 每次推送自动运行）
 - **15 套风格 × 浅色 / 深色 × 3 种屏宽**（360 / 820 / 1440）：无横向溢出、无组件溢出卡片
 - **无障碍**：axe-core 扫描画廊与风格页，30 种风格组合均为 0 个问题；界面模板页 15 套风格 × 浅色 / 深色 × 桌面 / 手机共 47 种组合（含 best-practice 规则）均为 0 个问题；文字对比度全部 ≥ 4.5:1（WCAG AA）
 - **动效**：全部尊重 `prefers-reduced-motion` 与 `data-motion="reduce"`；动画循环离开视口 / 标签页隐藏时暂停，组件移除时清理

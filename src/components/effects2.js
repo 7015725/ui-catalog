@@ -17,9 +17,9 @@ ui-glass-card{display:block}
   display:flex;align-items:center;justify-content:center;background:var(--ui-panel-2)}
 .ui-glc__bg{position:absolute;inset:0;z-index:-2}
 .ui-glc__bg i{position:absolute;border-radius:50%;filter:blur(2px)}
-.ui-glc__bg i:nth-child(1){width:46%;aspect-ratio:1;left:-6%;top:-14%;background:linear-gradient(135deg,var(--ui-brand),#ec4899);animation:ui-glc-f 9s ease-in-out infinite alternate}
-.ui-glc__bg i:nth-child(2){width:34%;aspect-ratio:1;right:-4%;bottom:-18%;background:linear-gradient(135deg,var(--ui-ok),#06b6d4);animation:ui-glc-f 11s ease-in-out infinite alternate-reverse}
-.ui-glc__bg i:nth-child(3){width:18%;aspect-ratio:1;right:24%;top:8%;background:linear-gradient(135deg,var(--ui-warn),#f97316);animation:ui-glc-f 7s ease-in-out infinite alternate}
+.ui-glc__bg i:nth-child(1){width:46%;aspect-ratio:1;left:-6%;top:-14%;background:linear-gradient(135deg,var(--ui-brand),var(--ui-accent));animation:ui-glc-f 9s ease-in-out infinite alternate}
+.ui-glc__bg i:nth-child(2){width:34%;aspect-ratio:1;right:-4%;bottom:-18%;background:linear-gradient(135deg,var(--ui-ok),color-mix(in srgb,var(--ui-ok) 50%,var(--ui-brand)));animation:ui-glc-f 11s ease-in-out infinite alternate-reverse}
+.ui-glc__bg i:nth-child(3){width:18%;aspect-ratio:1;right:24%;top:8%;background:linear-gradient(135deg,var(--ui-warn),var(--ui-danger));animation:ui-glc-f 7s ease-in-out infinite alternate}
 @keyframes ui-glc-f{to{transform:translate(12%,10%) rotate(20deg)}}
 .ui-glc__card{position:relative;width:min(100%,300px);padding:18px;border-radius:calc(var(--ui-radius-lg) + 4px);color:var(--ui-text);
   background:color-mix(in srgb,var(--ui-panel) var(--gl-tint,55%),transparent);
@@ -88,7 +88,7 @@ export class UIMeshGradient extends UIElement {
   static props = { colors: { default: '' }, height: { default: '180' }, animated: { type: 'boolean' } };
   template(p) {
     const c = splitList(p.colors);
-    const d = ['#a78bfa', '#f472b6', '#38bdf8', '#fbbf24'];
+    const d = ['var(--ui-brand)', 'var(--ui-accent)', 'color-mix(in srgb,var(--ui-ok) 60%,var(--ui-brand))', 'var(--ui-warn)'];
     return '<div class="ui-mesh ui-mo' + (p.animated ? ' ui-mesh--anim' : '') + '" style="--mh-h:' + (Number(p.height) || 180) + 'px;' + [0, 1, 2, 3].map((i) => '--m' + (i + 1) + ':' + esc(c[i] || d[i])).join(';') + '"><div class="ui-mesh__c"><slot></slot></div></div>';
   }
 }
@@ -257,7 +257,7 @@ export const borderBeamCss = `
 ui-border-beam{display:block}
 .ui-bb{position:relative;border-radius:var(--ui-radius-lg);background:var(--ui-panel);border:var(--ui-border-w) solid var(--ui-line);isolation:isolate}
 .ui-bb::before{content:"";position:absolute;inset:calc(var(--ui-border-w) * -1 - .5px);border-radius:inherit;padding:var(--bb-w,1.5px);pointer-events:none;
-  background:conic-gradient(from var(--ui-bb-a),transparent 0deg,transparent calc(360deg - var(--bb-len,70deg)),var(--bb-c2,#ec4899) calc(360deg - var(--bb-len,70deg) / 2),var(--bb-c1,var(--ui-brand)) 360deg);
+  background:conic-gradient(from var(--ui-bb-a),transparent 0deg,transparent calc(360deg - var(--bb-len,70deg)),var(--bb-c2,var(--ui-accent)) calc(360deg - var(--bb-len,70deg) / 2),var(--bb-c1,var(--ui-brand)) 360deg);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
   animation:ui-bb var(--bb-dur,5s) linear infinite}
 @keyframes ui-bb{to{--ui-bb-a:360deg}}

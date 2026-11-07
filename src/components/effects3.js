@@ -182,7 +182,7 @@ ui-gooey{display:inline-block}
 .ui-goo__f i{position:absolute;left:50%;top:50%;width:34%;height:34%;margin:-17%;border-radius:50%;background:var(--ui-brand)}
 .ui-goo__f i:nth-child(1){width:42%;height:42%;margin:-21%}
 .ui-goo__f i:nth-child(2){animation:ui-goo-a 3.4s ease-in-out infinite}
-.ui-goo__f i:nth-child(3){animation:ui-goo-b 4.2s ease-in-out infinite;background:color-mix(in srgb,var(--ui-brand) 55%,#ec4899)}
+.ui-goo__f i:nth-child(3){animation:ui-goo-b 4.2s ease-in-out infinite;background:color-mix(in srgb,var(--ui-brand) 55%,var(--ui-accent))}
 .ui-goo__f i:nth-child(4){animation:ui-goo-c 3.8s ease-in-out infinite;width:24%;height:24%;margin:-12%;background:color-mix(in srgb,var(--ui-brand) 40%,var(--ui-ok))}
 .ui-goo__f i:nth-child(5){animation:ui-goo-d 5s ease-in-out infinite;width:20%;height:20%;margin:-10%}
 @keyframes ui-goo-a{0%,100%{transform:translate(0,0)}50%{transform:translate(95%,-30%)}}
@@ -222,7 +222,7 @@ export class UICursorTrail extends UIElement {
   mounted() {
     const self = this;
     const box = this.querySelector('.ui-ct');
-    const colors = ['var(--ui-brand)', '#ec4899', 'var(--ui-warn)', 'var(--ui-ok)'];
+    const colors = ['var(--ui-brand)', 'var(--ui-accent)', 'var(--ui-warn)', 'var(--ui-ok)'];
     let last = 0, n = 0;
     box.addEventListener('pointermove', (e) => {
       if (reduced()) return;
@@ -255,7 +255,7 @@ ui-cube{display:inline-block}
   background:color-mix(in srgb,var(--ui-brand) 82%,transparent);border:1px solid color-mix(in srgb,var(--ui-brand-ink) 40%,transparent);backface-visibility:visible}
 .ui-cube__in > span:nth-child(1){transform:translateZ(calc(var(--cb-s,120px) / 2))}
 .ui-cube__in > span:nth-child(2){transform:rotateY(180deg) translateZ(calc(var(--cb-s,120px) / 2));background:color-mix(in srgb,var(--ui-brand) 60%,#000)}
-.ui-cube__in > span:nth-child(3){transform:rotateY(90deg) translateZ(calc(var(--cb-s,120px) / 2));background:color-mix(in srgb,var(--ui-brand) 70%,#ec4899)}
+.ui-cube__in > span:nth-child(3){transform:rotateY(90deg) translateZ(calc(var(--cb-s,120px) / 2));background:color-mix(in srgb,var(--ui-brand) 70%,var(--ui-accent))}
 .ui-cube__in > span:nth-child(4){transform:rotateY(-90deg) translateZ(calc(var(--cb-s,120px) / 2));background:color-mix(in srgb,var(--ui-brand) 70%,var(--ui-ok))}
 .ui-cube__in > span:nth-child(5){transform:rotateX(90deg) translateZ(calc(var(--cb-s,120px) / 2));background:color-mix(in srgb,var(--ui-brand) 55%,#fff)}
 .ui-cube__in > span:nth-child(6){transform:rotateX(-90deg) translateZ(calc(var(--cb-s,120px) / 2));background:color-mix(in srgb,var(--ui-brand) 50%,#000)}

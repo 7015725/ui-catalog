@@ -279,7 +279,7 @@ ui-checkmark{display:inline-block}
 .ui-ck circle{stroke-dasharray:166;stroke-dashoffset:166;animation:ui-ck-draw .6s var(--ui-ease,ease) forwards}
 .ui-ck path{stroke-dasharray:60;stroke-dashoffset:60;animation:ui-ck-draw .4s var(--ui-ease,ease) .5s forwards}
 .ui-ck .bg{fill:var(--ck-c);opacity:0;stroke:none;animation:ui-ck-bg .4s ease .85s forwards;stroke-dasharray:none}
-.ui-ck .mk{stroke:var(--ui-on-color,#fff)}
+.ui-ck .mk{stroke:var(--ui-on-color)}
 .ui-ck svg{overflow:visible;animation:ui-ck-pop .35s var(--ui-spring,ease) .85s both}
 @keyframes ui-ck-draw{to{stroke-dashoffset:0}}
 @keyframes ui-ck-bg{to{opacity:1}}

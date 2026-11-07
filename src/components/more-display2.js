@@ -121,7 +121,7 @@ ui-comment{display:block;width:100%}
 .ui-cm{display:grid;grid-template-columns:34px 1fr;gap:10px}
 .ui-cm + .ui-cm{margin-top:14px}
 .ui-cm__av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:600;
-  color:var(--ui-brand-ink);background:linear-gradient(135deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 45%,#8f5cff))}
+  color:var(--ui-brand-ink);background:linear-gradient(135deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 45%,var(--ui-accent)))}
 .ui-cm__av--2{background:linear-gradient(135deg,var(--ui-ok),color-mix(in srgb,var(--ui-ok) 50%,var(--ui-brand)))}
 .ui-cm__av--3{background:linear-gradient(135deg,var(--ui-warn),color-mix(in srgb,var(--ui-warn) 50%,var(--ui-danger)))}
 .ui-cm__body{min-width:0}

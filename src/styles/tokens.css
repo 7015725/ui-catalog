@@ -2,12 +2,14 @@
    Design Tokens  —— 两层：主题(颜色) + 风格(形态)
    组件 CSS 只允许使用 var(--ui-*)，禁止写死颜色/圆角/阴影
    叠加顺序：:root → dark → style → style+dark
+   --ui-accent：辅助色，只用于和品牌色组成渐变 / 装饰色块；
+   与品牌色按 35%~55% 混合后，上面的 --ui-brand-ink 文字对比度必须 ≥ 4.5（回归测试会校验）
    ========================================================= */
 :root, [data-theme="light"]{
   color-scheme: light;
   --ui-bg:#f6f7fb; --ui-panel:#ffffff; --ui-panel-2:#f1f3f9;
   --ui-text:#1b1f2a; --ui-sub:#666d7a; --ui-line:#e6e8f0;
-  --ui-brand:#245cff; --ui-brand-ink:#ffffff; --ui-brand-soft:#eef2ff;
+  --ui-brand:#245cff; --ui-brand-ink:#ffffff; --ui-accent:#c026d3; --ui-brand-soft:#eef2ff;
   --ui-ok:#15803d; --ui-ok-soft:#dcfce7;
   --ui-warn:#b45309; --ui-warn-soft:#fef3c7;
   --ui-danger:#b91c1c; --ui-danger-soft:#fee2e2;
@@ -35,7 +37,7 @@
   color-scheme: dark;
   --ui-bg:#0f1218; --ui-panel:#171b23; --ui-panel-2:#1d222c;
   --ui-text:#e6e9f0; --ui-sub:#93a0b4; --ui-line:#242a35;
-  --ui-brand:#6b9bff; --ui-brand-ink:#0f1218; --ui-brand-soft:#1c2740;
+  --ui-brand:#6b9bff; --ui-brand-ink:#0f1218; --ui-accent:#f0abfc; --ui-brand-soft:#1c2740;
   --ui-ok:#4ade80; --ui-ok-soft:#14301f;
   --ui-warn:#fbbf24; --ui-warn-soft:#3a2a08;
   --ui-danger:#f87171; --ui-danger-soft:#3a1414;
@@ -50,7 +52,7 @@
   --ui-radius-sm:0px; --ui-radius:0px; --ui-radius-lg:0px;
   --ui-border-w:2px;
   --ui-line:#12141a;
-  --ui-brand:#ffd84d; --ui-brand-ink:#12141a; --ui-brand-soft:#fff0a8;
+  --ui-brand:#ffd84d; --ui-brand-ink:#12141a; --ui-accent:#ff8fc7; --ui-brand-soft:#fff0a8;
   --ui-shadow-sm:3px 3px 0 var(--ui-line);
   --ui-shadow:6px 6px 0 var(--ui-line);
   --ui-ctl-h:42px;
@@ -87,12 +89,12 @@
   --ui-font:var(--ui-mono);
   --ui-radius-sm:4px; --ui-radius:5px; --ui-radius-lg:7px;
   --ui-shadow-sm:none; --ui-shadow:none;
-  --ui-brand:#111318; --ui-brand-ink:#ffffff; --ui-brand-soft:#eceff4;
+  --ui-brand:#111318; --ui-brand-ink:#ffffff; --ui-accent:#374151; --ui-brand-soft:#eceff4;
   --ui-line:#d6dae2;
   --ui-sub:#666d7a;
 }
 [data-style="mono"][data-theme="dark"]{
-  --ui-brand:#f4f6fa; --ui-brand-ink:#111318; --ui-brand-soft:#232833;
+  --ui-brand:#f4f6fa; --ui-brand-ink:#111318; --ui-accent:#cbd5e1; --ui-brand-soft:#232833;
   --ui-line:#2c323d;
   --ui-sub:#93a0b4;
 }
@@ -101,7 +103,7 @@
 [data-style="neumorph"]{
   --ui-bg:#e4e8ef; --ui-panel:#e4e8ef; --ui-panel-2:#dbe0e8;
   --ui-text:#2d3445; --ui-sub:#5a6272; --ui-line:#cfd5df;
-  --ui-brand:#2d43ff; --ui-brand-ink:#ffffff; --ui-brand-soft:#d9ddfb;
+  --ui-brand:#2d43ff; --ui-brand-ink:#ffffff; --ui-accent:#9333ea; --ui-brand-soft:#d9ddfb;
   --ui-radius-sm:12px; --ui-radius:14px; --ui-radius-lg:22px;
   --ui-border-w:0px;
   --ui-shadow-sm:4px 4px 9px #c4c9d3, -4px -4px 9px #ffffff;
@@ -113,7 +115,7 @@
 [data-style="neumorph"][data-theme="dark"]{
   --ui-bg:#262a33; --ui-panel:#262a33; --ui-panel-2:#20242c;
   --ui-text:#e3e7ef; --ui-sub:#8f99ad; --ui-line:#333845;
-  --ui-brand:#8f9bff; --ui-brand-ink:#14172a; --ui-brand-soft:#30365a;
+  --ui-brand:#8f9bff; --ui-brand-ink:#14172a; --ui-accent:#d8b4fe; --ui-brand-soft:#30365a;
   --ui-shadow-sm:4px 4px 9px #1b1e24, -4px -4px 9px #31363f;
   --ui-shadow:9px 9px 20px #1a1d23, -9px -9px 20px #323741;
   --ui-ok:#4ade80;
@@ -124,7 +126,7 @@
 [data-style="clay"]{
   --ui-bg:#f4f0ff; --ui-panel:#ffffff; --ui-panel-2:#f3effc;
   --ui-text:#2a2342; --ui-sub:#6f678b; --ui-line:#e6e0f5;
-  --ui-brand:#6540ff; --ui-brand-ink:#ffffff; --ui-brand-soft:#ece6ff;
+  --ui-brand:#6540ff; --ui-brand-ink:#ffffff; --ui-accent:#db2777; --ui-brand-soft:#ece6ff;
   --ui-font:ui-rounded,"SF Pro Rounded","Nunito","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
   --ui-radius-sm:14px; --ui-radius:18px; --ui-radius-lg:28px;
   --ui-border-w:0px; --ui-ctl-h:42px;
@@ -135,7 +137,7 @@
 [data-style="clay"][data-theme="dark"]{
   --ui-bg:#191628; --ui-panel:#262140; --ui-panel-2:#2e284d;
   --ui-text:#efeaff; --ui-sub:#a59cc8; --ui-line:#3a335f;
-  --ui-brand:#a48dff; --ui-brand-ink:#16122b; --ui-brand-soft:#352c62;
+  --ui-brand:#a48dff; --ui-brand-ink:#16122b; --ui-accent:#f9a8d4; --ui-brand-soft:#352c62;
   --ui-shadow-sm:0 6px 14px rgba(0,0,0,.4), inset 0 -3px 0 rgba(0,0,0,.25), inset 0 2px 0 rgba(255,255,255,.08);
   --ui-shadow:0 16px 34px rgba(0,0,0,.45), inset 0 -5px 0 rgba(0,0,0,.22), inset 0 3px 0 rgba(255,255,255,.07);
 }
@@ -144,7 +146,7 @@
 [data-style="material"]{
   --ui-bg:#fef7ff; --ui-panel:#ffffff; --ui-panel-2:#f3edf7;
   --ui-text:#1d1b20; --ui-sub:#49454f; --ui-line:#cac4d0;
-  --ui-brand:#6750a4; --ui-brand-ink:#ffffff; --ui-brand-soft:#eaddff;
+  --ui-brand:#6750a4; --ui-brand-ink:#ffffff; --ui-accent:#7d5260; --ui-brand-soft:#eaddff;
   --ui-ok:#146c2e; --ui-ok-soft:#c4eed0;
   --ui-font:"Roboto","Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
   --ui-radius-sm:8px; --ui-radius:12px; --ui-radius-lg:16px;
@@ -156,7 +158,7 @@
 [data-style="material"][data-theme="dark"]{
   --ui-bg:#141218; --ui-panel:#1d1b20; --ui-panel-2:#2b2930;
   --ui-text:#e6e0e9; --ui-sub:#cac4d0; --ui-line:#49454f;
-  --ui-brand:#d0bcff; --ui-brand-ink:#381e72; --ui-brand-soft:#4f378b;
+  --ui-brand:#d0bcff; --ui-brand-ink:#381e72; --ui-accent:#efb8c8; --ui-brand-soft:#4f378b;
   --ui-ok:#7fd99a; --ui-ok-soft:#0f3a1d;
   --ui-shadow-sm:0 1px 2px rgba(0,0,0,.5), 0 1px 3px 1px rgba(0,0,0,.3);
   --ui-shadow:0 1px 2px rgba(0,0,0,.5), 0 2px 6px 2px rgba(0,0,0,.3);
@@ -166,7 +168,7 @@
 [data-style="cyber"]{
   --ui-bg:#f4f5fb; --ui-panel:#ffffff; --ui-panel-2:#f0f1fa;
   --ui-text:#14152b; --ui-sub:#5d6187; --ui-line:#d6d9ef;
-  --ui-brand:#bd18a0; --ui-brand-ink:#ffffff; --ui-brand-soft:#fde4f8;
+  --ui-brand:#bd18a0; --ui-brand-ink:#ffffff; --ui-accent:#0e7490; --ui-brand-soft:#fde4f8;
   --ui-font:var(--ui-mono);
   --ui-radius-sm:2px; --ui-radius:3px; --ui-radius-lg:4px;
   --ui-shadow-sm:0 0 0 1px rgba(226,31,191,.12);
@@ -176,7 +178,7 @@
 [data-style="cyber"][data-theme="dark"]{
   --ui-bg:#07080f; --ui-panel:#0d0f1d; --ui-panel-2:#121531;
   --ui-text:#e6f6ff; --ui-sub:#7f8bb6; --ui-line:#232954;
-  --ui-brand:#00eaff; --ui-brand-ink:#03121a; --ui-brand-soft:#06293a;
+  --ui-brand:#00eaff; --ui-brand-ink:#03121a; --ui-accent:#ff5ccf; --ui-brand-soft:#06293a;
   --ui-ok:#3dff8f; --ui-ok-soft:#06301a;
   --ui-warn:#ffe14d; --ui-warn-soft:#332a05;
   --ui-danger:#ff3d7f; --ui-danger-soft:#3a0a1d;
@@ -189,7 +191,7 @@
 [data-style="paper"]{
   --ui-bg:#f5efe3; --ui-panel:#fffcf5; --ui-panel-2:#f0e9db;
   --ui-text:#2b2620; --ui-sub:#716656; --ui-line:#ddd2bf;
-  --ui-brand:#ac442d; --ui-brand-ink:#fffcf5; --ui-brand-soft:#f5e1d8;
+  --ui-brand:#ac442d; --ui-brand-ink:#fffcf5; --ui-accent:#7c5c2e; --ui-brand-soft:#f5e1d8;
   --ui-font:Georgia,"Songti SC","Noto Serif SC","SimSun",serif;
   --ui-radius-sm:2px; --ui-radius:3px; --ui-radius-lg:4px;
   --ui-shadow-sm:none;
@@ -198,7 +200,7 @@
 [data-style="paper"][data-theme="dark"]{
   --ui-bg:#1b1813; --ui-panel:#24201a; --ui-panel-2:#2c271f;
   --ui-text:#ece3d4; --ui-sub:#a89a84; --ui-line:#3b342a;
-  --ui-brand:#e0805f; --ui-brand-ink:#1b1813; --ui-brand-soft:#3b261d;
+  --ui-brand:#e0805f; --ui-brand-ink:#1b1813; --ui-accent:#e8c07a; --ui-brand-soft:#3b261d;
   --ui-shadow:0 1px 0 #3b342a, 0 10px 24px -14px rgba(0,0,0,.6);
 }
 
@@ -206,7 +208,7 @@
 [data-style="retro"]{
   --ui-bg:#c0c0c0; --ui-panel:#c0c0c0; --ui-panel-2:#ffffff;
   --ui-text:#000000; --ui-sub:#3a3a3a; --ui-line:#808080;
-  --ui-brand:#000080; --ui-brand-ink:#ffffff; --ui-brand-soft:#c9c9f2;
+  --ui-brand:#000080; --ui-brand-ink:#ffffff; --ui-accent:#800080; --ui-brand-soft:#c9c9f2;
   --ui-ok:#005a00; --ui-ok-soft:#c8e6c8;
   --ui-font:Tahoma,"MS Sans Serif","SimSun","Microsoft YaHei",sans-serif;
   --ui-radius-sm:0px; --ui-radius:0px; --ui-radius-lg:0px; --ui-radius-pill:0px;
@@ -220,7 +222,7 @@
 [data-style="retro"][data-theme="dark"]{
   --ui-bg:#2b2b2b; --ui-panel:#3a3a3a; --ui-panel-2:#1c1c1c;
   --ui-text:#f2f2f2; --ui-sub:#bdbdbd; --ui-line:#6c6c6c;
-  --ui-brand:#9c9cff; --ui-brand-ink:#0b0b2a; --ui-brand-soft:#2c2c66;
+  --ui-brand:#9c9cff; --ui-brand-ink:#0b0b2a; --ui-accent:#ff9cff; --ui-brand-soft:#2c2c66;
   --ui-ok:#5fd35f; --ui-ok-soft:#163016;
   --ui-shadow-sm:inset -1px -1px #000, inset 1px 1px #7a7a7a, inset -2px -2px #222, inset 2px 2px #555;
   --ui-shadow:inset -1px -1px #000, inset 1px 1px #555, inset -2px -2px #222, inset 2px 2px #7a7a7a;
@@ -270,7 +272,7 @@
 [data-style="brutal"] .ui-bn button[aria-current="page"],[data-style="brutal"] .ui-cm__tag,[data-style="brutal"] .ui-anchor a[aria-current],
 [data-style="brutal"] .ui-sug mark,[data-style="brutal"] .ui-pmenu button:hover,[data-style="brutal"] .ui-pmenu button:focus-visible,
 [data-style="brutal"] .ui-cmd__it[aria-selected="true"],[data-style="brutal"] .ui-ms-list li,[data-style="brutal"] .ui-cas-col li[aria-selected="true"],
-[data-style="brutal"] .ui-cal__hd button:hover,[data-style="brutal"] .ui-pw__eye:hover,[data-style="brutal"] .ui-ntf__a{color:var(--ui-text)}
+[data-style="brutal"] .ui-cal__hd button:hover,[data-style="brutal"] .ui-pw__eye:hover,[data-style="brutal"] .ui-ntf__a,[data-style="brutal"] .ui-ex__btn{color:var(--ui-text)}
 [data-style="brutal"] .ui-btn--outline{border-color:var(--ui-line)}
 /* 无边框风格里，上传区仍需要可见的虚线轮廓 */
 [data-style="neumorph"] .ui-up,[data-style="clay"] .ui-up{border:2px dashed var(--ui-line)}
@@ -283,7 +285,7 @@
 [data-style="nord"]{
   --ui-bg:#eceff4; --ui-panel:#ffffff; --ui-panel-2:#e5e9f0;
   --ui-text:#2e3440; --ui-sub:#4c566a; --ui-line:#d8dee9;
-  --ui-brand:#48678c; --ui-brand-ink:#ffffff; --ui-brand-soft:#dde6f2;
+  --ui-brand:#48678c; --ui-brand-ink:#ffffff; --ui-accent:#8a5a83; --ui-brand-soft:#dde6f2;
   --ui-ok:#4b7337; --ui-ok-soft:#e3eedb;
   --ui-warn:#8e5f16; --ui-warn-soft:#f6ecd6;
   --ui-danger:#a14852; --ui-danger-soft:#f5dfe1;
@@ -295,7 +297,7 @@
 [data-style="nord"][data-theme="dark"]{
   --ui-bg:#2e3440; --ui-panel:#3b4252; --ui-panel-2:#434c5e;
   --ui-text:#eceff4; --ui-sub:#b6bfd0; --ui-line:#4c566a;
-  --ui-brand:#9ccbd8; --ui-brand-ink:#2e3440; --ui-brand-soft:#3b5262;
+  --ui-brand:#9ccbd8; --ui-brand-ink:#2e3440; --ui-accent:#b48ead; --ui-brand-soft:#3b5262;
   --ui-ok:#a3be8c; --ui-ok-soft:#3a4a3a;
   --ui-warn:#ebcb8b; --ui-warn-soft:#4d4434;
   --ui-danger:#dba291; --ui-danger-soft:#523b3a;
@@ -307,7 +309,7 @@
 [data-style="luxury"]{
   --ui-bg:#f7f4ee; --ui-panel:#fffdf9; --ui-panel-2:#f1ece2;
   --ui-text:#1c1a17; --ui-sub:#70685b; --ui-line:#e3dccd;
-  --ui-brand:#7f632a; --ui-brand-ink:#ffffff; --ui-brand-soft:#f3ead6;
+  --ui-brand:#7f632a; --ui-brand-ink:#ffffff; --ui-accent:#8c4a2f; --ui-brand-soft:#f3ead6;
   --ui-font:"Didot","Bodoni 72","Playfair Display",Georgia,"Songti SC","Noto Serif SC","SimSun",serif;
   --ui-radius-sm:1px; --ui-radius:2px; --ui-radius-lg:3px;
   --ui-motion:.3s ease;
@@ -318,7 +320,7 @@
 [data-style="luxury"][data-theme="dark"]{
   --ui-bg:#0c0c0b; --ui-panel:#151411; --ui-panel-2:#1e1c17;
   --ui-text:#f2ead9; --ui-sub:#a59a83; --ui-line:#2e2a22;
-  --ui-brand:#d4af6a; --ui-brand-ink:#121110; --ui-brand-soft:#2d2618;
+  --ui-brand:#d4af6a; --ui-brand-ink:#121110; --ui-accent:#e8c99b; --ui-brand-soft:#2d2618;
   --ui-shadow-sm:0 1px 2px rgba(0,0,0,.5);
   --ui-shadow:0 0 0 1px rgba(212,175,106,.12), 0 18px 40px -20px rgba(0,0,0,.8);
 }
@@ -327,7 +329,7 @@
 [data-style="bauhaus"]{
   --ui-bg:#f2eee5; --ui-panel:#ffffff; --ui-panel-2:#ebe6db;
   --ui-text:#111111; --ui-sub:#555049; --ui-line:#111111;
-  --ui-brand:#c42319; --ui-brand-ink:#ffffff; --ui-brand-soft:#fbe0dc;
+  --ui-brand:#c42319; --ui-brand-ink:#ffffff; --ui-accent:#1d4fa3; --ui-brand-soft:#fbe0dc;
   --ui-ok:#1f4fd1; --ui-ok-soft:#dde6fb;
   --ui-warn:#946100; --ui-warn-soft:#fff0bf;
   --ui-font:"Helvetica Neue",Helvetica,Arial,"PingFang SC","Microsoft YaHei",sans-serif;
@@ -339,7 +341,7 @@
 [data-style="bauhaus"][data-theme="dark"]{
   --ui-bg:#121212; --ui-panel:#1b1b1b; --ui-panel-2:#252525;
   --ui-text:#f2eee5; --ui-sub:#b5ae9f; --ui-line:#f2eee5;
-  --ui-brand:#ff4c41; --ui-brand-ink:#111111; --ui-brand-soft:#3d1512;
+  --ui-brand:#ff4c41; --ui-brand-ink:#111111; --ui-accent:#ffd23f; --ui-brand-soft:#3d1512;
   --ui-ok:#6b93ff; --ui-ok-soft:#18254a;
   --ui-warn:#f2b705; --ui-warn-soft:#3a2d05;
 }
@@ -348,7 +350,7 @@
 [data-style="candy"]{
   --ui-bg:#fff5fa; --ui-panel:#ffffff; --ui-panel-2:#fff0f7;
   --ui-text:#4a2b3f; --ui-sub:#8c6279; --ui-line:#ffd3e7;
-  --ui-brand:#c91060; --ui-brand-ink:#ffffff; --ui-brand-soft:#ffe1ef;
+  --ui-brand:#c91060; --ui-brand-ink:#ffffff; --ui-accent:#7c3aed; --ui-brand-soft:#ffe1ef;
   --ui-ok:#117a4d; --ui-ok-soft:#d6f6e7;
   --ui-warn:#a15c00; --ui-warn-soft:#fff0d1;
   --ui-danger:#c4262c; --ui-danger-soft:#ffe1e2;
@@ -362,7 +364,7 @@
 [data-style="candy"][data-theme="dark"]{
   --ui-bg:#22181f; --ui-panel:#2e202b; --ui-panel-2:#382835;
   --ui-text:#ffe9f4; --ui-sub:#cba1b8; --ui-line:#4c3247;
-  --ui-brand:#ff7eb6; --ui-brand-ink:#2a1020; --ui-brand-soft:#4a2440;
+  --ui-brand:#ff7eb6; --ui-brand-ink:#2a1020; --ui-accent:#c4b5fd; --ui-brand-soft:#4a2440;
   --ui-ok:#5fe0a4; --ui-ok-soft:#173a2b;
   --ui-warn:#ffc266; --ui-warn-soft:#3f2f14;
   --ui-danger:#ff7a7f; --ui-danger-soft:#431c22;
@@ -374,7 +376,7 @@
 [data-style="terminal"]{
   --ui-bg:#f2f6ef; --ui-panel:#fbfdf9; --ui-panel-2:#e8f0e3;
   --ui-text:#0f2a12; --ui-sub:#4b6a4e; --ui-line:#b5cbb1;
-  --ui-brand:#11771c; --ui-brand-ink:#ffffff; --ui-brand-soft:#dbefd8;
+  --ui-brand:#11771c; --ui-brand-ink:#ffffff; --ui-accent:#0b6b72; --ui-brand-soft:#dbefd8;
   --ui-ok:#12733a;
   --ui-font:var(--ui-mono);
   --ui-radius-sm:0px; --ui-radius:0px; --ui-radius-lg:0px; --ui-radius-pill:0px;
@@ -384,7 +386,7 @@
 [data-style="terminal"][data-theme="dark"]{
   --ui-bg:#040904; --ui-panel:#081108; --ui-panel-2:#0d190d;
   --ui-text:#b8ffb2; --ui-sub:#5fae5c; --ui-line:#1c3a1c;
-  --ui-brand:#33ff66; --ui-brand-ink:#021004; --ui-brand-soft:#0e2d13;
+  --ui-brand:#33ff66; --ui-brand-ink:#021004; --ui-accent:#33e0ff; --ui-brand-soft:#0e2d13;
   --ui-ok:#33ff66; --ui-ok-soft:#0e2d13;
   --ui-warn:#ffd033; --ui-warn-soft:#2e2608;
   --ui-danger:#ff5c5c; --ui-danger-soft:#331010;

@@ -17,11 +17,11 @@ export const profileCss = `
 ui-profile{display:block;width:100%;max-width:340px}
 .ui-pf{overflow:hidden;background:var(--ui-panel);border:var(--ui-border-w) solid var(--ui-line);
   border-radius:var(--ui-radius-lg);box-shadow:var(--ui-shadow)}
-.ui-pf__cover{height:64px;background:linear-gradient(120deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 35%,#ec4899) 60%,color-mix(in srgb,var(--ui-ok) 60%,var(--ui-brand)))}
+.ui-pf__cover{height:64px;background:linear-gradient(120deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 35%,var(--ui-accent)) 60%,color-mix(in srgb,var(--ui-ok) 60%,var(--ui-brand)))}
 .ui-pf__bd{padding:0 16px 16px;display:flex;flex-direction:column;gap:8px}
 .ui-pf__top{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-top:-28px}
 .ui-pf__av{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;font-size:22px;font-weight:700;
-  color:var(--ui-brand-ink);background:linear-gradient(135deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 45%,#8f5cff));
+  color:var(--ui-brand-ink);background:linear-gradient(135deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 45%,var(--ui-accent)));
   border:3px solid var(--ui-panel);box-shadow:var(--ui-shadow-sm);position:relative}
 .ui-pf__av[data-on]::after{content:"";position:absolute;right:2px;bottom:2px;width:12px;height:12px;border-radius:50%;
   background:var(--ui-ok);border:2px solid var(--ui-panel)}
@@ -140,7 +140,7 @@ ui-command{display:inline-block}
 .ui-cmd-trigger kbd,.ui-cmd kbd{font-family:var(--ui-mono);font-size:11px;padding:1px 6px;color:var(--ui-sub);
   border:var(--ui-border-w) solid var(--ui-line);border-radius:var(--ui-radius-sm);background:var(--ui-panel)}
 .ui-cmd-mask{position:fixed;inset:0;z-index:360;display:flex;justify-content:center;align-items:flex-start;padding:12vh 16px 16px;
-  background:rgba(15,18,24,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);animation:ui-fade-in .15s ease}
+  background:rgba(0,0,0,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);animation:ui-fade-in .15s ease}
 .ui-cmd-mask[hidden]{display:none}
 .ui-cmd{width:min(560px,100%);max-height:min(70vh,520px);display:flex;flex-direction:column;overflow:hidden;
   background:var(--ui-panel);color:var(--ui-text);border:var(--ui-border-w) solid var(--ui-line);border-radius:var(--ui-radius-lg);
@@ -321,7 +321,7 @@ export const bannerCss = `
 ui-banner{display:block;width:100%}
 .ui-banner{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px 10px 14px;font-size:13px;
   color:var(--ui-brand-ink);background:var(--ui-brand);border-radius:var(--ui-radius);transition:opacity .2s,transform .2s}
-.ui-banner--gradient{color:var(--ui-brand-ink);background:linear-gradient(100deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 55%,#ec4899))}
+.ui-banner--gradient{color:var(--ui-brand-ink);background:linear-gradient(100deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 55%,var(--ui-accent)))}
 .ui-banner--soft{color:var(--ui-text);background:var(--ui-brand-soft);border:var(--ui-border-w) solid color-mix(in srgb,var(--ui-brand) 30%,transparent)}
 .ui-banner--warn{color:var(--ui-text);background:var(--ui-warn-soft);border:var(--ui-border-w) solid color-mix(in srgb,var(--ui-warn) 40%,transparent)}
 .ui-banner__i{font-size:15px}

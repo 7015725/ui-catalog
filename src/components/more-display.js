@@ -59,7 +59,7 @@ ui-avatar-group{display:inline-block}
   display:inline-grid;place-items:center;width:34px;height:34px;margin-left:-8px;
   border-radius:50%;font-size:12.5px;font-weight:600;
   border:2px solid var(--ui-panel);color:var(--ui-brand-ink);
-  background:linear-gradient(135deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 45%,#8f5cff));
+  background:linear-gradient(135deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 45%,var(--ui-accent)));
   transition:var(--ui-motion);position:relative;
 }
 .ui-ag > span:nth-child(3n+2){background:linear-gradient(135deg,var(--ui-ok),color-mix(in srgb,var(--ui-ok) 50%,var(--ui-brand)))}
@@ -160,18 +160,18 @@ ui-carousel{display:block;width:100%}
 .ui-car__slide{
   flex:0 0 100%;min-height:140px;padding:22px 52px;display:flex;flex-direction:column;justify-content:center;gap:6px;
   color:var(--ui-brand-ink);
-  background:linear-gradient(135deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 40%,#a855f7));
+  background:linear-gradient(135deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 40%,var(--ui-accent)));
 }
 .ui-car__slide:nth-child(3n+2){background:linear-gradient(135deg,color-mix(in srgb,var(--ui-ok) 85%,#000),color-mix(in srgb,var(--ui-ok) 50%,var(--ui-brand)))}
 .ui-car__slide:nth-child(3n+3){background:linear-gradient(135deg,color-mix(in srgb,var(--ui-warn) 90%,#000),color-mix(in srgb,var(--ui-danger) 70%,var(--ui-warn)))}
 /* 文字放在半透明深色底上：无论哪种风格的渐变色，白字对比度都 ≥ 4.5 */
-.ui-car__cap{align-self:flex-start;max-width:100%;display:flex;flex-direction:column;gap:4px;padding:10px 14px;border-radius:var(--ui-radius);background:rgba(8,10,16,.58)}
+.ui-car__cap{align-self:flex-start;max-width:100%;display:flex;flex-direction:column;gap:4px;padding:10px 14px;border-radius:var(--ui-radius);background:rgba(0,0,0,.58)}
 .ui-car__slide b{font-size:18px;line-height:1.3;color:#fff}
 .ui-car__slide span{font-size:12.5px;color:#fff}
 .ui-car__nav{
   position:absolute;top:50%;transform:translateY(-50%);width:30px;height:30px;
   display:grid;place-items:center;border:0;cursor:pointer;border-radius:50%;
-  font:inherit;font-size:16px;line-height:1;color:#fff;background:rgba(8,10,16,.58);
+  font:inherit;font-size:16px;line-height:1;color:#fff;background:rgba(0,0,0,.58);
   transition:var(--ui-motion);
 }
 .ui-car__nav:hover{background:rgba(0,0,0,.45)}

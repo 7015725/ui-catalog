@@ -89,7 +89,7 @@ export class UIGradientBorder extends UIElement {
   static props = { colors: { default: '' }, width: { default: '2' }, speed: { default: '4' }, glow: { type: 'boolean' } };
   template(p) {
     const c = splitList(p.colors);
-    const c1 = c[0] || 'var(--ui-brand)', c2 = c[1] || '#ec4899', c3 = c[2] || 'var(--ui-ok)';
+    const c1 = c[0] || 'var(--ui-brand)', c2 = c[1] || 'var(--ui-accent)', c3 = c[2] || 'var(--ui-ok)';
     return '<div class="ui-gb ui-mo' + (p.glow ? ' ui-gb--glow' : '') + '" style="--gb-w:' + (Number(p.width) || 2) + 'px;--gb-dur:' + (Number(p.speed) || 4) + 's;--gb-c1:' + esc(c1) + ';--gb-c2:' + esc(c2) + ';--gb-c3:' + esc(c3) + '"><div class="ui-gb__in"><slot></slot></div></div>';
   }
 }
@@ -102,7 +102,7 @@ ui-aurora{display:block}
   display:flex;align-items:center;justify-content:center}
 .ui-aur__b{position:absolute;z-index:-1;width:60%;aspect-ratio:1;border-radius:50%;filter:blur(var(--aur-blur,48px));opacity:var(--aur-o,.55);mix-blend-mode:var(--aur-blend,normal)}
 .ui-aur__b:nth-child(1){background:var(--ui-brand);left:-10%;top:-30%;animation:ui-aur-1 14s ease-in-out infinite alternate}
-.ui-aur__b:nth-child(2){background:#ec4899;right:-15%;top:-10%;animation:ui-aur-2 17s ease-in-out infinite alternate}
+.ui-aur__b:nth-child(2){background:var(--ui-accent);right:-15%;top:-10%;animation:ui-aur-2 17s ease-in-out infinite alternate}
 .ui-aur__b:nth-child(3){background:var(--ui-ok);left:20%;bottom:-45%;animation:ui-aur-3 19s ease-in-out infinite alternate}
 .ui-aur__c{position:relative;z-index:1;padding:20px;text-align:center;text-shadow:0 1px 14px var(--ui-bg),0 0 2px var(--ui-bg)}
 @keyframes ui-aur-1{to{transform:translate(30%,25%) scale(1.2)}}
@@ -182,7 +182,7 @@ export class UIBlob extends UIElement {
   static props = { size: { default: '140' }, colors: { default: '' }, speed: { default: '9' } };
   template(p) {
     const c = splitList(p.colors);
-    return '<span class="ui-blob ui-mo" style="--bl-size:' + (Number(p.size) || 140) + 'px;--bl-c1:' + esc(c[0] || 'var(--ui-brand)') + ';--bl-c2:' + esc(c[1] || 'color-mix(in srgb,var(--ui-brand) 55%,#ec4899)') + ';--bl-dur:' + (Number(p.speed) || 9) + 's"><span><slot></slot></span></span>';
+    return '<span class="ui-blob ui-mo" style="--bl-size:' + (Number(p.size) || 140) + 'px;--bl-c1:' + esc(c[0] || 'var(--ui-brand)') + ';--bl-c2:' + esc(c[1] || 'color-mix(in srgb,var(--ui-brand) 55%,var(--ui-accent))') + ';--bl-dur:' + (Number(p.speed) || 9) + 's"><span><slot></slot></span></span>';
   }
 }
 register('ui-blob', UIBlob, blobCss);

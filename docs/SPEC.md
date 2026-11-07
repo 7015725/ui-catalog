@@ -40,19 +40,21 @@
 4. 用户内容必须走 `<slot></slot>`，由基类搬运原始子节点。不得用字符串拼接 `innerHTML` 去替换用户内容。
 5. 拼进模板的属性值和外部文本必须经过 `esc()` 转义（见 `more-form.js`），防止 XSS。
 6. 重渲染之后要重新查询 DOM 节点再操作，不得持有旧节点（尤其是 `focus()`）。
-7. 自定义事件用 `CustomEvent`，事件名小写、不带前缀，数据放在 `detail` 里。新组件的事件应当带 `bubbles: true`，方便外层委托监听。`on<事件名>` 内联写法由基类支持，不得另造一套。
+7. 自定义事件用 `CustomEvent`，事件名小写、不带前缀，数据放在 `detail` 里。对外事件必须带 `bubbles: true`，方便外层委托监听（`Layer` 浮层内部使用的 `open` / `close` 不对外，不受此限）。`on<事件名>` 内联写法由基类支持，不得另造一套。
 8. 组件移除时（`disconnectedCallback`）必须清理：定时器、`requestAnimationFrame`、`ResizeObserver` / `MutationObserver` / `IntersectionObserver`、挂到 `body` 的浮层、全局监听。
 
 ### 2.3 样式与换肤
 
 1. 组件 CSS、模板 CSS 中的颜色、圆角、阴影、字体、间距、控件高度、动效曲线，只能使用 `var(--ui-*)`。当前 token 包括：
-   `--ui-bg --ui-panel --ui-panel-2 --ui-text --ui-sub --ui-line --ui-brand --ui-brand-soft --ui-brand-ink --ui-ok(-soft) --ui-warn(-soft) --ui-danger(-soft) --ui-on-color --ui-ring --ui-radius(-sm/-lg/-pill) --ui-border-w --ui-shadow(-sm) --ui-blur --ui-font --ui-mono --ui-gap --ui-ctl-h --ui-ease --ui-spring --ui-motion`。
+   `--ui-bg --ui-panel --ui-panel-2 --ui-text --ui-sub --ui-line --ui-brand --ui-brand-soft --ui-brand-ink --ui-accent --ui-ok(-soft) --ui-warn(-soft) --ui-danger(-soft) --ui-on-color --ui-ring --ui-radius(-sm/-lg/-pill) --ui-border-w --ui-shadow(-sm) --ui-blur --ui-font --ui-mono --ui-gap --ui-ctl-h --ui-ease --ui-spring --ui-motion`。
 2. 不得写死十六进制色、`rgb()` 或命名色。只有以下情况例外：
-   - `#000` / `#fff` / `transparent` 用作 `mask` 或 `color-mix()` 的明暗调节量；
-   - 拟物、特效类组件表现**物理材质本身的颜色**（金币、灯泡、钢琴黑白键、天气卡天空），而且这块颜色不承载文字对比度。这类例外必须在代码旁注释「材质色」。
+   - `#000` / `#fff` / `transparent`，以及纯黑、纯白带透明度的 `rgba(0,0,0,a)` / `rgba(255,255,255,a)`：用作 `mask`、`color-mix()` 的明暗调节量、阴影、高光、遮罩；
+   - 拟物、场景、媒体叠层类组件表现**材质本身的颜色**（金币、灯泡、钢琴黑白键、夜空、天气卡天空、图片上的白色拖柄）。这类组件必须登记在 `src/test/cases.js` 的 `MATERIAL_TAGS` 白名单里并写明理由，回归测试会拦下名单外的写死颜色；
+   - 让用户选择颜色的组件（如 `ui-color` 的预设色板）里的预设值，属于数据，不属于样式。
+   需要第二种品牌色做渐变、装饰色块时，用辅助色 `--ui-accent`，不得写死粉色、紫色等。
 3. 风格差异只能写进 `src/styles/tokens.css`：每套风格提供浅色、深色两份变量，确实表达不了的形态差异写在文件末尾的「风格微调」区，并用 `[data-style="…"]` 限定作用域。组件 JS 里不得判断当前风格。
 4. Canvas 绘制的界面不能使用 CSS 变量时，必须用 `getComputedStyle` 读取 `--ui-*` 的值，并在 `data-style` / `data-theme` 变化时重新读取、重画（参照 `canvas-ui.js`）。
-5. 新增 token 时，必须为 15 套风格 × 浅色 / 深色全部赋值，并同步更新本节第 1 条的清单。
+5. 新增 token 时，15 套风格 × 浅色 / 深色每个组合都必须有确定的值（可以继承 `:root` 或同风格浅色的值），并同步更新本节第 1 条的清单。涉及文字的 token 要补对比度测试。
 
 ### 2.4 自适应
 
@@ -156,7 +158,7 @@
 | CI | 推送到 `main` 后的 GitHub Actions `test` 工作流 | 显示绿色 |
 | Pages | 推送后的 `pages-build-deployment` | 成功；在线页面能看到新内容 |
 
-截至本文写作时，回归测试共 92 条，组件 167 个，模板 13 个。新增内容时必须同步补测试，测试数量只增不减；删除测试要在提交说明里写明原因。
+截至 v1.1.0，回归测试共 95 条，组件 167 个，模板 13 个。新增内容时必须同步补测试，测试数量只增不减；删除测试要在提交说明里写明原因。
 
 回归测试至少覆盖：
 
@@ -189,7 +191,7 @@
 
 - [ ] 继承 `UIElement`，已 `register`，已在 `index.js` import
 - [ ] `static props` 完整，代码面板的「可用属性」能自动列出
-- [ ] CSS 只用 `var(--ui-*)`（例外按 2.3 第 2 条注释）
+- [ ] CSS 只用 `var(--ui-*)`（材质色例外须登记 `MATERIAL_TAGS`，见 2.3 第 2 条）
 - [ ] 用户内容走 slot，外部文本经过 `esc()`
 - [ ] 键盘可操作、焦点可见、ARIA 角色正确
 - [ ] 320px 容器内不溢出
@@ -219,7 +221,7 @@
 
 - [ ] CI 和 Pages 都显示绿色，在线页面已更新（必要时强制刷新）
 - [ ] README 中的徽章数字、分类表、测试条数、「当前状态」与实际一致
-- [ ] 组件对外 API 有变化（新增组件、新增属性）时，打新的版本标签（如 `v1.1.0`），并把 README 里 CDN 示例的版本号改成新标签。现有 `v1.0.0` 不包含界面模板和 Canvas 组件
+- [ ] 组件对外 API 有变化（新增组件、新增属性）时，打新的版本标签（如 `v1.1.0`），同步 `package.json` 的 `version`，并把 README 里 CDN 示例的版本号改成新标签；在 GitHub Releases 写明新增内容和不兼容变化
 - [ ] 不得删除、改名已有标签名或属性名；确需改动时保留旧名兼容，至少保留一个版本
 
 ---
@@ -237,15 +239,21 @@
 
 ---
 
-## 6. 已知偏差（存量，待整改）
+## 6. 已知偏差
 
-这些问题是写本文时发现的现状，新代码不得再增加同类问题。
+### 6.1 待整改
 
-| 编号 | 问题 | 位置 | 处理建议 |
-|---|---|---|---|
-| D1 | 写死的十六进制色 | `fun.js`、`effects2.js`、`effects3.js`、`more-display.js` 等约 10 个文件 | 逐个核对：属于材质色的补「材质色」注释，其余改为 token 或 `color-mix()` |
-| D2 | 版本标签落后 | 最新标签 `v1.0.0` 不含界面模板、Canvas 组件 | 打 `v1.1.0`，并更新 README 中的 CDN 示例 |
-| D3 | README 小错 | 目录树里 `styles.js`、`style-guides.js` 错放在 `.github` 一行之后；「新增风格」一节仍写「和前 4 套并排」 | 修正目录树和措辞 |
-| D4 | `package.json` 版本号 `0.1.0` 与标签 `v1.0.0` 不一致 | `package.json` | 发布时同步版本号 |
-| D5 | 回归测试没有截图对比 | — | 待做：视觉回归（截图像素对比） |
-| D6 | 部分事件不冒泡 | `drawer.js` 的 `open` / `close` | 改为 `bubbles: true`（外层监听行为会变，需在发布说明里写明） |
+| 编号 | 问题 | 处理建议 |
+|---|---|---|
+| D5 | 回归测试没有截图对比，视觉变化只能靠人工看 | 待做：视觉回归（关键组件 × 若干风格的截图像素对比） |
+
+### 6.2 已整改（v1.1.0）
+
+| 编号 | 问题 | 处理结果 |
+|---|---|---|
+| D1 | 约 10 个组件文件写死颜色 | 新增辅助色 `--ui-accent`（15 套风格 × 浅色 / 深色，对比度经测试校验），渐变和装饰色改用它；遮罩改为纯黑透明；剩余 20 个拟物 / 场景组件登记进 `MATERIAL_TAGS` 白名单，并加了测试拦截 |
+| D2 | 版本标签停在 `v1.0.0` | 打 `v1.1.0`，README 的 CDN 示例已改 |
+| D3 | README 目录树错位、「前 4 套」等过时措辞 | 已修正 |
+| D4 | `package.json` 版本号与标签不一致 | 改为 `1.1.0` |
+| D6 | `ui-drawer`、`ui-modal` 的 `open` / `close` 不冒泡 | 改为冒泡，并补了测试 |
+| — | Brutal 浅色下「展开全文」按钮对比度不足（审查时发现） | 已修正 |

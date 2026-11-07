@@ -352,7 +352,7 @@ export const scrollProgressCss = `
 ui-scroll-progress{display:block}
 .ui-sp{height:var(--sp-h,3px);background:color-mix(in srgb,var(--ui-line) 70%,transparent);border-radius:99px;overflow:hidden}
 .ui-sp i{display:block;height:100%;width:100%;transform-origin:left;transform:scaleX(var(--p,0));
-  background:linear-gradient(90deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 55%,#ec4899));transition:transform .1s linear}
+  background:linear-gradient(90deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 55%,var(--ui-accent)));transition:transform .1s linear}
 .ui-sp--fixed{position:fixed;top:0;left:0;right:0;z-index:500;border-radius:0}
 `;
 

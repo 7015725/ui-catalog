@@ -631,7 +631,7 @@ export class UIReactions extends UIElement {
 register('ui-reactions', UIReactions, reactionsCss);
 
 /* ---------------- Radar 雷达图 ---------------- */
-const RADAR_C = ['var(--ui-brand)', '#f97316', 'var(--ui-ok)', '#a855f7'];
+const RADAR_C = ['var(--ui-brand)', 'var(--ui-accent)', 'var(--ui-ok)', 'var(--ui-warn)'];
 export const radarCss = `
 ui-radar{display:block;width:100%;max-width:340px}
 .ui-radar svg{display:block;width:100%;height:auto;overflow:visible}

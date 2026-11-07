@@ -422,7 +422,7 @@ export function confetti(opts) {
   if (o.from && o.from.getBoundingClientRect) { const r = o.from.getBoundingClientRect(); x = r.left + r.width / 2; y = r.top + r.height / 2; }
   if (x == null) x = innerWidth / 2;
   if (y == null) y = innerHeight * 0.35;
-  const colors = o.colors || tokenColors(document.documentElement, ['brand', 'ok', 'warn', 'danger']).concat(['#ec4899', '#8b5cf6']);
+  const colors = o.colors || tokenColors(document.documentElement, ['brand', 'ok', 'warn', 'danger', 'accent']);
   const cv = document.createElement('canvas');
   cv.setAttribute('aria-hidden', 'true');
   cv.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:9999';

@@ -8,7 +8,7 @@ import { FOCUSABLE, trapTab } from '../lib/focus.js';
 export const drawerCss = `
 .ui-drawer-mask{
   position:fixed;inset:0;z-index:340;
-  background:rgba(15,18,24,.45);
+  background:rgba(0,0,0,.45);
   animation:ui-fade-in .18s ease;
 }
 .ui-drawer{
@@ -117,7 +117,7 @@ export class UIDrawer extends UIElement {
 
     const first = this._panel.querySelector(FOCUSABLE);
     (first || this._panel).focus();
-    this.dispatchEvent(new CustomEvent('open'));
+    this.dispatchEvent(new CustomEvent('open', { bubbles: true }));
   }
 
   close() {
@@ -130,7 +130,7 @@ export class UIDrawer extends UIElement {
     document.removeEventListener('keydown', this._onKey);
     if (this._unbindTrap) { this._unbindTrap(); this._unbindTrap = null; }
     if (this._lastFocus && this._lastFocus.focus) this._lastFocus.focus();
-    this.dispatchEvent(new CustomEvent('close'));
+    this.dispatchEvent(new CustomEvent('close', { bubbles: true }));
   }
 
   disconnectedCallback() {

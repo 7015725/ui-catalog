@@ -266,7 +266,7 @@ export const motionCatalog = [
     brief: '卡片随鼠标倾斜 + 高光',
     demo:
       '<ui-tilt style="width:100%;max-width:280px;margin:0 auto">' +
-      '<div style="padding:22px;border-radius:var(--ui-radius-lg);color:var(--ui-brand-ink);background:linear-gradient(135deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 55%,#ec4899));box-shadow:var(--ui-shadow)">' +
+      '<div style="padding:22px;border-radius:var(--ui-radius-lg);color:var(--ui-brand-ink);background:linear-gradient(135deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 55%,var(--ui-accent)));box-shadow:var(--ui-shadow)">' +
       '<div class="ui-tilt__pop" style="font-size:12px;opacity:.85">MEMBER CARD</div><div class="ui-tilt__pop" style="font-size:22px;font-weight:800;margin:18px 0 6px">林小北</div>' +
       '<div style="font-family:var(--ui-mono);font-size:13px;letter-spacing:.12em">**** 2026 1101</div></div></ui-tilt>',
     ai:
@@ -318,7 +318,7 @@ export const motionCatalog = [
       '<ui-gradient-border glow width="3" speed="3"><div style="padding:16px;text-align:center"><b style="color:var(--ui-text)">AI 生成中…</b><div style="font-size:12px;color:var(--ui-sub);margin-top:4px">glow · 3px</div></div></ui-gradient-border></div>',
     ai:
       '【组件】流光边框 <ui-gradient-border>\n' +
-      '【属性】colors 三个颜色（逗号分隔，默认 品牌色 / 粉 / ok 色）；width 边框粗细 px（默认 2）；speed 一圈秒数（默认 4）；glow 外发光\n' +
+      '【属性】colors 三个颜色（逗号分隔，默认 品牌色 / 辅助色 accent / ok 色）；width 边框粗细 px（默认 2）；speed 一圈秒数（默认 4）；glow 外发光\n' +
       '【实现】外层 conic-gradient 背景 + padding 形成「边框」，内层用面板色盖住中间；用 @property 注册角度变量 --ui-gb-a，CSS 动画直接对角度做插值（不支持 @property 的浏览器显示静态渐变）；glow 为同一渐变的模糊副本\n' +
       MOTION_RULE + '静止为渐变描边\n' +
       '【约束】1) 一屏只给一个元素用（它就是「最重要的那个」）；2) 不要和阴影、spotlight 叠加；3) 圆角跟随 var(--ui-radius-lg)',
@@ -343,7 +343,7 @@ export const motionCatalog = [
     ai:
       '【组件】极光背景 <ui-aurora>\n' +
       '【属性】height 最小高度 px（默认 180）；intensity 色块不透明度（默认 .55）；blur 模糊半径 px（默认 48）\n' +
-      '【实现】三个大圆形色块（品牌色 / 粉 / ok 色）+ filter: blur，分别以 14s / 17s / 19s 不同周期 alternate 漂移，叠加出自然流动；内容在上层并带背景色的柔和 text-shadow 以保证可读\n' +
+      '【实现】三个大圆形色块（品牌色 / 辅助色 accent / ok 色）+ filter: blur，分别以 14s / 17s / 19s 不同周期 alternate 漂移，叠加出自然流动；内容在上层并带背景色的柔和 text-shadow 以保证可读\n' +
       MOTION_RULE + '色块静止\n' +
       '【约束】1) 只用于首屏 Hero 或大标题区；2) 上方文字使用 --ui-text，对比度要在最亮的色块上也成立；3) 不要在同一页叠加多个极光区',
     design: {
@@ -410,7 +410,7 @@ export const motionCatalog = [
       '<ui-blob size="64" speed="5" colors="#f59e0b,#ef4444"></ui-blob>',
     ai:
       '【组件】流体形状 <ui-blob>\n' +
-      '【属性】size 尺寸 px（默认 140）；colors 两个渐变色（默认品牌色 → 品牌色与粉的混合）；speed 一轮秒数（默认 9）；标签内可放图标或头像\n' +
+      '【属性】size 尺寸 px（默认 140）；colors 两个渐变色（默认品牌色 → 品牌色与辅助色 accent 的混合）；speed 一轮秒数（默认 9）；标签内可放图标或头像\n' +
       '【实现】8 值 border-radius 关键帧在三种不规则形状间过渡，同时轻微旋转；内部内容反向旋转保持端正；同色系柔和投影\n' +
       MOTION_RULE + '形状静止\n' +
       '【约束】1) 纯装饰，不承载信息；2) 同一视图 ≤ 3 个，大小错落；3) 放图标时注意与背景的对比',

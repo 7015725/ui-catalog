@@ -10,7 +10,7 @@ import { FOCUSABLE, trapTab } from '../lib/focus.js';
 export const modalCss = `
 .ui-modal-mask{
   position:fixed;inset:0;z-index:350;display:grid;place-items:center;padding:20px;
-  background:rgba(15,18,24,.5);
+  background:rgba(0,0,0,.5);
   backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
   animation:ui-fade-in .18s ease;
 }
@@ -119,7 +119,7 @@ export class UIModal extends UIElement {
 
     const first = this._panel.querySelector(FOCUSABLE);
     (first || this._panel).focus();
-    this.dispatchEvent(new CustomEvent('open'));
+    this.dispatchEvent(new CustomEvent('open', { bubbles: true }));
   }
 
   close() {
@@ -132,7 +132,7 @@ export class UIModal extends UIElement {
     document.removeEventListener('keydown', this._onKey);
     if (this._unbindTrap) { this._unbindTrap(); this._unbindTrap = null; }
     if (this._lastFocus && this._lastFocus.focus) this._lastFocus.focus();
-    this.dispatchEvent(new CustomEvent('close'));
+    this.dispatchEvent(new CustomEvent('close', { bubbles: true }));
   }
 
   disconnectedCallback() {

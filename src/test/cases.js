@@ -154,6 +154,18 @@ describe('浮层', () => {
     expect(document.activeElement).toBe(trigger);
     trigger.remove();
   });
+
+  it('ui-drawer / ui-modal 的 open / close 事件冒泡到外层', async (host) => {
+    await put(host, '<div id="wrap"><ui-drawer title="筛选"><button>应用</button></ui-drawer><ui-modal title="提示"><p>x</p></ui-modal></div>');
+    const got = [];
+    host.querySelector('#wrap').addEventListener('open', (e) => got.push(e.target.tagName.toLowerCase() + ':open'));
+    host.querySelector('#wrap').addEventListener('close', (e) => got.push(e.target.tagName.toLowerCase() + ':close'));
+    const dr = host.querySelector('ui-drawer');
+    dr.show(); await tick(20); dr.close(); await tick(20);
+    const md = host.querySelector('ui-modal');
+    md.setAttribute('open', ''); await tick(30); md.removeAttribute('open'); await tick(30);
+    expect(got).toEqual(['ui-drawer:open', 'ui-drawer:close', 'ui-modal:open', 'ui-modal:close']);
+  });
 });
 
 /* ---------------- 复杂控件 ---------------- */
@@ -525,7 +537,7 @@ describe('无障碍与主题（本轮审查）', () => {
 
   it('15 套风格 × 明暗：次要文字与品牌色对面板的对比度 ≥ 4.5', async (host) => {
     const styles = ['aurora', 'brutal', 'glass', 'mono', 'neumorph', 'clay', 'material', 'cyber', 'paper', 'retro', 'nord', 'luxury', 'bauhaus', 'candy', 'terminal'];
-    const rgb = (c) => { const x = document.createElement('i'); x.style.color = c; host.appendChild(x); const m = getComputedStyle(x).color.match(/[\d.]+/g).map(Number); x.remove(); return m; };
+    const rgb = (c) => { const x = document.createElement('i'); x.style.color = c; host.appendChild(x); const s = getComputedStyle(x).color; const m = s.match(/[\d.]+/g).map(Number); x.remove(); return s.indexOf('color(srgb') === 0 ? [m[0] * 255, m[1] * 255, m[2] * 255, m[3]] : m; };
     const L = (c) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]); };
     const over = (fg, bg) => { const a = fg[3] == null ? 1 : fg[3]; return [0, 1, 2].map((i) => fg[i] * a + bg[i] * (1 - a)); };
     const ratio = (a, b) => { const x = L(a), y = L(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
@@ -540,8 +552,65 @@ describe('无障碍与主题（本轮审查）', () => {
       if (s !== 'brutal') { const r2 = ratio(v('brand'), panel); if (r2 < 4.5) fails.push(s + '/' + t + ' brand ' + r2.toFixed(2)); }
       const r3 = ratio(v('brand-ink'), v('brand'));
       if (r3 < 4.5) fails.push(s + '/' + t + ' brand-ink ' + r3.toFixed(2));
+      // 品牌渐变（brand → brand 与 accent 的混色）上的 brand-ink 文字
+      for (const pct of [35, 45, 55]) {
+        const mix = rgb('color-mix(in srgb,' + cs.getPropertyValue('--ui-brand').trim() + ' ' + pct + '%,' + cs.getPropertyValue('--ui-accent').trim() + ')');
+        const r4 = ratio(v('brand-ink'), mix);
+        if (r4 < 4.5) fails.push(s + '/' + t + ' accent-mix' + pct + ' ' + r4.toFixed(2));
+      }
     }
     expect(fails).toEqual([]);
+  });
+});
+
+/* ---------------- 颜色约定：组件 CSS 只用 var(--ui-*) ---------------- */
+import { cssRegistry } from './../components/base.js';
+
+/**
+ * 允许写死颜色的组件（材质色 / 场景色 / 媒体叠层），见 docs/SPEC.md 2.3。
+ * 新组件不得随意加入；加入时必须在这里写明理由。
+ */
+export const MATERIAL_TAGS = {
+  'ui-image': '灯箱：深色遮罩上的浅色说明文字（媒体叠层）',
+  'ui-image-compare': '图片对比：叠在图片上的白色拖柄（媒体叠层）',
+  'ui-daynight': '日夜开关：白天天空 / 夜空 / 太阳 / 月亮',
+  'ui-split-flap': '机场翻牌：深色翻牌板 + 琥珀色字',
+  'ui-neon-text': '霓虹灯：默认深色墙面',
+  'ui-glitch': '故障效果：RGB 色散（红 / 青）',
+  'ui-holo': '镭射卡：彩虹镭射膜',
+  'ui-starfield': '星空：夜空背景',
+  'ui-meteors': '流星：夜空背景',
+  'ui-snow': '下雪：冬夜天空',
+  'ui-text-3d': 'retro 变体的固定三色叠影',
+  'ui-dice': '骰子：传统红色一点',
+  'ui-pull-lamp': '拉绳台灯：灯泡、电线、拉手',
+  'ui-coin-flip': '硬币：金属金色',
+  'ui-piano': '钢琴：黑白琴键',
+  'ui-gift-box': '礼盒：金色丝带',
+  'ui-music-player': '唱片：黑胶纹理',
+  'ui-weather': '天气卡：天空与天气图标',
+  'ui-sticky-notes': '便利贴：纸张颜色',
+  'ui-slide-verify': '滑块验证：示意风景图'
+};
+
+describe('颜色约定', () => {
+  it('写死的颜色只出现在 MATERIAL_TAGS 名单里的组件', () => {
+    const bad = [];
+    for (const [tag, css] of cssRegistry) {
+      if (MATERIAL_TAGS[tag]) continue;
+      const hex = (css.match(/#[0-9a-fA-F]{3,8}\b/g) || []).filter((h) => !/^#(000|fff|000000|ffffff)$/i.test(h));
+      const rgb = (css.match(/rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+/g) || []).filter((c) => !/rgba?\(\s*(0\s*,\s*0\s*,\s*0|255\s*,\s*255\s*,\s*255)\b/.test(c));
+      if (hex.length || rgb.length) bad.push(tag + ': ' + hex.concat(rgb).join(' '));
+    }
+    expect(bad).toEqual([]);
+  });
+
+  it('名单里的组件确实还在使用写死颜色（防止名单过期）', () => {
+    const stale = Object.keys(MATERIAL_TAGS).filter((tag) => {
+      const css = cssRegistry.get(tag) || '';
+      return !(css.match(/#[0-9a-fA-F]{3,8}\b/g) || []).some((h) => !/^#(000|fff|000000|ffffff)$/i.test(h));
+    });
+    expect(stale).toEqual([]);
   });
 });
 

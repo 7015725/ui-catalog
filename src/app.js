@@ -146,7 +146,7 @@ function showcase(theme, styleId) {
 }
 
 /* 从 tokens.css 实时读取某个风格的变量取值，拼进提示词，保证与代码一致 */
-const TOKEN_KEYS = ['bg', 'panel', 'panel-2', 'text', 'sub', 'line', 'brand', 'brand-ink', 'brand-soft',
+const TOKEN_KEYS = ['bg', 'panel', 'panel-2', 'text', 'sub', 'line', 'brand', 'brand-ink', 'brand-soft', 'accent',
   'ok', 'warn', 'danger', 'radius-sm', 'radius', 'radius-lg', 'border-w', 'ctl-h', 'shadow-sm', 'shadow', 'font'];
 const tokenCache = {};
 function readTokens(id) {

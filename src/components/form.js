@@ -34,7 +34,7 @@ html[data-style="brutal"] .ui-btn:active:not(:disabled){transform:translate(3px,
 .ui-btn--soft{background:var(--ui-brand-soft);border-color:transparent;color:var(--ui-brand);box-shadow:none}
 .ui-btn--soft:hover:not(:disabled){border-color:var(--ui-brand)}
 .ui-btn--gradient{border-color:transparent;color:var(--ui-brand-ink);box-shadow:var(--ui-shadow);
-  background:linear-gradient(135deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 55%,#ec4899))}
+  background:linear-gradient(135deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 55%,var(--ui-accent)))}
 .ui-btn--gradient:hover:not(:disabled){filter:brightness(1.06) saturate(1.1);color:var(--ui-brand-ink)}
 .ui-btn--success{background:var(--ui-ok);border-color:var(--ui-ok);color:var(--ui-on-color)}
 .ui-btn--success:hover:not(:disabled){filter:brightness(1.06);color:var(--ui-on-color);border-color:var(--ui-ok)}

@@ -259,7 +259,7 @@ const baseCatalog = [
     ai:
       '【组件】头像 <ui-avatar>\n' +
       '【属性】name 取首字回退；src 图片地址；size: sm(26) | md(36) | lg(48)\n' +
-      '【视觉】正圆 + 品牌色到紫色的 135° 渐变底，文字用 var(--ui-brand-ink)\n' +
+      '【视觉】正圆 + 品牌色到辅助色（var(--ui-accent)）的 135° 渐变底，文字用 var(--ui-brand-ink)\n' +
       '【约束】1) 无图时必须回退到首字，不要留空；2) 圆形裁切，图片需 object-fit:cover；3) 组合时最多叠 4 个',
     design: {
       purpose: '在列表与评论区快速指认"是谁"。',

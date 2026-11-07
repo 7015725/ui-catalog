@@ -467,7 +467,7 @@ ui-memory-game{display:block;width:100%;max-width:340px}
 .ui-mem__in{position:relative;display:block;width:100%;height:100%;transform-style:preserve-3d;transition:transform .45s var(--ui-ease)}
 .ui-mem__c.on .ui-mem__in,.ui-mem__c.ok .ui-mem__in{transform:rotateY(180deg)}
 .ui-mem__in > span{position:absolute;inset:0;display:grid;place-items:center;border-radius:var(--ui-radius);backface-visibility:hidden}
-.ui-mem__bk{background:linear-gradient(135deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 50%,#8f5cff));color:var(--ui-brand-ink);font-size:20px;font-weight:800}
+.ui-mem__bk{background:linear-gradient(135deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 50%,var(--ui-accent)));color:var(--ui-brand-ink);font-size:20px;font-weight:800}
 .ui-mem__fr{transform:rotateY(180deg);background:var(--ui-panel);border:var(--ui-border-w) solid var(--ui-line);font-size:clamp(22px,7cqw,34px)}
 .ui-mem{container-type:inline-size}
 .ui-mem__c.ok .ui-mem__fr{background:var(--ui-ok-soft);border-color:var(--ui-ok)}

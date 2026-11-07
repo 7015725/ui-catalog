@@ -75,7 +75,7 @@ export const motionCatalog2 = [
     '<span data-depth="0.15" style="left:8%;top:14%;width:90px;height:90px;border-radius:50%;background:color-mix(in srgb,var(--ui-brand) 30%,transparent)"></span>' +
     '<span data-depth="0.45" style="right:12%;top:18%;font-size:38px" aria-hidden="true">🪐</span>' +
     '<span data-depth="0.7" style="left:22%;bottom:16%;font-size:30px" aria-hidden="true">🚀</span>' +
-    '<span data-depth="0.3" style="right:26%;bottom:12%;width:54px;height:54px;border-radius:14px;background:color-mix(in srgb,#ec4899 40%,transparent);rotate:18deg"></span>' +
+    '<span data-depth="0.3" style="right:26%;bottom:12%;width:54px;height:54px;border-radius:14px;background:color-mix(in srgb,var(--ui-accent) 40%,transparent);rotate:18deg"></span>' +
     '<div data-static style="position:relative;height:210px;display:grid;place-items:center;text-align:center;color:var(--ui-text)"><div>' + H('在鼠标下移动', '每层 data-depth 不同，产生空间感') + '</div></div></ui-parallax>',
     '【组件】视差层 <ui-parallax>\n【结构】标签内的直接子元素都是图层（绝对定位，自己写 left / top），data-depth 0-1 表示深度（越大移动越多）；加 data-static 的子元素不移动（放正文）\n' +
     '【属性】mode: pointer（跟随鼠标，默认）| scroll（跟随页面滚动）；height 最小高度；strength 整体强度倍数\n' +
@@ -90,7 +90,7 @@ export const motionCatalog2 = [
     '<b style="color:var(--ui-text)">滚动这段文字试试 ↓</b><br>' + '进度条把「还剩多少」可视化，降低长文阅读的焦虑。'.repeat(14) + '</div></div>',
     '【组件】阅读进度 <ui-scroll-progress>\n【属性】target 滚动容器选择器（不填为整页）；height 粗细 px（默认 3）；fixed 固定在视口顶部；label 无障碍名称\n' +
     '【实现】监听滚动（passive），进度 = scrollTop / (scrollHeight - clientHeight)，用 transform: scaleX 绘制（不触发布局）；role=progressbar + aria-valuenow 实时更新；到 100% 派发 complete\n' +
-    '【视觉】品牌色到粉色的渐变；轨道为浅色 line\n' +
+    '【视觉】品牌色到辅助色 accent 的渐变；轨道为浅色 line\n' +
     '【约束】1) 只用于长文 / 长表单；2) fixed 模式注意避开固定顶栏；3) 不要和浏览器滚动条重复强调',
     { purpose: '告诉读者「还剩多少」，提高长文的完读率。', when: ['博客文章、文档页', '分步长表单'], avoid: ['短页面', '首页'] }),
 
@@ -212,8 +212,8 @@ export const motionCatalog2 = [
 
   V('grain', 'ui-grain', '颗粒质感', '给任意区块加一层胶片噪点',
     '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;width:100%">' +
-    '<div style="height:120px;border-radius:var(--ui-radius-lg);background:linear-gradient(135deg,var(--ui-brand),#ec4899);display:grid;place-items:center;color:#fff;font-weight:700">无噪点</div>' +
-    '<ui-grain opacity="0.35"><div style="height:120px;background:linear-gradient(135deg,var(--ui-brand),#ec4899);display:grid;place-items:center;color:#fff;font-weight:700">静态颗粒</div></ui-grain>' +
+    '<div style="height:120px;border-radius:var(--ui-radius-lg);background:linear-gradient(135deg,var(--ui-brand),var(--ui-accent));display:grid;place-items:center;color:#fff;font-weight:700">无噪点</div>' +
+    '<ui-grain opacity="0.35"><div style="height:120px;background:linear-gradient(135deg,var(--ui-brand),var(--ui-accent));display:grid;place-items:center;color:#fff;font-weight:700">静态颗粒</div></ui-grain>' +
     '<ui-grain opacity="0.4" animated><div style="height:120px;background:linear-gradient(135deg,#0f172a,#334155);display:grid;place-items:center;color:#fff;font-weight:700">动态胶片</div></ui-grain></div>',
     '【组件】颗粒质感 <ui-grain>\n【属性】opacity 噪点强度（默认 .18）；animated 胶片式抖动\n' +
     '【实现】一张内联的 SVG feTurbulence 噪点图（无外部请求）平铺在 ::after 上，mix-blend-mode: overlay；animated 用 steps(6) 快速平移模拟胶片颗粒跳动\n' + R + '颗粒静止\n' +
@@ -222,12 +222,12 @@ export const motionCatalog2 = [
 
   V('mesh-gradient', 'ui-mesh-gradient', '网格渐变', '多点弥散的柔和渐变背景',
     '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;width:100%">' +
-    '<ui-mesh-gradient height="140" animated><div style="color:#1b1f2a;font-weight:800;font-size:18px">Dreamy</div></ui-mesh-gradient>' +
+    '<ui-mesh-gradient height="140" animated><div style="color:var(--ui-brand-ink);font-weight:800;font-size:18px">Brand</div></ui-mesh-gradient>' +
     '<ui-mesh-gradient height="140" colors="#0ea5e9,#22d3ee,#a7f3d0,#6366f1"><div style="color:#0b1324;font-weight:800;font-size:18px">Ocean</div></ui-mesh-gradient>' +
     '<ui-mesh-gradient height="140" colors="#f97316,#facc15,#fb7185,#c026d3"><div style="color:#1b1f2a;font-weight:800;font-size:18px">Sunset</div></ui-mesh-gradient></div>',
-    '【组件】网格渐变 <ui-mesh-gradient>\n【属性】colors 四个颜色（逗号分隔，默认紫 / 粉 / 蓝 / 黄）；height 最小高度；animated 缓慢流动\n' +
+    '【组件】网格渐变 <ui-mesh-gradient>\n【属性】colors 四个颜色（逗号分隔，默认取风格变量：品牌色 / 辅助色 accent / 品牌与成功色的混色 / 警告色，随风格变化）；height 最小高度；animated 缓慢流动\n' +
     '【实现】五层 radial-gradient 分别放在四角与中心叠加，模拟 Figma / iOS 的 Mesh Gradient；animated 时放大背景尺寸并缓慢移动位置\n' + R + '静止\n' +
-    '【约束】1) 四个颜色明度要接近，否则会出现脏色；2) 上方文字用深色并校验对比度；3) 适合大面积背景，不适合小按钮',
+    '【约束】1) 四个颜色明度要接近，否则会出现脏色；2) 上方文字校验对比度：默认配色下用 var(--ui-brand-ink)，自定义浅色配色时用深色；3) 适合大面积背景，不适合小按钮',
     { purpose: '比单向渐变更柔和、更有「光」的背景。', when: ['Hero、封面、壁纸', '音乐 / 冥想 / AI 产品'], avoid: ['需要品牌色一致性的严肃页面'] }, true),
 
   V('glitch', 'ui-glitch', '故障风', '红蓝错位 + 切片抖动的赛博文字',
@@ -330,7 +330,7 @@ export const motionCatalog2 = [
     '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;width:100%">' +
     '<ui-cursor-trail height="150">在这里移动鼠标</ui-cursor-trail><ui-cursor-trail height="150" shape="star">✨ 星星拖尾</ui-cursor-trail></div>',
     '【组件】鼠标拖尾 <ui-cursor-trail>\n【属性】shape: dot | star；height 区域高度\n' +
-    '【实现】pointermove 节流到约 60 次/秒，每次插入一个彩色小元素（品牌 / 粉 / warn / ok 轮换），向下飘散淡出后自动移除；同时存在的粒子上限 80 个\n' + R + '不产生轨迹\n' +
+    '【实现】pointermove 节流到约 60 次/秒，每次插入一个彩色小元素（品牌 / accent / warn / ok 轮换），向下飘散淡出后自动移除；同时存在的粒子上限 80 个\n' + R + '不产生轨迹\n' +
     '【约束】1) 只在限定区域内使用，不要全页面跟随鼠标；2) 纯装饰；3) 不要用于需要精确指向的区域',
     { purpose: '为创意页面增加一点「跟手」的愉悦感。', when: ['作品集、活动页彩蛋', '儿童 / 娱乐产品'], avoid: ['工具、后台、表单'] }, true),
 

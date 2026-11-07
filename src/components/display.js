@@ -79,7 +79,7 @@ export const avatarCss = `
   display:inline-grid;place-items:center;flex:0 0 auto;
   width:36px;height:36px;border-radius:50%;
   font-size:13px;font-weight:600;color:var(--ui-brand-ink);
-  background:linear-gradient(135deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 45%,#8f5cff));
+  background:linear-gradient(135deg,var(--ui-brand),color-mix(in srgb,var(--ui-brand) 45%,var(--ui-accent)));
   box-shadow:var(--ui-shadow-sm);user-select:none;overflow:hidden;
 }
 .ui-avatar--sm{width:26px;height:26px;font-size:11px}
