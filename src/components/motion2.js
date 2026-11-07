@@ -248,7 +248,7 @@ export class UILikeButton extends UIElement {
   template(p) {
     const n = Number(p.count) || 0;
     const colors = ['var(--ui-danger)', 'var(--ui-warn)', 'var(--ui-brand)', 'var(--ui-ok)'];
-    return '<button type="button" class="ui-like ui-mo" aria-pressed="' + p.liked + '" aria-label="' + esc(p.label) + '，' + n + ' 人">' +
+    return '<button type="button" class="ui-like ui-mo" aria-pressed="' + p.liked + '" aria-label="' + esc(p.label) + '，' + n.toLocaleString() + ' 人">' +
       '<span class="ui-like__h" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20.5s-7.5-4.6-9.3-9.6C1.4 7.4 3.6 4 7 4c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.4 0 5.6 3.4 4.3 6.9-1.8 5-9.3 9.6-9.3 9.6z"/></svg>' +
       '<span class="ui-like__b">' + Array.from({ length: 8 }, (_, i) => '<i style="--a:' + i * 45 + 'deg;--c:' + colors[i % 4] + '"></i>').join('') + '</span></span>' +
       '<span class="ui-like__n" aria-hidden="true">' + n.toLocaleString() + '</span></button>';

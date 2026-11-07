@@ -123,7 +123,7 @@ main{min-width:0;container-type:inline-size;container-name:gallery}
 /* ---------- 风格页 ---------- */
 .styles{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,600px),1fr));gap:20px;align-items:start}
 .sframe{container-type:inline-size;border:var(--ui-border-w) solid var(--ui-line);border-radius:var(--ui-radius-lg);
-  overflow:hidden;background:var(--ui-panel);color:var(--ui-text);box-shadow:var(--ui-shadow);font-family:var(--ui-font)}
+  overflow:hidden;background:var(--ui-bg);color:var(--ui-text);box-shadow:var(--ui-shadow);font-family:var(--ui-font)}
 .sframe--on{outline:2px solid var(--ui-brand);outline-offset:3px}
 .sframe__hd{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px dashed var(--ui-line);font-size:13px}
 .sframe__sw{display:inline-flex;flex:0 0 auto}
@@ -276,3 +276,9 @@ html[data-style="luxury"][data-theme="dark"] body{background:
 @media (max-width:900px){
   html[data-style="retro"]:not([data-theme="dark"]) .side button:not(.on){color:var(--ui-text)}
 }
+
+/* ---------- 减少动效：画廊固定时长过渡直接到终态 ---------- */
+@media (prefers-reduced-motion: reduce){
+  body,.tbrowser__page{transition:none}
+}
+html[data-motion="reduce"] :is(body,.tbrowser__page){transition:none}

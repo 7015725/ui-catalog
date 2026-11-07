@@ -4,6 +4,7 @@
    ========================================================= */
 import { UIElement, register } from './base.js';
 import { Layer } from '../lib/positioner.js';
+import { esc } from './more-form.js';
 
 const WEEK = ['一', '二', '三', '四', '五', '六', '日'];
 
@@ -86,13 +87,13 @@ export class UIDatepicker extends UIElement {
   };
 
   template(p) {
-    const label = p.label ? '<span class="ui-dp__label">' + p.label + '</span>' : '';
+    const label = p.label ? '<span class="ui-dp__label">' + esc(p.label) + '</span>' : '';
     const text = p.value
-      ? '<span>' + p.value + '</span>'
-      : '<span class="ui-dp__ph">' + p.placeholder + '</span>';
+      ? '<span>' + esc(p.value) + '</span>'
+      : '<span class="ui-dp__ph">' + esc(p.placeholder) + '</span>';
     return '<div class="ui-dp">' + label +
       '<button type="button" class="ui-dp__btn" aria-haspopup="dialog" aria-expanded="false"' +
-      (p.label ? ' aria-label="' + p.label + '"' : '') + '>' + text +
+      ' aria-label="' + esc((p.label ? p.label + '，' : '') + (p.value || p.placeholder)) + '">' + text +
       '<span class="ui-dp__ico" aria-hidden="true">📅</span></button></div>';
   }
 

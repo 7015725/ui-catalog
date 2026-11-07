@@ -3,12 +3,12 @@
 [![test](https://github.com/7015725/ui-catalog/actions/workflows/test.yml/badge.svg)](https://github.com/7015725/ui-catalog/actions/workflows/test.yml)
 ![零依赖](https://img.shields.io/badge/依赖-0-brightgreen)
 ![组件](https://img.shields.io/badge/组件-167-4f7cff)
-![风格](https://img.shields.io/badge/UI%20风格-15-8b5cf6)
-![模板](https://img.shields.io/badge/界面模板-13-f59e0b)
+![风格](https://img.shields.io/badge/UI%20风格-21-8b5cf6)
+![模板](https://img.shields.io/badge/界面模板-19-f59e0b)
 ![无障碍](https://img.shields.io/badge/WCAG-AA-15803d)
 [![MIT](https://img.shields.io/badge/license-MIT-lightgrey)](./LICENSE)
 
-一套**零依赖**的原生 Web Components 组件库：**167 个组件 · 15 套 UI 风格（各含浅色 / 深色）· 13 个界面模板**，
+一套**零运行时依赖**的原生 Web Components 组件库：**167 个组件 · 21 套 UI 风格（各含浅色 / 深色）· 19 个界面模板**，
 每个组件和模板都配有「预览 / AI 提示词 / 设计说明 / 代码」，可以直接把提示词交给 AI Agent 生成同风格界面。
 
 🔗 **在线预览：[7015725.github.io/ui-catalog](https://7015725.github.io/ui-catalog/)**　·　回归测试页：[test.html](https://7015725.github.io/ui-catalog/test.html)
@@ -19,7 +19,7 @@
 
 <table>
 <tr>
-<td width="50%"><b>15 套 UI 风格</b>：同一套组件，只切换 <code>data-style</code> / <code>data-theme</code><br><img src="docs/screenshots/styles.webp" alt="UI 风格页"></td>
+<td width="50%"><b>21 套 UI 风格</b>：同一套组件，只切换 <code>data-style</code> / <code>data-theme</code><br><img src="docs/screenshots/styles.webp" alt="UI 风格页（已有风格截图）"></td>
 <td width="50%"><b>深色 + 赛博风格</b>：视觉效果分类<br><img src="docs/screenshots/dark.webp" alt="深色模式"></td>
 </tr>
 <tr>
@@ -47,7 +47,7 @@
 仓库是公开的，可以直接通过 jsDelivr CDN 引用。引入一个样式文件 + 一个脚本，就能用全部组件：
 
 ```html
-<!-- 1. 设计变量（颜色 / 圆角 / 阴影 / 15 套风格） -->
+<!-- 1. 设计变量（颜色 / 圆角 / 阴影；当前 main 含 21 套风格，固定版本以发布内容为准） -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/7015725/ui-catalog@v1.0.0/src/styles/tokens.css">
 <!-- 2. 注册全部组件 -->
 <script type="module" src="https://cdn.jsdelivr.net/gh/7015725/ui-catalog@v1.0.0/src/components/index.js"></script>
@@ -69,6 +69,7 @@
 - 没有构建步骤：组件是原生自定义元素（Custom Elements），浏览器直接跑。
 - 没有框架绑定：以后要包成 Vue / React 组件只是加一层壳。
 - 换肤靠 CSS 变量：同一份组件代码，改 `data-style` / `data-theme` 就换风格，不改一行组件逻辑。
+- 运行时没有 npm 依赖，也不需要构建；Playwright 仅用于开发自动化测试，不随页面加载。
 
 ## 启动（带实时刷新）
 
@@ -151,28 +152,51 @@ src/
     templates.js           ★ 界面模板入口（字段说明见文件头）：TPL_CATS 分类 + 全部模板
     templates-shared.js    模板共用骨架样式（屏幕 / 滚动区 / 区块标题 / 横滑 / 占位图）
     templates-app.js       移动 APP 模板（6 个）
+    templates-mobile.js    系统 APP 原创风格灵感预览（6 个）
     templates-web.js       Web 页面模板（4 个）
     templates-canvas.js    JS 绘制模板（3 个）
 scripts/
   check.mjs                跨平台语法检查（npm run check）
   run-tests.mjs            无头浏览器跑全部回归用例（npm test，CI 同款）
+  test-mobile-previews.mjs 系统 APP 画廊级验证（npm run test:mobile）
+  test-accessibility.mjs   全风格/主题/宽度/视图矩阵（npm run test:a11y）
+  test-validation-guards.mjs 验收脚本负例与真实正常页（npm run test:guards）
+docs/SPEC.md              ★ 项目第一约束与验收标准
 docs/screenshots/          README 用的截图与动图
-.github/workflows/test.yml 每次推送自动跑语法检查 + 回归测试
+.github/workflows/test.yml 每次推送自动跑语法、回归、系统 APP、验收脚本负例与全风格矩阵
 ```
 
 ## 界面模板（整页布局 + 操作逻辑）
 
-顶栏切到「界面模板」，可以看到 13 个整页模板。和组件卡片一样，每个模板都有 **AI 提示词 / 设计说明 / 代码** 三个标签页，
-预览可以直接点、滑、拖、用键盘操作。模板全部用组件库拼成，切换风格和明暗时整页一起变。
+顶栏切到「界面模板」，可以看到 19 个整页模板。和组件卡片一样，每个模板都有 **AI 提示词 / 设计说明 / 代码** 三个标签页，
+预览可直接操作，并在手机框内独立滚动。**系统 APP 使用各自推荐风格，只跟随全站明暗；其余模板继续跟随全站风格与明暗。** 明暗切换不重建系统 APP，也不丢失当前筛选、勾选、连接或日期状态。
 
 | 类型 | 预览方式 | 模板 |
 |---|---|---|
 | 移动 APP（6） | 手机框，375 宽，内容区独立滚动 + 底部导航 | 电商首页、外卖 / 本地生活、社交动态、银行 / 理财、健身健康、智能家居 |
+| 系统 APP（6） | 手机框，独立滚动；各自风格 + 全局明暗 | 系统设置、文件管理、提醒事项、设备中心、原子日程、轻量笔记 |
 | Web 页面（4） | 浏览器框，可切换 桌面 / 平板 / 手机 宽度 | 后台仪表盘、产品落地页、内容门户 / 博客、邮件 / 三栏工作台 |
 | JS 绘制（3） | 浏览器框，界面主体画在 `<canvas>` 上 | 监控数据大屏、游戏菜单 / HUD、白板 / 画布编辑器 |
 
+### 系统 APP 入口与操作
+
+顶栏「界面模板」→ 分类「系统 APP」；也可搜索风格名或页面名。
+
+| data-style | 风格灵感 | 示例页面 / 模板 ID | 可操作主路径 |
+|---|---|---|---|
+| `miui` | MIUI / HyperOS | 系统设置 · `miui-settings` | 搜索设置与空结果、开关状态反馈、展开设备概览 |
+| `coui` | COUI（参考 ColorOS 形态） | 文件管理 · `coui-files` | 分类与搜索组合过滤、文件选择与详情 |
+| `oneui` | One UI | 提醒事项 · `oneui-tasks` | 勾选/撤销、剩余数量与进度、待办筛选与重置 |
+| `harmonyos` | HarmonyOS | 设备中心 · `harmonyos-devices` | 选择设备、连接/断开本地示例、读屏反馈 |
+| `originos` | OriginOS | 原子日程 · `originos-agenda` | 日期选择同步日程与模块摘要、空日程 |
+| `flyme` | Flyme | 轻量笔记 · `flyme-notes` | 搜索与分类、置顶/取消、已置顶筛选 |
+
+六页均为**原创风格灵感，不是官方产品或屏幕复刻**，没有商标、官方截图、图片/字体 CDN 或新框架。COUI 仅是目录命名，参考 ColorOS 的卡片与胶囊形态，不宣称两者是同一官方规范；OriginOS 参考早期模块化网格，Flyme 参考 Flyme 8 的留白原则，不宣称最新版复刻。
+
+所有设备、文件、存储、任务、日期和笔记都是**本地示例**，不读取或上传真实数据、不连接真实硬件；交互只影响当前挂载页面。新增风格使用当前仓库或 `@main` 的 tokens.css，旧固定版本不保证包含它们。
+
 - **提示词**按「页面目标 → 整体结构（从上到下）→ 响应式 → 操作逻辑 → 状态 → 无障碍 → 约束」写，末尾自动附上依赖组件清单。
-- **代码**面板 = 页面 HTML + 公共骨架样式 + 模板样式 + `init(root)` 操作逻辑，复制即可运行（需要引入 tokens.css 和 components/index.js）。
+- **代码**面板 = 页面 HTML + 公共骨架样式 + 模板样式 + `init(root)` 操作逻辑。系统 APP 导出完整 HTML，明确默认 `data-style` / `data-theme="light"`，可放到仓库根目录直接运行；迁移时调整两个本地资源路径（tokens.css / components/index.js），深色时同步 html 与局部容器的 `data-theme`。每个 `init(root)` 均可独立复制，不依赖数据模块闭包。
 - **Web 模板用容器查询**（`@container tpl`）做自适应，所以放进侧栏、弹窗或任意宽度的容器都能正确响应，不依赖屏幕宽度。
 - **Canvas 模板**从 `getComputedStyle` 读取 `--ui-*` 变量，监听 `data-style / data-theme` 变化自动重画；按设备像素比绘制；
   画布可聚焦，所有操作都有键盘方式，状态变化写进 `aria-live`；离开视口时停止动画循环。
@@ -230,7 +254,7 @@ docs/screenshots/          README 用的截图与动图
 新增浮层组件时，直接复用 `new Layer()`：`setContent(html)` / `show(anchor, placement, offset)` /
 `hide()` / `toggle()`，placement 形如 `bottom-start`、`top-center`。
 
-## 内置风格（15 套）
+## 内置风格（21 套）
 
 | data-style | 名称 | 特征 |
 |---|---|---|
@@ -249,9 +273,15 @@ docs/screenshots/          README 用的截图与动图
 | `bauhaus` | Bauhaus 包豪斯 | 红黄蓝三原色、2px 黑线、无阴影 |
 | `candy` | Candy 糖果 | 粉色系、圆体、实色下投影 |
 | `terminal` | Terminal 终端 | 磷光绿等宽字、按钮带 `>` 前缀 |
+| `miui` | MIUI / HyperOS 风格灵感 | 大标题、浅底分组、紧凑设置项 |
+| `coui` | COUI · 参考 ColorOS 形态 | 冷青层次、圆润卡片、分类胶囊 |
+| `oneui` | One UI 风格灵感 | 上部观览、下部操作、柔和胶囊 |
+| `harmonyos` | HarmonyOS 风格灵感 | 节制蓝色、设备层级、拇指操作 |
+| `originos` | OriginOS 风格灵感 | 不同跨度模块、日期条、原子日程 |
+| `flyme` | Flyme 风格灵感 | 大留白、细分隔、低装饰与青绿 |
 
 每套都有浅色 / 深色两份变量，并且都经过对比度校验：正文、次要文字、品牌色文字、语义色对面板背景均 ≥ 4.5:1（WCAG AA），
-`test.html` 里有一条用例对 15 × 2 组合逐一断言，改 token 时如果把对比度改坏了会直接报红。
+`test.html` 的对比度用例从风格元数据遍历全部 21 × 2 组合，新增六种还覆盖实际背景、面板与品牌浅底的次要文字/品牌色/按钮文字；改坏 token 会直接报红。
 
 `--ui-on-color` 是「实心语义色（ok / warn / danger 做底色）上的文字色」：浅色主题为白色、深色主题为近黑色，
 靠 CSS 变量继承就近生效，所以深色页面里嵌一块浅色预览也不会取错。
@@ -349,12 +379,19 @@ register('ui-toast', UIToast, '.ui-toast{background:var(--ui-panel);border:var(-
 
 ## 测试
 
-零依赖回归测试页：`/test.html`（95 条用例：颜色约定（写死颜色白名单）、界面模板数据约定与操作逻辑、Canvas 组件键盘操作与换肤、属性渲染、键盘与焦点、浮层开关、数据兜底、无障碍、15 套风格对比度、减少动效与动画循环清理）。
+零运行时依赖回归测试页：`/test.html`（172 条用例）。保留 1.1.0 的 95 条基线用例（含颜色白名单、冒泡事件、模板、Canvas、键盘与焦点、无障碍和动效清理），并补充六个系统 APP 的真实操作、独立代码出口、局部风格隔离及全部风格的对比度断言。
+
+自动化测试需要 **Playwright + Chromium + axe-core**，仅为开发测试依赖；本地启动和页面运行仍无需 `npm install` 或构建。
 
 ```bash
 npm run check        # 语法检查（Windows / macOS / Linux 通用）
+npm install --no-save --package-lock=false playwright@1.63.0 @axe-core/playwright@4.14.0  # 仅测试用
+npx playwright install chromium
 npm start            # 另开一个终端启动服务器后：
-npm test             # 无头浏览器跑完全部用例（需要 playwright：npx playwright install chromium）
+npm test             # 无头浏览器跑完回归页与原组件画廊
+npm run test:mobile  # 系统 APP 风格、状态保留、复制、独立运行与屏宽
+npm run test:guards  # 用故障夹具验证旧报告、损坏出口、状态丢失等情况会被拒绝
+npm run test:a11y    # 全风格/明暗/屏宽/视图矩阵（含 best-practice）
 ```
 
 每次推送到 GitHub，[GitHub Actions](https://github.com/7015725/ui-catalog/actions) 会自动跑一遍以上流程，结果显示在 README 顶部的 test 徽章上。
@@ -362,10 +399,10 @@ npm test             # 无头浏览器跑完全部用例（需要 playwright：n
 ## 当前状态
 
 - **167 个组件**全部可渲染、可交互；画廊逐个点击所有控件 + 键盘操作，无报错
-- **13 个界面模板**：逐个操作过所有交互（筛选、排序、加购、折叠侧栏、窄屏抽屉、列表 → 详情、Canvas 派单 / 游戏状态机 / 便签编辑连线），无报错
-- **95 条回归用例**全部通过（GitHub Actions 每次推送自动运行）
-- **15 套风格 × 浅色 / 深色 × 3 种屏宽**（360 / 820 / 1440）：无横向溢出、无组件溢出卡片
-- **无障碍**：axe-core 扫描画廊与风格页，30 种风格组合均为 0 个问题；界面模板页 15 套风格 × 浅色 / 深色 × 桌面 / 手机共 47 种组合（含 best-practice 规则）均为 0 个问题；文字对比度全部 ≥ 4.5:1（WCAG AA）
+- **19 个界面模板**：保留原 13 个，新增系统 APP 的搜索/筛选、开关、任务进度、设备连接、日期与置顶操作均有真实回归
+- **172 条回归用例**已在本地通过，保留原有用例；提交前另跑系统 APP 画廊级 `npm run test:mobile` 与完整 `npm run test:a11y`
+- **响应式**：原 15 套风格的既有 360 / 820 / 1440 验证保留；新增 6 个系统 APP 覆盖 320 / 390 / 768 / 1440，内容独立滚动
+- **无障碍验收**：按 `docs/SPEC.md` 检查全部风格与明暗、键盘、可访问名称、触控目标、pressed/live 状态及 axe-core（包含 best-practice）
 - **动效**：全部尊重 `prefers-reduced-motion` 与 `data-motion="reduce"`；动画循环离开视口 / 标签页隐藏时暂停，组件移除时清理
 - **无泄漏**：反复切换分类、搜索后，浮层节点与 body 子节点数量不增长；页面内无重复 id
 

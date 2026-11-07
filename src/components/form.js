@@ -11,14 +11,19 @@ export const buttonCss = `
   height:var(--ui-ctl-h);padding:0 18px;
   font:inherit;font-size:14px;font-weight:500;line-height:1;
   color:var(--ui-text);background:var(--ui-panel);
-  border:var(--ui-border-w) solid var(--ui-line);border-radius:var(--ui-radius);
+  border:var(--ui-border-w) solid var(--ui-line);border-radius:var(--ui-button-radius);
   cursor:pointer;transition:var(--ui-motion);user-select:none;white-space:nowrap;
   box-shadow:var(--ui-shadow-sm);
 }
+.ui-btn--default{background:var(--ui-default-button-bg);color:var(--ui-default-button-text);box-shadow:var(--ui-default-button-shadow)}
+.ui-btn::before{content:var(--ui-button-prefix);opacity:.6}
+.ui-btn--circle::before,.ui-btn--loading::before{content:none}
 .ui-btn:hover:not(:disabled){border-color:var(--ui-brand);color:var(--ui-brand)}
-.ui-btn:focus-visible{outline:none;box-shadow:var(--ui-ring)}
+.ui-btn:focus-visible{outline:none}
+/* 焦点环优先于风格阴影，outline 保留原优先级供模板增强。 */
+.ui-btn:focus-visible:not(:disabled){box-shadow:var(--ui-ring)}
 .ui-btn:active:not(:disabled){transform:translateY(1px)}
-.ui-btn--primary{background:var(--ui-brand);border-color:var(--ui-brand);color:var(--ui-brand-ink);box-shadow:var(--ui-shadow)}
+.ui-btn--primary{background:var(--ui-brand);border-color:var(--ui-brand);color:var(--ui-brand-ink);box-shadow:var(--ui-primary-button-shadow);text-shadow:var(--ui-primary-button-text-shadow)}
 .ui-btn--primary:hover:not(:disabled){filter:brightness(1.06);color:var(--ui-brand-ink)}
 .ui-btn--danger{background:var(--ui-danger-soft);border-color:var(--ui-danger);color:var(--ui-danger)}
 .ui-btn--text{background:transparent;border-color:transparent;box-shadow:none;color:var(--ui-brand);padding:0 12px}

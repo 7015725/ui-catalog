@@ -98,8 +98,14 @@ export class UIImage extends UIElement {
     const self = this;
     const img = this.querySelector('img');
     const ph = this.querySelector('.ui-img__ph');
+    const box = this.querySelector('button.ui-img__box');
+    const syncName = () => {
+      if (!box) return;
+      const status = self.querySelector('.ui-img__ph,.ui-img__err');
+      box.setAttribute('aria-label', '预览：' + (self.props.alt || '图片') + (status ? '，' + status.textContent : ''));
+    };
     if (img) {
-      const done = () => { img.removeAttribute('data-loading'); if (ph) ph.remove(); };
+      const done = () => { img.removeAttribute('data-loading'); if (ph) ph.remove(); syncName(); };
       if (img.complete && img.naturalWidth) done();
       img.addEventListener('load', done);
       img.addEventListener('error', () => {
@@ -107,9 +113,10 @@ export class UIImage extends UIElement {
         img.remove();
         const box = self.querySelector('.ui-img__box');
         if (box) box.insertAdjacentHTML('beforeend', '<span class="ui-img__err">图片加载失败</span>');
+        syncName();
       });
     } else if (ph) ph.remove();
-    const box = this.querySelector('button.ui-img__box');
+    syncName();
     if (box && img) box.addEventListener('click', () => { openLightbox(self._src(), self.props.alt, self.props.caption); emit(self, 'preview', {}); });
   }
 }
@@ -290,6 +297,11 @@ export class UICalendar extends UIElement {
   mounted() {
     const self = this;
     const curMonth = () => { const g = self.querySelector('.ui-cal__grid').getAttribute('aria-label'); const m = /(\d+) 年 (\d+) 月/.exec(g); return [Number(m[1]), Number(m[2]) - 1]; };
+    this.querySelectorAll('.ui-cal__d').forEach((cell) => {
+      const visible = cell.textContent.replace(/\s+/g, ' ').trim();
+      const label = cell.getAttribute('aria-label') || '';
+      if (visible && !label.includes(visible)) cell.setAttribute('aria-label', label + '，' + visible);
+    });
     this.querySelectorAll('[data-go]').forEach((b) => b.addEventListener('click', () => {
       const go = Number(b.dataset.go);
       let d;

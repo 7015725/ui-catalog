@@ -6,6 +6,10 @@ import './../components/index.js';
 import { toast } from './../components/overlay.js';
 import { describe, it, expect, put, tick } from './harness.js';
 import { templates, TPL_CATS } from './../data/templates.js';
+import { styles } from './../data/styles.js';
+import { MOBILE_IDS } from './cases-mobile.js';
+import './cases-spec-mobile.js';
+import './cases-a11y-names.js';
 
 const key = (k) => document.activeElement.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true }));
 const click = (el) => el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
@@ -535,14 +539,13 @@ describe('无障碍与主题（本轮审查）', () => {
     expect(bad.length).toBe(0);
   });
 
-  it('15 套风格 × 明暗：次要文字与品牌色对面板的对比度 ≥ 4.5', async (host) => {
-    const styles = ['aurora', 'brutal', 'glass', 'mono', 'neumorph', 'clay', 'material', 'cyber', 'paper', 'retro', 'nord', 'luxury', 'bauhaus', 'candy', 'terminal'];
+  it('全部风格元数据 × 明暗：次要文字与品牌色对面板的对比度 ≥ 4.5', async (host) => {
     const rgb = (c) => { const x = document.createElement('i'); x.style.color = c; host.appendChild(x); const s = getComputedStyle(x).color; const m = s.match(/[\d.]+/g).map(Number); x.remove(); return s.indexOf('color(srgb') === 0 ? [m[0] * 255, m[1] * 255, m[2] * 255, m[3]] : m; };
     const L = (c) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]); };
     const over = (fg, bg) => { const a = fg[3] == null ? 1 : fg[3]; return [0, 1, 2].map((i) => fg[i] * a + bg[i] * (1 - a)); };
     const ratio = (a, b) => { const x = L(a), y = L(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
     const fails = [];
-    for (const s of styles) for (const t of ['light', 'dark']) {
+    for (const { id: s } of styles) for (const t of ['light', 'dark']) {
       host.innerHTML = '<div data-style="' + s + '" data-theme="' + t + '"></div>';
       const cs = getComputedStyle(host.firstChild);
       const v = (n) => rgb(cs.getPropertyValue('--ui-' + n).trim());
@@ -903,7 +906,9 @@ describe('界面模板', () => {
       /* 模板样式里不允许写死十六进制颜色（全部走 var(--ui-*)） */
       expect(/#[0-9a-f]{3,6}\b/i.test(t.css)).toBe(false);
     });
-    expect(templates.length).toBe(13);
+    const original = ['shop', 'food', 'social', 'bank', 'fit', 'home', 'admin', 'landing', 'portal', 'mail', 'cvdash', 'cvgame', 'cvboard'];
+    original.concat(MOBILE_IDS).forEach((id) => expect(ids.has(id)).toBe(true));
+    expect(templates.length).toBe(original.length + MOBILE_IDS.length);
   });
 
   it('每个模板挂载后 init 不报错，并且用到的组件都已注册', async (host) => {

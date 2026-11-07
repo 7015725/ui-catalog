@@ -277,7 +277,15 @@ export class UIFlipCard extends UIElement {
     const self = this;
     const box = this.querySelector('.ui-flip');
     const back = this.querySelector('.ui-flip__in > :nth-child(2)');
-    const sync = (on) => { if (back) back.toggleAttribute('inert', !on); const f = self.querySelector('.ui-flip__in > :first-child'); if (f) f.toggleAttribute('inert', !!on); };
+    const sync = (on) => {
+      if (back) back.toggleAttribute('inert', !on);
+      const front = self.querySelector('.ui-flip__in > :first-child');
+      if (front) front.toggleAttribute('inert', !!on);
+      const face = on && back ? back : front;
+      const visible = face ? face.textContent.replace(/\s+/g, ' ').trim() : '';
+      const action = self.props.trigger === 'click' ? '点击翻转' : '悬停或聚焦翻转';
+      box.setAttribute('aria-label', self.props.label + '（' + action + '）' + (visible ? '，' + visible : ''));
+    };
     sync(this._flipped);
     if (this.props.trigger !== 'click') {
       box.addEventListener('mouseenter', () => sync(true)); box.addEventListener('mouseleave', () => sync(false));

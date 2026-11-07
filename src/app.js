@@ -231,11 +231,30 @@ function fnSource(fn) {
 
 function tplAI(t) {
   return t.ai +
+    (t.style ? '\n【推荐主题】data-style="' + t.style + '" data-theme="light"（默认）；深色改为 data-theme="dark"。系统 APP 使用自己的风格灵感，不随全站风格选择改变；预览仅跟随全站明暗，交互状态不重置。' : '') +
     '\n【依赖组件】' + t.uses.join('、') +
-    '\n【组件库】ui-catalog 零依赖 Web Components：引入 tokens.css + components/index.js；换风格只改 <html> 上的 data-style / data-theme，模板样式只能用 var(--ui-*) 变量';
+    '\n【组件库】ui-catalog 零运行时依赖 Web Components：引入 tokens.css + components/index.js；' +
+    (t.style ? '局部容器明确设置推荐 data-style 与 data-theme；' : '换风格只改 <html> 上的 data-style / data-theme；') + '模板样式只能用 var(--ui-*) 变量';
 }
 
 function tplCode(t) {
+  if (t.style) {
+    /* 系统 APP 导出为完整本地页面；init 源码不能引用数据模块的闭包。 */
+    return '<!DOCTYPE html>\n<html lang="zh-CN" data-style="' + t.style + '" data-theme="light">\n<head>\n' +
+      '<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
+      '<title>' + esc(t.name) + ' · 本地示例</title>\n' +
+      '<!-- 在仓库根目录保存此 HTML；迁移时调整下面两个本地资源路径。 -->\n' +
+      '<link rel="stylesheet" href="./src/styles/tokens.css">\n<style>\n' +
+      'body{margin:0;background:var(--ui-bg)}\n' +
+      '.tpl-export{width:min(100%,375px);height:100dvh;max-height:760px;margin:0 auto}\n' +
+      TPL_BASE_CSS + '\n' + t.css + '\n</style>\n</head>\n<body>\n' +
+      '<!-- 原创风格灵感，非官方产品；只操作本地示例。默认浅色，深色时同步下面容器与 html 的 data-theme。 -->\n' +
+      '<main class="tpl-export" data-style="' + t.style + '" data-theme="light" aria-label="' + esc(t.name) + '">\n' + t.html + '\n</main>\n' +
+      '<script type="module">\nimport \'./src/components/index.js\';\n' +
+      fnSource(t.init) + '\nawait new Promise((resolve) => setTimeout(resolve, 0));\n' +
+      'const root = document.querySelector(\'.t-' + t.id + '\');\ninit(root);\nroot.dataset.ready = \'1\';\n' +
+      '</script>\n</body>\n</html>';
+  }
   return '<!-- 页面结构 -->\n' + formatHtml(t.html) +
     '\n\n/* 公共骨架样式（所有模板共用） */' + TPL_BASE_CSS +
     '\n/* 模板样式 */' + t.css +
@@ -257,7 +276,8 @@ function paneTplDesign(t) {
 const VW = [['桌面', ''], ['平板', '768'], ['手机', '390']];
 function tplFrame(t) {
   if (t.frame === 'phone') {
-    return '<div class="tphone"><div class="tphone__sb" aria-hidden="true"><span>9:41</span><span>▂▄▆ 5G ▭</span></div>' + t.html + '</div>';
+    const local = t.style ? ' data-template-style="' + t.style + '" data-style="' + t.style + '" data-theme="' + state.theme + '"' : '';
+    return '<div class="tphone"' + local + '><div class="tphone__sb" aria-hidden="true"><span>9:41</span><span>▂▄▆ 5G ▭</span></div>' + t.html + '</div>';
   }
   return '<div class="tbrowser' + (t.fit ? ' tbrowser--fit' : '') + '"><div class="tbrowser__bar" aria-hidden="true"><i></i><i></i><i></i><span>' + esc(t.url || 'example.com') + '</span></div>' +
     '<div class="tbrowser__vp"><div class="tbrowser__page" data-page>' + t.html + '</div></div></div>';
@@ -348,7 +368,7 @@ function render() {
     main.innerHTML = tl.length
       ? '<p class="hint">' + (state.tcat === '全部' ? '全部模板' : state.tcat) + ' · ' + tl.length + ' 个' +
         (state.q ? '（搜索「' + esc(state.q) + '」）' : '') +
-        ' · 整页布局 + 操作逻辑，全部用组件库拼成，切换风格 / 明暗会一起变；预览可以直接点、滑、拖。</p>' +
+        ' · 整页布局 + 操作逻辑。系统 APP 使用各自风格灵感，只跟随全站明暗；其余模板跟随全站风格与明暗。预览可直接操作，系统 APP 数据均为本地示例。</p>' +
         '<div class="grid tgrid">' + tl.map(tplCardHTML).join('') + '</div>'
       : '<p class="none">没有匹配的模板，换个关键词试试～</p>';
     mountTemplates();
@@ -410,6 +430,8 @@ function applyStyle(id) {
 
 function applyTheme() {
   document.documentElement.setAttribute('data-theme', state.theme);
+  /* 只更新局部变量，不重建模板，保留筛选、勾选、连接与滚动状态。 */
+  main.querySelectorAll('.tphone[data-template-style]').forEach(function (phone) { phone.setAttribute('data-theme', state.theme); });
   themeBtn.textContent = state.theme === 'light' ? '🌙 暗色' : '☀️ 亮色';
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute('content', getComputedStyle(document.documentElement).getPropertyValue('--ui-bg').trim());

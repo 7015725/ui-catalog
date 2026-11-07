@@ -9,7 +9,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -22,7 +22,7 @@ jobs:
 
       - name: 安装无头浏览器
         run: |
-          npm i --no-save playwright@1.63.0
+          npm i --no-save --package-lock=false playwright@1.63.0 @axe-core/playwright@4.14.0
           npx playwright install --with-deps chromium
 
       - name: 启动开发服务器
@@ -32,3 +32,12 @@ jobs:
 
       - name: 回归测试（test.html）
         run: node scripts/run-tests.mjs
+
+      - name: 验收脚本负例与真实出口回归
+        run: npm run test:guards
+
+      - name: 系统 APP 画廊与响应式回归
+        run: npm run test:mobile
+
+      - name: 全风格无障碍与屏宽矩阵
+        run: npm run test:a11y

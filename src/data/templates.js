@@ -3,8 +3,9 @@
    字段说明：
    id      —— 唯一标识（样式作用域 .t-<id>）
    name    —— 中文名
-   cat     —— 分类：移动 APP / Web 页面 / JS 绘制
+   cat     —— 分类：移动 APP / 系统 APP / Web 页面 / JS 绘制
    frame   —— 预览外框：phone 手机框 / browser 浏览器框（可切换桌面 / 平板 / 手机宽度）
+   style   —— 可选：模板推荐且固定的局部风格（明暗仍跟随全站）
    url     —— 浏览器框地址栏里显示的示例地址
    fit     —— 浏览器框高度跟随内容（Canvas 模板），否则固定高度、视口内滚动
    brief   —— 一句话说明页面由哪些部分组成
@@ -16,9 +17,10 @@
    design  —— 设计说明：purpose / when / avoid / tips
    ========================================================= */
 import { appTemplates } from './templates-app.js';
+import { mobileTemplates } from './templates-mobile.js';
 import { webTemplates } from './templates-web.js';
 import { canvasTemplates } from './templates-canvas.js';
 
 export { TPL_BASE_CSS } from './templates-shared.js';
-export const TPL_CATS = ['移动 APP', 'Web 页面', 'JS 绘制'];
-export const templates = appTemplates.concat(webTemplates, canvasTemplates);
+export const TPL_CATS = ['移动 APP', '系统 APP', 'Web 页面', 'JS 绘制'];
+export const templates = appTemplates.concat(mobileTemplates, webTemplates, canvasTemplates);
