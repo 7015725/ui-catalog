@@ -48,9 +48,9 @@
 
 ```html
 <!-- 1. 设计变量（颜色 / 圆角 / 阴影；当前 main 含 21 套风格，固定版本以发布内容为准） -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/7015725/ui-catalog@v1.0.0/src/styles/tokens.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/7015725/ui-catalog@v1.2.0/src/styles/tokens.css">
 <!-- 2. 注册全部组件 -->
-<script type="module" src="https://cdn.jsdelivr.net/gh/7015725/ui-catalog@v1.0.0/src/components/index.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/7015725/ui-catalog@v1.2.0/src/components/index.js"></script>
 
 <!-- 3. 选一套风格和明暗，然后直接写标签 -->
 <html data-style="nord" data-theme="light">
@@ -60,7 +60,7 @@
 </html>
 ```
 
-- `@v1.0.0` 是固定版本（推荐，永久缓存、不会突然变化）；想始终用最新代码可以换成 `@main`（CDN 缓存最长约 12 小时）。
+- `@v1.2.0` 是固定版本（推荐，永久缓存、不会突然变化）；想始终用最新代码可以换成 `@main`（CDN 缓存最长约 12 小时）。
 - 只想要一部分组件时，把 `components/index.js` 换成具体文件，例如 `components/form.js`、`components/charts2.js`。
 - 函数式 API 会挂在 `window` 上：`uiToast()`、`uiNotify()`、`uiConfetti()`。
 
