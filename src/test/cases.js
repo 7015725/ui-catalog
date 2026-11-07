@@ -597,6 +597,21 @@ export const MATERIAL_TAGS = {
 };
 
 describe('颜色约定', () => {
+  it('每套风格都给出自己的辅助色 --ui-accent（不靠继承默认的洋红）', (host) => {
+    /* aurora 就是默认值；glass 沿用默认配色，是有意继承 */
+    const inherit = ['aurora', 'glass'];
+    const read = (attrs) => { host.innerHTML = '<div ' + attrs + '></div>'; return getComputedStyle(host.firstChild).getPropertyValue('--ui-accent').trim(); };
+    const base = { light: read('data-theme="light"'), dark: read('data-theme="dark"') };
+    const bad = [];
+    for (const { id } of styles) {
+      if (inherit.includes(id)) continue;
+      if (read('data-style="' + id + '" data-theme="light"') === base.light) bad.push(id + '/light');
+      // brutal 的深色沿用自己浅色的黄色系，只要不是默认深色值即可
+      if (read('data-style="' + id + '" data-theme="dark"') === base.dark) bad.push(id + '/dark');
+    }
+    expect(bad).toEqual([]);
+  });
+
   it('写死的颜色只出现在 MATERIAL_TAGS 名单里的组件', () => {
     const bad = [];
     for (const [tag, css] of cssRegistry) {

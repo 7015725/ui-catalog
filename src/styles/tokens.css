@@ -438,7 +438,7 @@
   color-scheme:light;text-shadow:none;
   --ui-bg:#f4f6fa; --ui-panel:#ffffff; --ui-panel-2:#eceff5;
   --ui-text:#1b2534; --ui-sub:#566276; --ui-line:#d7dfe9;
-  --ui-brand:#2458bf; --ui-brand-ink:#ffffff; --ui-brand-soft:#e7efff;
+  --ui-brand:#2458bf; --ui-brand-ink:#ffffff; --ui-accent:#6a4fc2; --ui-brand-soft:#e7efff;
   --ui-ok:#176d40; --ui-ok-soft:#e0f3e7; --ui-warn:#93510d; --ui-warn-soft:#fff1d8;
   --ui-danger:#ad3034; --ui-danger-soft:#fce5e6; --ui-on-color:#ffffff;
   --ui-font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
@@ -452,7 +452,7 @@
   color-scheme:dark;
   --ui-bg:#10151d; --ui-panel:#19212d; --ui-panel-2:#222d3c;
   --ui-text:#f1f5fc; --ui-sub:#bec8d9; --ui-line:#3b485c;
-  --ui-brand:#9dbfff; --ui-brand-ink:#10203b; --ui-brand-soft:#233450;
+  --ui-brand:#9dbfff; --ui-brand-ink:#10203b; --ui-accent:#c9b8ff; --ui-brand-soft:#233450;
   --ui-ok:#87d9ac; --ui-ok-soft:#183827; --ui-warn:#f4c27f; --ui-warn-soft:#3d2c18;
   --ui-danger:#ffa8aa; --ui-danger-soft:#432426; --ui-on-color:#10151d;
   --ui-shadow-sm:0 1px 2px color-mix(in srgb,var(--ui-bg) 50%,transparent);
@@ -464,7 +464,7 @@
   color-scheme:light;text-shadow:none;
   --ui-bg:#f2f7f8; --ui-panel:#ffffff; --ui-panel-2:#e8f0f2;
   --ui-text:#173034; --ui-sub:#4c666b; --ui-line:#ccdde0;
-  --ui-brand:#00636b; --ui-brand-ink:#ffffff; --ui-brand-soft:#def0f0;
+  --ui-brand:#00636b; --ui-brand-ink:#ffffff; --ui-accent:#2f6493; --ui-brand-soft:#def0f0;
   --ui-ok:#176d40; --ui-ok-soft:#e0f3e7; --ui-warn:#93510d; --ui-warn-soft:#fff1d8;
   --ui-danger:#ad3034; --ui-danger-soft:#fce5e6; --ui-on-color:#ffffff;
   --ui-font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
@@ -478,7 +478,7 @@
   color-scheme:dark;
   --ui-bg:#0e181b; --ui-panel:#17262b; --ui-panel-2:#203239;
   --ui-text:#eaf7f8; --ui-sub:#b4ccd1; --ui-line:#39535c;
-  --ui-brand:#7fd8dc; --ui-brand-ink:#092a2d; --ui-brand-soft:#1a3c42;
+  --ui-brand:#7fd8dc; --ui-brand-ink:#092a2d; --ui-accent:#a7cdf2; --ui-brand-soft:#1a3c42;
   --ui-ok:#87d9ac; --ui-ok-soft:#183827; --ui-warn:#f4c27f; --ui-warn-soft:#3d2c18;
   --ui-danger:#ffa8aa; --ui-danger-soft:#432426; --ui-on-color:#0e181b;
   --ui-shadow-sm:0 1px 3px color-mix(in srgb,var(--ui-bg) 50%,transparent);
@@ -490,7 +490,7 @@
   color-scheme:light;text-shadow:none;
   --ui-bg:#f3f5f9; --ui-panel:#ffffff; --ui-panel-2:#e9edf4;
   --ui-text:#202938; --ui-sub:#586478; --ui-line:#d8dfeb;
-  --ui-brand:#2857aa; --ui-brand-ink:#ffffff; --ui-brand-soft:#e5edfc;
+  --ui-brand:#2857aa; --ui-brand-ink:#ffffff; --ui-accent:#6a50b8; --ui-brand-soft:#e5edfc;
   --ui-ok:#176d40; --ui-ok-soft:#e0f3e7; --ui-warn:#93510d; --ui-warn-soft:#fff1d8;
   --ui-danger:#ad3034; --ui-danger-soft:#fce5e6; --ui-on-color:#ffffff;
   --ui-font:ui-rounded,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
@@ -504,7 +504,7 @@
   color-scheme:dark;
   --ui-bg:#11151d; --ui-panel:#1d2430; --ui-panel-2:#263142;
   --ui-text:#f2f5fb; --ui-sub:#bdc8da; --ui-line:#40506a;
-  --ui-brand:#a0c1ff; --ui-brand-ink:#172946; --ui-brand-soft:#243854;
+  --ui-brand:#a0c1ff; --ui-brand-ink:#172946; --ui-accent:#c8b6ff; --ui-brand-soft:#243854;
   --ui-ok:#87d9ac; --ui-ok-soft:#183827; --ui-warn:#f4c27f; --ui-warn-soft:#3d2c18;
   --ui-danger:#ffa8aa; --ui-danger-soft:#432426; --ui-on-color:#11151d;
   --ui-shadow-sm:0 1px 2px color-mix(in srgb,var(--ui-bg) 50%,transparent);
@@ -516,7 +516,7 @@
   color-scheme:light;text-shadow:none;
   --ui-bg:#f3f6fb; --ui-panel:#ffffff; --ui-panel-2:#eaf0f8;
   --ui-text:#1b2a40; --ui-sub:#53637a; --ui-line:#d2dfef;
-  --ui-brand:#1c58b4; --ui-brand-ink:#ffffff; --ui-brand-soft:#e2ecfc;
+  --ui-brand:#1c58b4; --ui-brand-ink:#ffffff; --ui-accent:#0e6f80; --ui-brand-soft:#e2ecfc;
   --ui-ok:#176d40; --ui-ok-soft:#e0f3e7; --ui-warn:#93510d; --ui-warn-soft:#fff1d8;
   --ui-danger:#ad3034; --ui-danger-soft:#fce5e6; --ui-on-color:#ffffff;
   --ui-font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
@@ -530,7 +530,7 @@
   color-scheme:dark;
   --ui-bg:#101722; --ui-panel:#1b2636; --ui-panel-2:#233249;
   --ui-text:#edf4fe; --ui-sub:#bfd0e4; --ui-line:#3e526e;
-  --ui-brand:#9dbfff; --ui-brand-ink:#132846; --ui-brand-soft:#223b5d;
+  --ui-brand:#9dbfff; --ui-brand-ink:#132846; --ui-accent:#8fd6e3; --ui-brand-soft:#223b5d;
   --ui-ok:#87d9ac; --ui-ok-soft:#183827; --ui-warn:#f4c27f; --ui-warn-soft:#3d2c18;
   --ui-danger:#ffa8aa; --ui-danger-soft:#432426; --ui-on-color:#101722;
   --ui-shadow-sm:0 1px 3px color-mix(in srgb,var(--ui-bg) 50%,transparent);
@@ -542,7 +542,7 @@
   color-scheme:light;text-shadow:none;
   --ui-bg:#f7f4f1; --ui-panel:#fffefc; --ui-panel-2:#f0eae5;
   --ui-text:#302520; --ui-sub:#69605b; --ui-line:#ded4cc;
-  --ui-brand:#a33f34; --ui-brand-ink:#ffffff; --ui-brand-soft:#f5e4df;
+  --ui-brand:#a33f34; --ui-brand-ink:#ffffff; --ui-accent:#8a5a12; --ui-brand-soft:#f5e4df;
   --ui-ok:#176d40; --ui-ok-soft:#e0f3e7; --ui-warn:#93510d; --ui-warn-soft:#fff1d8;
   --ui-danger:#ad3034; --ui-danger-soft:#fce5e6; --ui-on-color:#ffffff;
   --ui-font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
@@ -556,7 +556,7 @@
   color-scheme:dark;
   --ui-bg:#1c1614; --ui-panel:#2a211e; --ui-panel-2:#342923;
   --ui-text:#faf0e9; --ui-sub:#d0bfb5; --ui-line:#554036;
-  --ui-brand:#ffc0b1; --ui-brand-ink:#3c1c16; --ui-brand-soft:#442c27;
+  --ui-brand:#ffc0b1; --ui-brand-ink:#3c1c16; --ui-accent:#f3cf8e; --ui-brand-soft:#442c27;
   --ui-ok:#87d9ac; --ui-ok-soft:#183827; --ui-warn:#f4c27f; --ui-warn-soft:#3d2c18;
   --ui-danger:#ffa8aa; --ui-danger-soft:#432426; --ui-on-color:#1c1614;
   --ui-shadow-sm:0 1px 2px color-mix(in srgb,var(--ui-bg) 50%,transparent);
@@ -568,7 +568,7 @@
   color-scheme:light;text-shadow:none;
   --ui-bg:#fbfcfb; --ui-panel:#ffffff; --ui-panel-2:#f0f4f2;
   --ui-text:#22352f; --ui-sub:#536a60; --ui-line:#d8e2dc;
-  --ui-brand:#146b56; --ui-brand-ink:#ffffff; --ui-brand-soft:#e5f2ed;
+  --ui-brand:#146b56; --ui-brand-ink:#ffffff; --ui-accent:#2c6a86; --ui-brand-soft:#e5f2ed;
   --ui-ok:#176d40; --ui-ok-soft:#e0f3e7; --ui-warn:#93510d; --ui-warn-soft:#fff1d8;
   --ui-danger:#ad3034; --ui-danger-soft:#fce5e6; --ui-on-color:#ffffff;
   --ui-font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
@@ -580,7 +580,7 @@
   color-scheme:dark;
   --ui-bg:#131c18; --ui-panel:#1d2b24; --ui-panel-2:#27382f;
   --ui-text:#edf8f0; --ui-sub:#bed0c4; --ui-line:#42564a;
-  --ui-brand:#a0dcb9; --ui-brand-ink:#173527; --ui-brand-soft:#254234;
+  --ui-brand:#a0dcb9; --ui-brand-ink:#173527; --ui-accent:#a9d6ea; --ui-brand-soft:#254234;
   --ui-ok:#87d9ac; --ui-ok-soft:#183827; --ui-warn:#f4c27f; --ui-warn-soft:#3d2c18;
   --ui-danger:#ffa8aa; --ui-danger-soft:#432426; --ui-on-color:#131c18;
 }
