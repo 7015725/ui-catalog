@@ -20,7 +20,8 @@ import { appTemplates } from './templates-app.js';
 import { mobileTemplates } from './templates-mobile.js';
 import { webTemplates } from './templates-web.js';
 import { canvasTemplates } from './templates-canvas.js';
+import { liquidGlassTemplates } from './templates-liquid-glass.js';
 
 export { TPL_BASE_CSS } from './templates-shared.js';
 export const TPL_CATS = ['移动 APP', '系统 APP', 'Web 页面', 'JS 绘制'];
-export const templates = appTemplates.concat(mobileTemplates, webTemplates, canvasTemplates);
+export const templates = appTemplates.concat(mobileTemplates, webTemplates, liquidGlassTemplates, canvasTemplates);

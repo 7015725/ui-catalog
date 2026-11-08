@@ -11,6 +11,7 @@
     "test:mobile": "node scripts/test-mobile-previews.mjs",
     "test:a11y": "node scripts/test-accessibility.mjs",
     "test:guards": "node scripts/test-validation-guards.mjs",
+    "test:liquid": "node scripts/test-liquid-glass.mjs",
     "check": "node scripts/check.mjs"
   }
 }

@@ -4,11 +4,11 @@
 ![零依赖](https://img.shields.io/badge/依赖-0-brightgreen)
 ![组件](https://img.shields.io/badge/组件-167-4f7cff)
 ![风格](https://img.shields.io/badge/UI%20风格-21-8b5cf6)
-![模板](https://img.shields.io/badge/界面模板-19-f59e0b)
+![模板](https://img.shields.io/badge/界面模板-20-f59e0b)
 ![无障碍](https://img.shields.io/badge/WCAG-AA-15803d)
 [![MIT](https://img.shields.io/badge/license-MIT-lightgrey)](./LICENSE)
 
-一套**零运行时依赖**的原生 Web Components 组件库：**167 个组件 · 21 套 UI 风格（各含浅色 / 深色）· 19 个界面模板**，
+一套**零运行时依赖**的原生 Web Components 组件库：**167 个组件 · 21 套 UI 风格（各含浅色 / 深色）· 20 个界面模板**，
 每个组件和模板都配有「预览 / AI 提示词 / 设计说明 / 代码」，可以直接把提示词交给 AI Agent 生成同风格界面。
 
 🔗 **在线预览：[7015725.github.io/ui-catalog](https://7015725.github.io/ui-catalog/)**　·　回归测试页：[test.html](https://7015725.github.io/ui-catalog/test.html)
@@ -154,29 +154,45 @@ src/
     templates-app.js       移动 APP 模板（6 个）
     templates-mobile.js    系统 APP 原创风格灵感预览（6 个）
     templates-web.js       Web 页面模板（4 个）
+    templates-liquid-glass.js 液态玻璃经营后台（原生 Web 模板）
     templates-canvas.js    JS 绘制模板（3 个）
 scripts/
   check.mjs                跨平台语法检查（npm run check）
   run-tests.mjs            无头浏览器跑全部回归用例（npm test，CI 同款）
   test-mobile-previews.mjs 系统 APP 画廊级验证（npm run test:mobile）
+  test-liquid-glass.mjs    液态玻璃完整 HTML 代码出口（npm run test:liquid）
   test-accessibility.mjs   全风格/主题/宽度/视图矩阵（npm run test:a11y）
   test-validation-guards.mjs 验收脚本负例与真实正常页（npm run test:guards）
 docs/SPEC.md              ★ 项目第一约束与验收标准
+examples/liquid-glass-dashboard.html 原始独立单页（内嵌资源与字体许可）
 docs/screenshots/          README 用的截图与动图
 .github/workflows/test.yml 每次推送自动跑语法、回归、系统 APP、验收脚本负例与全风格矩阵
 ```
 
 ## 界面模板（整页布局 + 操作逻辑）
 
-顶栏切到「界面模板」，可以看到 19 个整页模板。和组件卡片一样，每个模板都有 **AI 提示词 / 设计说明 / 代码** 三个标签页，
+顶栏切到「界面模板」，可以看到 20 个整页模板。和组件卡片一样，每个模板都有 **AI 提示词 / 设计说明 / 代码** 三个标签页，
 预览可直接操作，并在手机框内独立滚动。**系统 APP 使用各自推荐风格，只跟随全站明暗；其余模板继续跟随全站风格与明暗。** 明暗切换不重建系统 APP，也不丢失当前筛选、勾选、连接或日期状态。
 
 | 类型 | 预览方式 | 模板 |
 |---|---|---|
 | 移动 APP（6） | 手机框，375 宽，内容区独立滚动 + 底部导航 | 电商首页、外卖 / 本地生活、社交动态、银行 / 理财、健身健康、智能家居 |
 | 系统 APP（6） | 手机框，独立滚动；各自风格 + 全局明暗 | 系统设置、文件管理、提醒事项、设备中心、原子日程、轻量笔记 |
-| Web 页面（4） | 浏览器框，可切换 桌面 / 平板 / 手机 宽度 | 后台仪表盘、产品落地页、内容门户 / 博客、邮件 / 三栏工作台 |
+| Web 页面（5） | 浏览器框，可切换 桌面 / 平板 / 手机 宽度 | 后台仪表盘、产品落地页、内容门户 / 博客、邮件 / 三栏工作台、液态玻璃后台 |
 | JS 绘制（3） | 浏览器框，界面主体画在 `<canvas>` 上 | 监控数据大屏、游戏菜单 / HUD、白板 / 画布编辑器 |
+
+### 液态玻璃后台入口与操作
+
+顶栏「界面模板」→「Web 页面」→「液态玻璃后台」（`liquid-glass-dashboard`），也可搜索「液态玻璃」。原生预览复用库组件，跟随全局风格与明暗，不使用 iframe。
+
+- 悬浮岛侧栏与底部 Dock 联动切换页面；桌面侧栏可收起与展开。
+- 收入趋势、客户结构、目标追踪、产品表现、收入来源、订单动态六个模块可原位展开；其它模块收为缩略条，支持切换详情及关闭 / Esc 收回。
+- 时间胶囊选择今日 / 本周 / 本月 / 本季，同步更新本地示例指标和图表；方向键、Home / End、Enter / Space 与 Esc 可完成选择。
+- 搜索按钮或模板区域 K / Ctrl+K 打开命令面板，实时过滤并高亮；上下键选择、Enter 跳转、Esc 关闭并归还焦点。
+- 「代码」导出可独立运行的完整 HTML，包含当前风格、明暗、容器查询与本地动效导入；迁移时调整 `src/styles/tokens.css`、`src/components/index.js` 和 `src/lib/motion.js` 三条资源路径。
+- 卡片的「打开原始单页」链接保留最初的独立 HTML：内嵌 CSS、JS、图标和 Manrope 字体及许可，不依赖 CDN；它不跟随画廊换肤。
+
+全部数字和订单均为固定本地示例，不请求外部接口，不读取真实经营数据。
 
 ### 系统 APP 入口与操作
 
@@ -379,7 +395,7 @@ register('ui-toast', UIToast, '.ui-toast{background:var(--ui-panel);border:var(-
 
 ## 测试
 
-零运行时依赖回归测试页：`/test.html`（173 条用例）。保留 1.1.0 的 95 条基线用例（含颜色白名单、冒泡事件、模板、Canvas、键盘与焦点、无障碍和动效清理），并补充六个系统 APP 的真实操作、独立代码出口、局部风格隔离及全部风格的对比度断言。
+零运行时依赖回归测试页：`/test.html`（198 条用例）。保留 1.1.0 的 95 条基线用例（含颜色白名单、冒泡事件、模板、Canvas、键盘与焦点、无障碍和动效清理），并补充系统 APP、液态玻璃后台的真实操作、独立代码出口、局部风格隔离及全部风格的对比度断言。
 
 自动化测试需要 **Playwright + Chromium + axe-core**，仅为开发测试依赖；本地启动和页面运行仍无需 `npm install` 或构建。
 
@@ -390,6 +406,7 @@ npx playwright install chromium
 npm start            # 另开一个终端启动服务器后：
 npm test             # 无头浏览器跑完回归页与原组件画廊
 npm run test:mobile  # 系统 APP 风格、状态保留、复制、独立运行与屏宽
+npm run test:liquid  # 液态玻璃完整 HTML 复制代码与独立初始化
 npm run test:guards  # 用故障夹具验证旧报告、损坏出口、状态丢失等情况会被拒绝
 npm run test:a11y    # 全风格/明暗/屏宽/视图矩阵（含 best-practice）
 ```
@@ -399,8 +416,8 @@ npm run test:a11y    # 全风格/明暗/屏宽/视图矩阵（含 best-practice�
 ## 当前状态
 
 - **167 个组件**全部可渲染、可交互；画廊逐个点击所有控件 + 键盘操作，无报错
-- **19 个界面模板**：保留原 13 个，新增系统 APP 的搜索/筛选、开关、任务进度、设备连接、日期与置顶操作均有真实回归
-- **173 条回归用例**已在本地通过，保留原有用例；提交前另跑系统 APP 画廊级 `npm run test:mobile` 与完整 `npm run test:a11y`
+- **20 个界面模板**：保留原 19 个，新增液态玻璃后台的模块钻取、周期选择、命令搜索、响应式与焦点归还回归
+- **198 条回归用例**已在本地通过，保留原有用例；提交前另跑 `npm run test:mobile`、`npm run test:liquid` 与完整 `npm run test:a11y`
 - **响应式**：原 15 套风格的既有 360 / 820 / 1440 验证保留；新增 6 个系统 APP 覆盖 320 / 390 / 768 / 1440，内容独立滚动
 - **无障碍验收**：按 `docs/SPEC.md` 检查全部风格与明暗、键盘、可访问名称、触控目标、pressed/live 状态及 axe-core（包含 best-practice）
 - **动效**：全部尊重 `prefers-reduced-motion` 与 `data-motion="reduce"`；动画循环离开视口 / 标签页隐藏时暂停，组件移除时清理

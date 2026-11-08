@@ -238,19 +238,25 @@ function tplAI(t) {
 }
 
 function tplCode(t) {
-  if (t.style) {
-    /* 系统 APP 导出为完整本地页面；init 源码不能引用数据模块的闭包。 */
-    return '<!DOCTYPE html>\n<html lang="zh-CN" data-style="' + t.style + '" data-theme="light">\n<head>\n' +
+  if (t.style || t.exportDocument) {
+    /* 完整原生页面：保留 HTML 字面量，明确所有本地模块依赖。 */
+    const style = t.style || state.style;
+    const theme = t.style ? 'light' : state.theme;
+    const frameCss = t.frame === 'phone'
+      ? '.tpl-export{width:min(100%,375px);height:100dvh;max-height:760px;margin:0 auto}'
+      : '.tpl-export{width:100%;max-width:1440px;height:100vh;min-height:100vh;margin:0 auto;container:tpl/inline-size;overflow:auto}';
+    const imports = Array.isArray(t.imports) ? t.imports.join('\n') + '\n' : '';
+    return '<!DOCTYPE html>\n<html lang="zh-CN" data-style="' + esc(style) + '" data-theme="' + esc(theme) + '"' +
+      (state.motion === 'reduce' ? ' data-motion="reduce"' : '') + '>\n<head>\n' +
       '<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
       '<title>' + esc(t.name) + ' · 本地示例</title>\n' +
-      '<!-- 在仓库根目录保存此 HTML；迁移时调整下面两个本地资源路径。 -->\n' +
+      '<!-- 在仓库根目录保存此 HTML；迁移时调整下方明确列出的本地资源路径。 -->\n' +
       '<link rel="stylesheet" href="./src/styles/tokens.css">\n<style>\n' +
-      'body{margin:0;background:var(--ui-bg)}\n' +
-      '.tpl-export{width:min(100%,375px);height:100dvh;max-height:760px;margin:0 auto}\n' +
+      'body{margin:0;background:var(--ui-bg)}\n' + frameCss + '\n' +
       TPL_BASE_CSS + '\n' + t.css + '\n</style>\n</head>\n<body>\n' +
-      '<!-- 原创风格灵感，非官方产品；只操作本地示例。默认浅色，深色时同步下面容器与 html 的 data-theme。 -->\n' +
-      '<main class="tpl-export" data-style="' + t.style + '" data-theme="light" aria-label="' + esc(t.name) + '">\n' + t.html + '\n</main>\n' +
-      '<script type="module">\nimport \'./src/components/index.js\';\n' +
+      '<!-- 原创本地示例，不读取或上传真实数据。风格与明暗上下文随代码一并导出。 -->\n' +
+      '<main class="tpl-export" data-style="' + esc(style) + '" data-theme="' + esc(theme) + '" aria-label="' + esc(t.name) + '">\n' + t.html + '\n</main>\n' +
+      '<script type="module">\nimport \'./src/components/index.js\';\n' + imports +
       fnSource(t.init) + '\nawait new Promise((resolve) => setTimeout(resolve, 0));\n' +
       'const root = document.querySelector(\'.t-' + t.id + '\');\ninit(root);\nroot.dataset.ready = \'1\';\n' +
       '</script>\n</body>\n</html>';
@@ -290,6 +296,7 @@ function tplCardHTML(t) {
     '<code>' + (web ? (t.cat === 'JS 绘制' ? 'Canvas' : '响应式 Web') : '移动端 · 375 宽') + '</code></h2>' +
     '<span class="cat">' + esc(t.cat) + '</span></div>' +
     '<div class="tcard__bar"><span>' + esc(t.brief) + '</span>' +
+    (t.example ? '<a class="tcard__example" href="' + esc(t.example) + '" target="_blank" rel="noopener noreferrer" aria-label="打开原始单页：' + esc(t.name) + '">打开原始单页</a>' : '') +
     (web ? '<div class="tvw" role="group" aria-label="' + esc(t.name) + ' 预览宽度">' + VW.map(function (v, i) {
       return '<button data-vw="' + v[1] + '" aria-pressed="' + (i === 0) + '">' + v[0] + '</button>';
     }).join('') + '</div>' : '') + '</div>' +

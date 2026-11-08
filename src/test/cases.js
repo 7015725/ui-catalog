@@ -10,6 +10,7 @@ import { styles } from './../data/styles.js';
 import { MOBILE_IDS } from './cases-mobile.js';
 import './cases-spec-mobile.js';
 import './cases-a11y-names.js';
+import { LIQUID_GLASS_IDS } from './cases-liquid-glass.js';
 
 const key = (k) => document.activeElement.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true }));
 const click = (el) => el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
@@ -469,6 +470,61 @@ describe('展示与导航扩展', () => {
 });
 
 describe('浮层扩展', () => {
+  it('ui-command Unicode 小写展开后仍高亮原字符串的匹配片段', async (host) => {
+    await put(host, '<ui-command hotkey=""></ui-command>');
+    const cmd = host.querySelector('ui-command');
+    cmd.show();
+    try {
+      const input = cmd._mask.querySelector('input');
+      for (const [label, query, highlighted] of [
+        ['İstanbul', 'stan', 'stan'],
+        ['İstanbul', 'STAN', 'stan'],
+        ['İstanbul', 'İ', 'İ'],
+        ['İstanbul', 'i\u0307s', 'İs'],
+        ['İİstanbul', 'stan', 'stan'],
+        ['😀İstanbul', 'stan', 'stan'],
+        ['AİBİC', 'bİ', 'Bİ']
+      ]) {
+        cmd.setAttribute('items', JSON.stringify([{ label }]));
+        input.value = query;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        expect(cmd._hits.map((item) => item.label)).toEqual([label]);
+        expect([...cmd._mask.querySelectorAll('mark')].map((mark) => mark.textContent)).toEqual([highlighted]);
+        expect(cmd._mask.querySelector('.ui-cmd__it span').textContent).toBe(label);
+      }
+    } finally {
+      cmd.close();
+    }
+  });
+
+  it('ui-command 高亮保留转义、中文与字面查询语义', async (host) => {
+    await put(host, '<ui-command hotkey=""></ui-command>');
+    const cmd = host.querySelector('ui-command');
+    cmd.show();
+    try {
+      const input = cmd._mask.querySelector('input');
+      for (const [label, query, marks, keywords] of [
+        ['<img src=x onerror="alert(1)">İ客户&<b>资料</b>', '客户&<b>', ['客户&<b>']],
+        ['İ [a+b].*? 说明', '[a+b].*?', ['[a+b].*?']],
+        ['客户客户洞察', '客户', ['客户']],
+        ['İstanbul <img src=x>', '客户', [], '客户'],
+        ['İstanbul <img src=x>', '', []]
+      ]) {
+        cmd.setAttribute('items', JSON.stringify([{ label, keywords }]));
+        input.value = query;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        expect(cmd._hits.length).toBe(1);
+        const span = cmd._mask.querySelector('.ui-cmd__it span');
+        expect(span.textContent).toBe(label);
+        expect([...span.querySelectorAll('mark')].map((mark) => mark.textContent)).toEqual(marks);
+        expect([...span.children].every((node) => node.localName === 'mark')).toBe(true);
+        expect(cmd._mask.querySelectorAll('img, b, script').length).toBe(0);
+      }
+    } finally {
+      cmd.close();
+    }
+  });
+
   it('ui-command Ctrl+K 打开、过滤、回车执行并归还焦点', async (host) => {
     await put(host, `<button id="before">x</button><ui-command items='[{"label":"打开设置"},{"label":"新建项目"}]'></ui-command>`);
     const cmd = host.querySelector('ui-command');
@@ -922,8 +978,8 @@ describe('界面模板', () => {
       expect(/#[0-9a-f]{3,6}\b/i.test(t.css)).toBe(false);
     });
     const original = ['shop', 'food', 'social', 'bank', 'fit', 'home', 'admin', 'landing', 'portal', 'mail', 'cvdash', 'cvgame', 'cvboard'];
-    original.concat(MOBILE_IDS).forEach((id) => expect(ids.has(id)).toBe(true));
-    expect(templates.length).toBe(original.length + MOBILE_IDS.length);
+    original.concat(MOBILE_IDS, LIQUID_GLASS_IDS).forEach((id) => expect(ids.has(id)).toBe(true));
+    expect(templates.length).toBe(original.length + MOBILE_IDS.length + LIQUID_GLASS_IDS.length);
   });
 
   it('每个模板挂载后 init 不报错，并且用到的组件都已注册', async (host) => {

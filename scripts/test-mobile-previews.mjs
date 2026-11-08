@@ -18,6 +18,7 @@ const expected = [
   { id: 'flyme-notes', style: 'flyme' }
 ];
 const original = ['shop', 'food', 'social', 'bank', 'fit', 'home', 'admin', 'landing', 'portal', 'mail', 'cvdash', 'cvgame', 'cvboard'];
+const currentAdditions = ['liquid-glass-dashboard'];
 const viewportWidths = [1440, 768, 390, 320];
 const globalStyles = ['brutal', 'terminal', 'material', 'neumorph', 'luxury'];
 const transitions = ['theme:dark', ...globalStyles.map((style) => 'style:' + style), 'style:aurora', 'theme:light'];
@@ -231,7 +232,9 @@ try {
     assert.ok(templates.some((t) => t.id === item.id && t.style === item.style), '缺少配套 APP 模板：' + item.id);
   }
   assert.equal(styles.length, 21, '应保留原 15 套并新增 6 套风格');
-  assert.equal(templates.length, 19, '应保留原 13 个并新增 6 个模板');
+  assert.equal(templates.length, original.length + expected.length + currentAdditions.length, '必须保留原模板、六个系统 APP 和新增 Web 模板');
+  assert.equal(new Set(templates.map((template) => template.id)).size, templates.length, '模板 ID 不能重复');
+  currentAdditions.forEach((id) => assert.ok(templates.some((template) => template.id === id), '新增模板丢失：' + id));
   original.forEach((id) => assert.ok(templates.some((t) => t.id === id), '原模板丢失：' + id));
 
   stage = 'launch';

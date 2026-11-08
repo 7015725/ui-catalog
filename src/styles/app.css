@@ -239,6 +239,11 @@ html[data-style="luxury"][data-theme="dark"] body{background:
 .tcard--web{grid-column:1/-1}
 .tcard__bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
   padding:8px 14px;font-size:12px;color:var(--ui-sub);border-bottom:1px dashed var(--ui-line)}
+.tcard__example{display:inline-flex;align-items:center;justify-content:center;min-height:var(--ui-ctl-h);padding-inline:var(--ui-gap);
+  border:var(--ui-border-w) solid var(--ui-line);border-radius:var(--ui-radius);background:var(--ui-panel);color:var(--ui-text);
+  font-family:var(--ui-font);font-size:inherit;text-decoration:none;white-space:nowrap}
+.tcard__example:hover{background:var(--ui-panel-2)}
+.tcard__example:focus-visible{outline:2px solid var(--ui-text);outline-offset:var(--ui-border-w)}
 .tvw{display:inline-flex;gap:2px;padding:2px;border:var(--ui-border-w) solid var(--ui-line);border-radius:var(--ui-radius-pill);background:var(--ui-panel)}
 .tvw button{font:inherit;font-size:12px;padding:4px 11px;border:0;border-radius:var(--ui-radius-pill);background:none;color:var(--ui-sub);cursor:pointer}
 .tvw button[aria-pressed="true"]{background:var(--ui-brand);color:var(--ui-brand-ink);font-weight:600}

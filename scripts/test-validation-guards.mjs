@@ -7,6 +7,7 @@ import { createServer, request as httpRequest } from 'node:http';
 import { mkdir, readFile, writeFile, chmod } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { chromium } from 'playwright';
 
 const option = (name, fallback) => {
   const index = process.argv.indexOf(name);
@@ -676,6 +677,46 @@ chromium.launch = async (...args) => {
     assert.ok(run.report.errors.filter((error) => error.stage === mode).length === 3, '三个 worker 的 ' + mode + ' 异常都必须归档');
   });
 }
+
+tests.set('liquid-export-root-overflow', async () => {
+  const name = 'liquid-export-root-overflow';
+  await withAppFixture(name, (source) => replaceOnce(source,
+    "      TPL_BASE_CSS + '\\n' + t.css + '\\n</style>\\n</head>\\n<body>\\n' +",
+    "      TPL_BASE_CSS + '\\n' + t.css + (t.id === 'liquid-glass-dashboard' ? '\\n/* KNOWN BROKEN EXPORT ROOT-WIDTH FIXTURE ONLY */\\n.t-liquid-glass-dashboard{min-width:2000px}' : '') + '\\n</style>\\n</head>\\n<body>\\n' +"), async (url) => {
+    const run = await runScript(name, 'test-liquid-glass.mjs', url);
+    evidence.cases.push(run.record);
+    const html = await readFile(join(run.artifacts, 'liquid-glass-dashboard-copied.html'), 'utf8');
+    assert.match(html, /KNOWN BROKEN EXPORT ROOT-WIDTH FIXTURE ONLY/, '必须损坏实际复制的出口，而非在检查后修改 DOM');
+    const browser = await chromium.launch();
+    let geometry;
+    try {
+      const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, reducedMotion: 'reduce' });
+      const page = await context.newPage();
+      const errors = [];
+      page.on('pageerror', (error) => errors.push(error.message));
+      await page.route('**/__qa_liquid_overflow_fixture.html', (route) => route.fulfill({ status: 200, contentType: 'text/html', body: html }));
+      await page.goto(new URL('__qa_liquid_overflow_fixture.html', url).href, { waitUntil: 'domcontentloaded' });
+      await page.waitForFunction(() => document.querySelector('.t-liquid-glass-dashboard')?.dataset.ready === '1');
+      geometry = await page.evaluate(() => {
+        const frame = document.querySelector('.tpl-export');
+        const root = document.querySelector('.t-liquid-glass-dashboard');
+        return { fixture: true, documentWidth: document.documentElement.clientWidth,
+          documentScrollWidth: document.documentElement.scrollWidth, exportWidth: frame.clientWidth,
+          exportScrollWidth: frame.scrollWidth, rootWidth: root.getBoundingClientRect().width };
+      });
+      assert.deepEqual(errors, [], '有效负例必须真实初始化，不能由脚本或资源报错代替几何失败');
+    } finally {
+      await browser.close();
+    }
+    await writeFile(join(run.dir, 'fixture-geometry.json'), JSON.stringify(geometry, null, 2));
+    assert.ok(geometry.documentScrollWidth <= geometry.documentWidth + 1, '必须复现 documentElement 不溢出的盲区');
+    assert.ok(geometry.rootWidth >= 2000, '损坏出口的根节点必须实际达到 2000px');
+    assert.ok(geometry.exportScrollWidth > geometry.exportWidth + 1, '必须实际在导出容器内部横向溢出');
+    assert.equal(run.record.signal, null, '负例必须自行退出，超时不算有效 RED');
+    assert.ok(run.record.exitCode !== 0, '导出容器内部横向溢出不得因 documentElement 未溢出而假绿');
+    assert.match(await readFile(run.record.stderr, 'utf8'), /独立 Web 导出容器不能横向溢出/, '拒绝必须来自容器几何断言');
+  });
+});
 
 tests.set('export-broken-init', async () => {
   await withAppFixture('export-broken-init', (source) => replaceOnce(source,

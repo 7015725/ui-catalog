@@ -154,6 +154,7 @@ ui-command{display:inline-block}
 .ui-cmd__it[aria-selected="true"]{background:var(--ui-brand-soft);color:var(--ui-brand)}
 .ui-cmd__it i{width:20px;text-align:center;font-style:normal}
 .ui-cmd__it span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ui-cmd__it mark{background:var(--ui-brand-soft);color:var(--ui-text);font-weight:var(--ui-font-weight-700)}
 .ui-cmd__empty{padding:28px 10px;text-align:center;font-size:13px;color:var(--ui-sub)}
 .ui-cmd__ft{display:flex;gap:14px;padding:8px 14px;border-top:var(--ui-border-w) solid var(--ui-line);font-size:11px;color:var(--ui-sub);background:var(--ui-panel-2)}
 @media (max-width:520px){.ui-cmd-mask{padding:10px;align-items:stretch}.ui-cmd{max-height:none}.ui-cmd__ft{display:none}}
@@ -162,6 +163,7 @@ ui-command{display:inline-block}
 `;
 
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+let commandSequence = 0;
 
 export class UICommand extends UIElement {
   static props = { items: { default: '[]' }, placeholder: { default: '输入命令或搜索…' }, hotkey: { default: 'k' } };
@@ -185,12 +187,13 @@ export class UICommand extends UIElement {
   }
   show() {
     if (!this._mask) {
+      this._listId = 'ui-cmd-list-' + (++commandSequence);
       const m = this._mask = document.createElement('div');
-      m.className = 'ui-cmd-mask';
+      m.className = 'ui-cmd-mask ui-mo';
       m.hidden = true;
       m.innerHTML = '<div class="ui-cmd" role="dialog" aria-modal="true" aria-label="命令面板">' +
-        '<div class="ui-cmd__in"><span aria-hidden="true">⌕</span><input role="combobox" aria-expanded="true" aria-controls="ui-cmd-list" aria-autocomplete="list"><kbd>Esc</kbd></div>' +
-        '<ul class="ui-cmd__list" id="ui-cmd-list" role="listbox"></ul>' +
+        '<div class="ui-cmd__in"><span aria-hidden="true">⌕</span><input role="combobox" aria-expanded="true" aria-controls="' + this._listId + '" aria-autocomplete="list"><kbd>Esc</kbd></div>' +
+        '<ul class="ui-cmd__list" id="' + this._listId + '" role="listbox"></ul>' +
         '<div class="ui-cmd__ft"><span>↑↓ 选择</span><span>↵ 执行</span><span>Esc 关闭</span></div></div>';
       document.body.appendChild(m);
       const input = m.querySelector('input');
@@ -237,15 +240,34 @@ export class UICommand extends UIElement {
   }
   _draw() {
     const q = this._mask.querySelector('input').value.trim().toLowerCase();
+    const labelHtml = (value) => {
+      const text = String(value == null ? '' : value);
+      const index = q ? text.toLowerCase().indexOf(q) : -1;
+      if (index < 0) return esc(text);
+      // 小写转换可能展开字符；先把匹配区间映回原文，再分别转义。
+      let start = 0, end = 0, offset = 0;
+      for (const char of text) {
+        const next = offset + char.toLowerCase().length;
+        if (next <= index) start += char.length;
+        end += char.length;
+        if (next >= index + q.length) break;
+        offset = next;
+      }
+      return esc(text.slice(0, start)) + '<mark>' + esc(text.slice(start, end)) + '</mark>' + esc(text.slice(end));
+    };
     const all = this._list();
     this._hits = all.filter((it) => !q || (String(it.label) + ' ' + (it.group || '') + ' ' + (it.keywords || '')).toLowerCase().indexOf(q) > -1);
     const ul = this._mask.querySelector('.ui-cmd__list');
-    if (!this._hits.length) { ul.innerHTML = '<li class="ui-cmd__empty">没有找到「' + esc(q) + '」相关的命令</li>'; return; }
+    if (!this._hits.length) {
+      this._mask.querySelector('input').removeAttribute('aria-activedescendant');
+      ul.innerHTML = '<li class="ui-cmd__empty" role="option" aria-disabled="true"><span role="status">没有找到「' + esc(q) + '」相关的命令</span></li>';
+      return;
+    }
     let g = null;
     ul.innerHTML = this._hits.map((it, i) => {
       const head = it.group && it.group !== g ? '<li class="ui-cmd__g" role="presentation">' + esc(it.group) + '</li>' : '';
       g = it.group;
-      return head + '<li class="ui-cmd__it" role="option" id="ui-cmd-o' + i + '" data-i="' + i + '" aria-selected="false"><i aria-hidden="true">' + esc(it.icon || '›') + '</i><span>' + esc(it.label) + '</span>' +
+      return head + '<li class="ui-cmd__it" role="option" id="' + this._listId + '-o' + i + '" data-i="' + i + '" aria-selected="false"><i aria-hidden="true">' + esc(it.icon || '›') + '</i><span>' + labelHtml(it.label) + '</span>' +
         (it.kbd ? '<kbd>' + esc(it.kbd) + '</kbd>' : '') + '</li>';
     }).join('');
     this._mark();
@@ -257,7 +279,7 @@ export class UICommand extends UIElement {
       li.setAttribute('aria-selected', String(on));
       if (on) li.scrollIntoView({ block: 'nearest' });
     });
-    input.setAttribute('aria-activedescendant', 'ui-cmd-o' + this._cur);
+    input.setAttribute('aria-activedescendant', this._listId + '-o' + this._cur);
   }
   _run(i) {
     const it = this._hits && this._hits[i];

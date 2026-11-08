@@ -33,6 +33,9 @@ jobs:
       - name: 回归测试（test.html）
         run: node scripts/run-tests.mjs
 
+      - name: 液态玻璃模板的字面代码独立运行
+        run: npm run test:liquid
+
       - name: 验收脚本负例与真实出口回归
         run: npm run test:guards
 
