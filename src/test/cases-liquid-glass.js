@@ -410,6 +410,280 @@ describe('液态玻璃后台', () => {
     } finally { command.close(); root._liquidGlassMount(); }
   });
 
+  it('关闭动画中时间胶囊已移动的选项焦点不被源卡抢走', async (host) => {
+    const { root } = await mountInViewport(host);
+    root.style.setProperty('--ui-motion', '180ms');
+    const detail = root.querySelector('.lg-detail');
+    try {
+      expect(document.visibilityState).toBe('visible');
+      root.querySelector('[data-open="revenue"] button').click();
+      await tick(0);
+      const opening = detail.getAnimations()[0];
+      if (opening) await opening.finished;
+      await tick(0);
+      expect(document.activeElement).toBe(root.querySelector('[data-detail-close] button'));
+      kd(document.activeElement, 'Escape');
+      await tick(0);
+      const closing = detail.getAnimations()[0];
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        expect(!!closing).toBe(true);
+        await closing.ready;
+        await until(() => closing.currentTime > 0);
+        const ms = closing.effect.getTiming().duration;
+        expect(ms).toBeGreaterThan(0);
+        closing.playbackRate = .01;
+        closing.currentTime = ms * .1;
+        expect(closing.playState).toBe('running');
+      }
+      const time = root.querySelector('[data-time] button');
+      time.focus({ preventScroll: true });
+      time.click();
+      const week = root.querySelector('.lg-filter-option[data-period="week"] button');
+      await until(() => getComputedStyle(week).visibility === 'visible');
+      expect(document.activeElement).toBe(week);
+      kd(document.activeElement, 'ArrowDown');
+      expect(document.activeElement).toBe(root.querySelector('.lg-filter-option[data-period="month"] button'));
+      if (closing) {
+        expect(closing.currentTime > 0 && closing.currentTime < closing.effect.getTiming().duration / 2).toBe(true);
+        closing.playbackRate = 1;
+        await closing.finished;
+      }
+      await tick(0);
+      expect({
+        period: document.activeElement.closest('.lg-filter-option')?.dataset.period ?? null,
+        source: document.activeElement.closest('[data-open]')?.dataset.open ?? null,
+        filter: time.getAttribute('aria-expanded'), hidden: root.querySelector('.lg-detail-layer').hidden
+      }).toEqual({ period: 'month', source: null, filter: 'true', hidden: true });
+      kd(document.activeElement, 'ArrowDown');
+      expect(document.activeElement).toBe(root.querySelector('.lg-filter-option[data-period="quarter"] button'));
+      kd(document.activeElement, 'Enter');
+      expect(root.dataset.period).toBe('quarter');
+      expect(document.activeElement).toBe(time);
+    } finally { root._liquidGlassMount(); }
+  });
+
+  it('关闭动画收尾不抢走期间打开的命令输入焦点', async (host) => {
+    const { root } = await mountInViewport(host);
+    root.style.setProperty('--ui-motion', '180ms');
+    const detail = root.querySelector('.lg-detail');
+    const command = root.querySelector('ui-command');
+    try {
+      expect(document.visibilityState).toBe('visible');
+      root.querySelector('[data-open="revenue"] button').click();
+      await tick(0);
+      const opening = detail.getAnimations()[0];
+      if (opening) await opening.finished;
+      await tick(0);
+      expect(document.activeElement).toBe(root.querySelector('[data-detail-close] button'));
+      kd(document.activeElement, 'Escape');
+      await tick(0);
+      const closing = detail.getAnimations()[0];
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        expect(!!closing).toBe(true);
+        await closing.ready;
+        await until(() => closing.currentTime > 0);
+        const ms = closing.effect.getTiming().duration;
+        expect(ms).toBeGreaterThan(0);
+        closing.playbackRate = .01;
+        closing.currentTime = ms * .1;
+        expect(closing.playState).toBe('running');
+      }
+      root.querySelector('[data-command] button').click();
+      const input = command._mask.querySelector('input');
+      expect(document.activeElement).toBe(input);
+      expect(command._mask.hidden).toBe(false);
+      if (closing) {
+        expect(closing.currentTime > 0 && closing.currentTime < closing.effect.getTiming().duration / 2).toBe(true);
+        closing.playbackRate = 1;
+        await closing.finished;
+      }
+      await tick(0);
+      expect({
+        inputFocused: document.activeElement === input, activeTag: document.activeElement.tagName,
+        source: document.activeElement.closest('[data-open]')?.dataset.open ?? null,
+        hidden: root.querySelector('.lg-detail-layer').hidden, commandOpen: !command._mask.hidden
+      }).toEqual({ inputFocused: true, activeTag: 'INPUT', source: null, hidden: true, commandOpen: true });
+      const before = input.getAttribute('aria-activedescendant');
+      kd(document.activeElement, 'ArrowDown');
+      expect(input.getAttribute('aria-activedescendant') !== before).toBe(true);
+      expect(document.activeElement).toBe(input);
+      kd(document.activeElement, 'Escape');
+      expect(command._mask.hidden).toBe(true);
+    } finally { command.close(); root._liquidGlassMount(); }
+  });
+
+  it('展开 FLIP 收尾不抢走期间点击侧栏开关后的焦点', async (host) => {
+    const { root } = await mountInViewport(host);
+    try {
+      const opening = await holdDetailOpening(root);
+      const collapse = root.querySelector('[data-collapse] button');
+      // 真实指针按下路径；子组件 stopPropagation 时 document 捕获阶段仍必须收到。
+      collapse.addEventListener('pointerdown', (event) => event.stopPropagation(), { once: true });
+      collapse.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true, pointerType: 'mouse' }));
+      collapse.focus({ preventScroll: true });
+      collapse.click();
+      expect(root.classList.contains('lg-sidebar-collapsed')).toBe(true);
+      expect(document.activeElement).toBe(collapse);
+      if (opening) {
+        expect(opening.playState).toBe('running');
+        expect(opening.currentTime < opening.effect.getTiming().duration / 2).toBe(true);
+        opening.playbackRate = 1;
+        await opening.finished;
+      }
+      await tick(0);
+      expect({
+        collapseFocused: document.activeElement === collapse,
+        closeFocused: document.activeElement === root.querySelector('[data-detail-close] button'),
+        collapsed: root.classList.contains('lg-sidebar-collapsed'),
+        hidden: root.querySelector('.lg-detail-layer').hidden
+      }).toEqual({ collapseFocused: true, closeFocused: false, collapsed: true, hidden: false });
+    } finally { root._liquidGlassMount(); }
+  });
+
+  it('关闭动画中详情外 pointerdown 即使被目标停止冒泡也阻止旧回焦', async (host) => {
+    const { root } = await mountInViewport(host);
+    root.style.setProperty('--ui-motion', '180ms');
+    const detail = root.querySelector('.lg-detail');
+    const close = root.querySelector('[data-detail-close] button');
+    const source = root.querySelector('[data-open="revenue"] button');
+    const time = root.querySelector('[data-time] button');
+    // reduce 下没有关闭动画窗口，无法构造该竞态；正常动效下必须真实执行。
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    try {
+      root.querySelector('[data-open="revenue"] button').click();
+      await tick(0);
+      const opening = detail.getAnimations()[0];
+      if (opening) await opening.finished;
+      await tick(0);
+      expect(document.activeElement).toBe(close);
+      kd(close, 'Escape');
+      await tick(0);
+      const closing = detail.getAnimations()[0];
+      expect(!!closing).toBe(true);
+      await closing.ready;
+      await until(() => closing.currentTime > 0);
+      const ms = closing.effect.getTiming().duration;
+      expect(ms).toBeGreaterThan(0);
+      closing.playbackRate = .01;
+      closing.currentTime = ms * .1;
+      expect(closing.playState).toBe('running');
+      // 焦点先离开详情，再在时间触发器上按下并阻止冒泡：
+      // 只有 document 捕获阶段能收到这个 pointerdown，因此能区分 capture 是否生效。
+      close.blur();
+      expect(document.activeElement).toBe(document.body);
+      time.addEventListener('pointerdown', (event) => event.stopPropagation(), { once: true });
+      time.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true, pointerType: 'mouse' }));
+      expect(document.activeElement).toBe(document.body);
+      closing.playbackRate = 1;
+      await closing.finished;
+      await tick(0);
+      expect({
+        sourceFocused: document.activeElement === source,
+        body: document.activeElement === document.body,
+        hidden: root.querySelector('.lg-detail-layer').hidden
+      }).toEqual({ sourceFocused: false, body: true, hidden: true });
+    } finally { root._liquidGlassMount(); }
+  });
+
+  it('时间胶囊打开时关闭详情并双击关闭按钮，焦点归还源卡而非 body', async (host) => {
+    const { root } = await mountInViewport(host);
+    root.style.setProperty('--ui-motion', '180ms');
+    const detail = root.querySelector('.lg-detail');
+    const close = root.querySelector('[data-detail-close] button');
+    const source = root.querySelector('[data-open="revenue"] button');
+    const time = root.querySelector('[data-time] button');
+    try {
+      root.querySelector('[data-open="revenue"] button').click();
+      await tick(0);
+      const opening = detail.getAnimations()[0];
+      if (opening) await opening.finished;
+      await tick(0);
+      expect(document.activeElement).toBe(close);
+      // 打开时间胶囊，焦点进入选项；这是用户已经生效的新意图。
+      time.click();
+      const week = root.querySelector('.lg-filter-option[data-period="week"] button');
+      await until(() => getComputedStyle(week).visibility === 'visible');
+      expect(document.activeElement).toBe(week);
+      // 真实点击关闭按钮：pointerdown → focus → click。
+      close.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true, pointerType: 'mouse' }));
+      close.focus({ preventScroll: true });
+      close.click();
+      await tick(0);
+      const closing = detail.getAnimations()[0];
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        expect(!!closing).toBe(true);
+        await closing.ready;
+        await until(() => closing.currentTime > 0);
+        const ms = closing.effect.getTiming().duration;
+        expect(ms).toBeGreaterThan(0);
+        closing.playbackRate = .01;
+        closing.currentTime = ms * .1;
+        expect(closing.playState).toBe('running');
+      }
+      // 双击：第二次 pointerdown 仍落在即将隐藏的关闭按钮上。
+      close.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true, pointerType: 'mouse' }));
+      close.click();
+      if (closing) {
+        expect(closing.currentTime > 0 && closing.currentTime < closing.effect.getTiming().duration / 2).toBe(true);
+        closing.playbackRate = 1;
+        await closing.finished;
+      }
+      await tick(0);
+      expect({
+        sourceFocused: document.activeElement === source,
+        closeFocused: document.activeElement === close,
+        body: document.activeElement === document.body,
+        hidden: root.querySelector('.lg-detail-layer').hidden,
+        filterOpen: time.getAttribute('aria-expanded')
+      }).toEqual({ sourceFocused: true, closeFocused: false, body: false, hidden: true, filterOpen: 'true' });
+    } finally { root._liquidGlassMount(); }
+  });
+
+  it('关闭动画收尾不抢走期间仅移到时间触发器的焦点', async (host) => {
+    const { root } = await mountInViewport(host);
+    root.style.setProperty('--ui-motion', '180ms');
+    const detail = root.querySelector('.lg-detail');
+    try {
+      expect(document.visibilityState).toBe('visible');
+      root.querySelector('[data-open="revenue"] button').click();
+      await tick(0);
+      const opening = detail.getAnimations()[0];
+      if (opening) await opening.finished;
+      await tick(0);
+      expect(document.activeElement).toBe(root.querySelector('[data-detail-close] button'));
+      kd(document.activeElement, 'Escape');
+      await tick(0);
+      const closing = detail.getAnimations()[0];
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        expect(!!closing).toBe(true);
+        await closing.ready;
+        await until(() => closing.currentTime > 0);
+        const ms = closing.effect.getTiming().duration;
+        expect(ms).toBeGreaterThan(0);
+        closing.playbackRate = .01;
+        closing.currentTime = ms * .1;
+        expect(closing.playState).toBe('running');
+      }
+      const time = root.querySelector('[data-time] button');
+      time.focus({ preventScroll: true });
+      expect(document.activeElement).toBe(time);
+      // 只移动焦点，不展开列表；这同样是用户已经生效的新意图。
+      expect(time.getAttribute('aria-expanded')).toBe('false');
+      if (closing) {
+        expect(closing.currentTime > 0 && closing.currentTime < closing.effect.getTiming().duration / 2).toBe(true);
+        closing.playbackRate = 1;
+        await closing.finished;
+      }
+      await tick(0);
+      expect({
+        timeFocused: document.activeElement === time,
+        source: document.activeElement.closest('[data-open]')?.dataset.open ?? null,
+        expanded: time.getAttribute('aria-expanded'),
+        hidden: root.querySelector('.lg-detail-layer').hidden
+      }).toEqual({ timeFocused: true, source: null, expanded: 'false', hidden: true });
+    } finally { root._liquidGlassMount(); }
+  });
+
   it('320px 下方模块滚动后展开详情进入视口，关闭归还原滚动', async (host) => {
     const { root } = await mountInViewport(host, 320);
     root.style.setProperty('--ui-motion', '100ms');
@@ -451,6 +725,68 @@ describe('液态玻璃后台', () => {
       const returnedSource = root.querySelector('[data-open="orders"] button');
       const returned = returnedSource.getBoundingClientRect();
       expect(inside(returned)).toBe(true);
+    } finally { root._liquidGlassMount(); }
+  });
+
+  it('360px 底部模块关闭中 Dock 重开后归还首次概览滚动快照', async (host) => {
+    const { root } = await mountInViewport(host, 360);
+    root.style.setProperty('--ui-motion', '180ms');
+    const scroll = root.querySelector('.lg-scroll');
+    const detail = root.querySelector('.lg-detail');
+    const layer = root.querySelector('.lg-detail-layer');
+    const source = root.querySelector('[data-open="orders"] button');
+    try {
+      expect(document.visibilityState).toBe('visible');
+      scroll.scrollTop = scroll.scrollHeight;
+      await tick(0);
+      const originalScroll = scroll.scrollTop;
+      const viewport = scroll.getBoundingClientRect();
+      const rect = source.getBoundingClientRect();
+      expect(originalScroll).toBeGreaterThan(0);
+      expect(rect.width > 0 && rect.height > 0 && rect.top >= viewport.top && rect.bottom <= viewport.bottom).toBe(true);
+      source.click();
+      await tick(0);
+      const opening = detail.getAnimations()[0];
+      if (opening) await opening.finished;
+      await tick(0);
+      const expandedScroll = scroll.scrollTop;
+      expect(expandedScroll !== originalScroll).toBe(true);
+      expect(document.activeElement).toBe(root.querySelector('[data-detail-close] button'));
+      kd(document.activeElement, 'Escape');
+      await tick(0);
+      const closing = detail.getAnimations()[0];
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        expect(!!closing).toBe(true);
+        await closing.ready;
+        await until(() => closing.currentTime > 0);
+        const ms = closing.effect.getTiming().duration;
+        expect(ms).toBeGreaterThan(0);
+        closing.playbackRate = .01;
+        closing.currentTime = ms * .1;
+        expect(closing.playState).toBe('running');
+        expect(layer.hidden).toBe(false);
+        expect(root.getAttribute('data-detail')).toBe(null);
+      }
+      root.querySelector('.lg-dock [data-page="audience"] button').click();
+      await tick(0);
+      expect(root.dataset.detail).toBe('audience');
+      const reopening = detail.getAnimations()[0];
+      if (closing) expect(closing.playState).toBe('idle');
+      if (reopening) await reopening.finished;
+      await tick(0);
+      expect(document.activeElement).toBe(root.querySelector('[data-detail-close] button'));
+      kd(document.activeElement, 'Escape');
+      await tick(0);
+      const finalClosing = detail.getAnimations()[0];
+      if (finalClosing) await finalClosing.finished;
+      await tick(0);
+      expect({
+        scrollTop: scroll.scrollTop, hidden: layer.hidden,
+        inert: root.querySelector('.lg-grid').hasAttribute('inert'),
+        minimized: root.querySelector('.lg-grid').classList.contains('lg-minimized'),
+        stageHeight: root.querySelector('.lg-stage').style.height,
+        cardsVisible: [...root.querySelectorAll('.lg-module')].every((card) => getComputedStyle(card).visibility === 'visible')
+      }).toEqual({ scrollTop: originalScroll, hidden: true, inert: false, minimized: false, stageHeight: '', cardsVisible: true });
     } finally { root._liquidGlassMount(); }
   });
 

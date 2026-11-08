@@ -336,8 +336,35 @@ const liquidGlassDashboard = {
     const animations = new Set();
     let animationLoop = null;
     let disposed = false;
-    const listen = (node, type, handler, options = {}) => node.addEventListener(type, handler, { ...options, signal: abort.signal });
+    const listen = (node, type, handler, options = {}) => node.addEventListener(type, handler, {
+      ...(typeof options === 'boolean' ? { capture: options } : options),
+      signal: abort.signal
+    });
     const command = $('ui-command');
+    let selfFocus = 0;
+    const moveFocus = (element) => {
+      // 产品自身的 focus 由 moveFocus 发起，不能算作“用户已转移意图”。
+      selfFocus++;
+      try { element.focus({ preventScroll: true }); } finally { selfFocus--; }
+    };
+    // 只有焦点已经落到详情之外的其他可见控件时，才视为用户接管了焦点。
+    const focusOwnedElsewhere = () => {
+      const active = document.activeElement;
+      if (!active || active === document.body || active === document.documentElement) return false;
+      if ($('.lg-detail').contains(active)) return false;
+      // 模板自身的布局容器（含打开后即将被 inert 的网格）不是用户接管的新焦点目标。
+      if (active === root || active === $('.lg-scroll') || active === $('.lg-stage')) return false;
+      if ($('.lg-grid').contains(active)) return false;
+      return true;
+    };
+    // 任何真实指针按下或非产品发起的焦点移动，都应让进行中动画的自动回焦失效；
+    // 但对关闭按钮自身的重复按下（双击）不是新的焦点意图。
+    listen(document, 'pointerdown', (event) => {
+      // 只有本实例关闭按钮上的重复按下（双击）才不算新的焦点意图。
+      if (root.contains(event.target) && event.target?.closest?.('[data-detail-close]')) return;
+      detailFocusEpoch++;
+    }, true);
+    listen(document, 'focusin', () => { if (!selfFocus) detailFocusEpoch++; }, true);
     listen(command, 'click', () => { detailFocusEpoch++; });
     command.setAttribute('items', JSON.stringify([
       ...Object.entries(pages).map(([key, page]) => ({ label: page[0], value: 'page:' + key, group: '菜单' })),
@@ -515,7 +542,7 @@ const liquidGlassDashboard = {
         button.setAttribute('aria-selected', String(current));
         button.tabIndex = open && current ? 0 : -1;
       });
-      if (open && focus) $(`.lg-filter-option[data-period="${state.period}"] button`).focus({ preventScroll: true });
+      if (open && focus) moveFocus($(`.lg-filter-option[data-period="${state.period}"] button`));
     }
     function setPeriod(key) {
       if (!periods[key]) return;
@@ -554,13 +581,12 @@ const liquidGlassDashboard = {
         animate(card, opening ? [{ transform: 'none', opacity: 1 }, { transform: small, opacity: 0 }] : [{ transform: small, opacity: 0 }, { transform: 'none', opacity: 1 }], 3.8);
       });
     }
-    async function openDetail(key) {
+    async function openDetail(key, trigger = null) {
       if (!moduleNames[key] || state.detail === key || disposed) return;
       const epoch = ++detailEpoch;
-      const focusEpoch = detailFocusEpoch;
       $$('.lg-module').forEach((card) => { card.style.visibility = ''; });
       const wasOpen = !!state.detail;
-      if (!wasOpen) {
+      if (!wasOpen && $('.lg-detail-layer').hidden) {
         overviewScroll = $('.lg-scroll').scrollTop;
         overviewRects = Object.fromEntries($$('.lg-module').map((card) => [card.dataset.module, card.getBoundingClientRect()]));
       }
@@ -602,12 +628,16 @@ const liquidGlassDashboard = {
       }
       if (animation) { try { await animation.finished; } catch {} }
       if (disposed || epoch !== detailEpoch) return;
-      if (!state.filter && focusEpoch === detailFocusEpoch) $('[data-detail-close] button').focus({ preventScroll: true });
+      // 打开动作的触发控件仍持有焦点（或焦点在其内部）时，不算用户已经转移到别处。
+      const active = document.activeElement;
+      const triggerOwnsFocus = !!trigger && (active === trigger || trigger.contains(active));
+      if (!focusOwnedElsewhere() || triggerOwnsFocus) moveFocus($('[data-detail-close] button'));
       $('[data-status]').textContent = '已展开' + moduleNames[key] + '，其他五个模块进入缩略条。';
     }
     async function closeDetail() {
       if (!state.detail || disposed) return;
       const key = state.detail, epoch = ++detailEpoch;
+      const focusEpoch = detailFocusEpoch;
       const detail = $('.lg-detail'), grid = $('.lg-grid');
       const source = $(`.lg-module[data-module="${key}"]`);
       $$('.lg-module').forEach((card) => card.getAnimations().forEach((a) => a.cancel()));
@@ -620,6 +650,8 @@ const liquidGlassDashboard = {
       root.removeAttribute('data-detail');
       if (animation) { try { await animation.finished; } catch {} }
       if (disposed || epoch !== detailEpoch) return;
+      // 若焦点仍停在即将隐藏的详情内（含双击关闭按钮），必须在本节点消失前把焦点移走。
+      const focusStranded = !!document.activeElement && detail.contains(document.activeElement);
       $('.lg-detail-layer').hidden = true;
       $('[data-detail-body]').replaceChildren();
       grid.removeAttribute('inert');
@@ -628,7 +660,7 @@ const liquidGlassDashboard = {
       $('.lg-stage').style.height = '';
       $('.lg-scroll').scrollTop = overviewScroll;
       if (state.page !== 'overview') navigate('overview');
-      source.querySelector('[data-open] button').focus({ preventScroll: true });
+      if ((focusEpoch === detailFocusEpoch || focusStranded) && !focusOwnedElsewhere()) moveFocus(source.querySelector('[data-open] button'));
       $('[data-status]').textContent = '已返回经营概览。';
     }
     listen(root, 'click', (event) => {
@@ -642,15 +674,15 @@ const liquidGlassDashboard = {
       if (event.target.closest('[data-command]')) { setFilterOpen(false); command.show(); return; }
       if (event.target.closest('[data-time]')) { setFilterOpen(!state.filter, true); return; }
       const period = event.target.closest('.lg-filter-option');
-      if (period && state.filter) { setPeriod(period.dataset.period); timeButton.focus({ preventScroll: true }); return; }
+      if (period && state.filter) { setPeriod(period.dataset.period); moveFocus(timeButton); return; }
       if (event.target.closest('[data-detail-close]')) { closeDetail(); return; }
       const item = event.target.closest('.lg-nav-item');
-      if (item && root.contains(item)) { navigate(item.dataset.page); if (item.dataset.page !== 'overview') openDetail(item.dataset.page); else closeDetail(); return; }
+      if (item && root.contains(item)) { navigate(item.dataset.page); if (item.dataset.page !== 'overview') openDetail(item.dataset.page, item.querySelector('button')); else closeDetail(); return; }
       const thumb = event.target.closest('[data-thumb]');
-      if (thumb && !thumb.hidden) { openDetail(thumb.dataset.thumb); return; }
+      if (thumb && !thumb.hidden) { openDetail(thumb.dataset.thumb, thumb.querySelector('button')); return; }
       const open = event.target.closest('[data-open]');
       const card = event.target.closest('.lg-module');
-      if (open || (card && !event.target.closest('a,button,input,select,textarea'))) openDetail(open ? open.dataset.open : card.dataset.module);
+      if (open || (card && !event.target.closest('a,button,input,select,textarea'))) openDetail(open ? open.dataset.open : card.dataset.module, open ? open.querySelector('button') : card);
     });
     listen(root, 'keydown', (event) => {
       const editable = event.target.closest('input,textarea,select,[contenteditable]');
@@ -663,7 +695,7 @@ const liquidGlassDashboard = {
       if (event.key === 'Escape' && state.filter) {
         event.preventDefault();
         setFilterOpen(false);
-        timeButton.focus({ preventScroll: true });
+        moveFocus(timeButton);
         return;
       }
       const option = event.target.closest('.lg-filter-option');
@@ -678,12 +710,12 @@ const liquidGlassDashboard = {
         else if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
           setPeriod(option.dataset.period);
-          timeButton.focus({ preventScroll: true });
+          moveFocus(timeButton);
           return;
         } else return;
         event.preventDefault();
         buttons.forEach((button, i) => { button.tabIndex = i === next ? 0 : -1; });
-        buttons[next].focus({ preventScroll: true });
+        moveFocus(buttons[next]);
         return;
       }
       if (event.key === 'Escape' && state.detail) { event.preventDefault(); closeDetail(); }

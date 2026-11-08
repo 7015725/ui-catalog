@@ -395,7 +395,7 @@ register('ui-toast', UIToast, '.ui-toast{background:var(--ui-panel);border:var(-
 
 ## 测试
 
-零运行时依赖回归测试页：`/test.html`（198 条用例）。保留 1.1.0 的 95 条基线用例（含颜色白名单、冒泡事件、模板、Canvas、键盘与焦点、无障碍和动效清理），并补充系统 APP、液态玻璃后台的真实操作、独立代码出口、局部风格隔离及全部风格的对比度断言。
+零运行时依赖回归测试页：`/test.html`（210 条用例）。保留 1.1.0 的 95 条基线用例（含颜色白名单、冒泡事件、模板、Canvas、键盘与焦点、无障碍和动效清理），并补充系统 APP、液态玻璃后台的真实操作、独立代码出口、局部风格隔离及全部风格的对比度断言。
 
 自动化测试需要 **Playwright + Chromium + axe-core**，仅为开发测试依赖；本地启动和页面运行仍无需 `npm install` 或构建。
 
@@ -417,7 +417,7 @@ npm run test:a11y    # 全风格/明暗/屏宽/视图矩阵（含 best-practice�
 
 - **167 个组件**全部可渲染、可交互；画廊逐个点击所有控件 + 键盘操作，无报错
 - **20 个界面模板**：保留原 19 个，新增液态玻璃后台的模块钻取、周期选择、命令搜索、响应式与焦点归还回归
-- **198 条回归用例**已在本地通过，保留原有用例；提交前另跑 `npm run test:mobile`、`npm run test:liquid` 与完整 `npm run test:a11y`
+- **210 条回归用例**已在本地通过，保留原有用例；提交前另跑 `npm run test:mobile`、`npm run test:liquid` 与完整 `npm run test:a11y`
 - **响应式**：原 15 套风格的既有 360 / 820 / 1440 验证保留；新增 6 个系统 APP 覆盖 320 / 390 / 768 / 1440，内容独立滚动
 - **无障碍验收**：按 `docs/SPEC.md` 检查全部风格与明暗、键盘、可访问名称、触控目标、pressed/live 状态及 axe-core（包含 best-practice）
 - **动效**：全部尊重 `prefers-reduced-motion` 与 `data-motion="reduce"`；动画循环离开视口 / 标签页隐藏时暂停，组件移除时清理
