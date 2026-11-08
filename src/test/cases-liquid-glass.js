@@ -110,13 +110,16 @@ describe('液态玻璃后台', () => {
     expect(root.querySelector('[data-status]').textContent).toContain('收入分析');
   });
 
-  it('Dock 悬停放大当前图标和相邻图标，移出恢复', async (host) => {
+  it('Dock 悬停按光标距离连续放大当前与相邻图标，移出恢复', async (host) => {
     const { root } = await mountInViewport(host);
     const dock = root.querySelector('.lg-dock');
     const buttons = [...dock.querySelectorAll('ui-button button')];
     const widths = () => buttons.map((button) => button.querySelector('.lg-icon').getBoundingClientRect().width);
     const baseline = widths();
-    const enter = () => buttons[2].dispatchEvent(new PointerEvent('pointerover', { bubbles: true, pointerType: 'mouse' }));
+    const enter = () => {
+      const r = buttons[2].getBoundingClientRect();
+      buttons[2].dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerType: 'mouse', clientX: r.left + r.width / 2, clientY: r.top + r.height / 2 }));
+    };
     const leave = () => dock.dispatchEvent(new PointerEvent('pointerleave', { pointerType: 'mouse', relatedTarget: host }));
     const magnified = () => {
       const current = widths();
@@ -1190,5 +1193,31 @@ describe('液态玻璃后台', () => {
       window.requestAnimationFrame = nativeRequest;
       window.cancelAnimationFrame = nativeCancel;
     }
+  });
+
+  it('固定使用专属风格 dusk：模板元数据、风格登记与代码出口一致', async (host) => {
+    const { template } = await mount(host);
+    expect(template.style).toBe('dusk');
+    const { styles } = await import('../data/styles.js');
+    const { styleGuides } = await import('../data/style-guides.js');
+    expect(styles.some((style) => style.id === 'dusk')).toBe(true);
+    expect(styleGuides.dusk.ai).toContain('data-style="dusk"');
+    host.innerHTML = '<div data-style="dusk" data-theme="light"></div><div data-style="dusk" data-theme="dark"></div>';
+    const [light, dark] = [...host.children].map((node) => getComputedStyle(node));
+    expect(light.getPropertyValue('--ui-panel-2').trim().toLowerCase()).toBe('#f3f1f1');
+    expect(parseFloat(light.getPropertyValue('--ui-blur'))).toBe(28);
+    expect(light.getPropertyValue('--ui-bg').trim() !== dark.getPropertyValue('--ui-bg').trim()).toBe(true);
+  });
+
+  it('时间胶囊：当前周期对应的融合液滴为铜色（lg-on），切换后跟随', async (host) => {
+    const { root } = await mount(host);
+    const onSlot = () => [...root.querySelectorAll('.lg-goo-blob.lg-on')].map((blob) => blob.dataset.slot);
+    const slotOf = (key) => root.querySelector(`.lg-filter-option[data-period="${key}"]`).dataset.slot;
+    root.querySelector('[data-time] button').click();
+    expect(onSlot()).toEqual([slotOf('week')]);
+    root.querySelector('.lg-filter-option[data-period="month"] button').click();
+    root.querySelector('[data-time] button').click();
+    expect(onSlot()).toEqual([slotOf('month')]);
+    expect(getComputedStyle(root.querySelector('.lg-goo-scene')).opacity).toBe('1');
   });
 });

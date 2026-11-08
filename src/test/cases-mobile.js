@@ -70,7 +70,7 @@ function register(id, styleId, name) {
       expect(guide.ai).toContain('data-style="' + styleId + '"');
       expect(guide.ai).toContain('风格灵感');
       expect(guide.design.when.length > 0 && guide.design.avoid.length > 0 && guide.design.tips.length > 0).toBe(true);
-      expect(styles.length).toBe(15 + MOBILE_IDS.length);
+      expect(styles.length).toBe(15 + MOBILE_IDS.length + 1); // + Dusk Glass（液态玻璃后台专属）
     });
 
     it(name + ' 单页 CSS 可独立复制，init 源码不依赖模块闭包', async (host) => {

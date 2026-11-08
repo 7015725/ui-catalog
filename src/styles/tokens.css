@@ -585,6 +585,35 @@
   --ui-danger:#ffa8aa; --ui-danger-soft:#432426; --ui-on-color:#131c18;
 }
 
+/* ---------- 风格 22：Dusk Glass 晚霞液态玻璃 ----------
+   暖桃 / 灰粉 / 浅杏的磨砂晚霞底，半透明白玻璃面板，铜橙强调。
+   铜橙品牌色压暗到 #8a4826 以保证 4.5:1；更亮的 #b66d44 观感由模板用 color-mix(brand, brand-soft) 得到。 */
+[data-style="dusk"]{
+  color-scheme:light;text-shadow:none;
+  --ui-bg:#ebd7cc; --ui-panel:rgba(255,255,255,.52); --ui-panel-2:#f3f1f1;
+  --ui-text:#1b1b19; --ui-sub:#5e4a40; --ui-line:rgba(255,255,255,.72);
+  --ui-brand:#8a4826; --ui-brand-ink:#ffffff; --ui-accent:#7e4a5a; --ui-brand-soft:#f2ccae;
+  --ui-ok:#176d40; --ui-ok-soft:#e0f0e2; --ui-warn:#7f450a; --ui-warn-soft:#f8e3c8;
+  --ui-danger:#ad3034; --ui-danger-soft:#f7dcdc; --ui-on-color:#ffffff;
+  --ui-font:"Plus Jakarta Sans",Manrope,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --ui-radius-sm:12px; --ui-radius:16px; --ui-radius-lg:24px; --ui-radius-pill:999px;
+  --ui-border-w:1px; --ui-ctl-h:42px; --ui-gap:12px; --ui-motion:.22s; --ui-blur:28px;
+  --ui-ease:cubic-bezier(.2,.8,.2,1); --ui-spring:cubic-bezier(.34,1.56,.64,1);
+  --ui-shadow-sm:inset 0 1px 0 rgba(255,255,255,.85),0 2px 8px color-mix(in srgb,var(--ui-brand) 10%,transparent);
+  --ui-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 30px 60px -24px color-mix(in srgb,var(--ui-brand) 32%,transparent),0 10px 24px -14px color-mix(in srgb,var(--ui-brand) 22%,transparent);
+  --ui-ring:0 0 0 3px color-mix(in srgb,var(--ui-brand) 26%,transparent);
+}
+[data-style="dusk"][data-theme="dark"]{
+  color-scheme:dark;
+  --ui-bg:#1e1715; --ui-panel:rgba(58,44,39,.6); --ui-panel-2:#2b2422;
+  --ui-text:#f3ede8; --ui-sub:#c9b6ac; --ui-line:rgba(255,255,255,.12);
+  --ui-brand:#e7a471; --ui-brand-ink:#1b1b19; --ui-accent:#c5a0ab; --ui-brand-soft:#3a2a22;
+  --ui-ok:#87d9ac; --ui-ok-soft:#183827; --ui-warn:#f4c27f; --ui-warn-soft:#3d2c18;
+  --ui-danger:#ffa8aa; --ui-danger-soft:#432426; --ui-on-color:#1e1715;
+  --ui-shadow-sm:inset 0 1px 0 rgba(255,255,255,.08),0 2px 8px rgba(0,0,0,.35);
+  --ui-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 30px 60px -24px rgba(0,0,0,.6),0 10px 24px -14px rgba(0,0,0,.45);
+}
+
 /* 共享排版、间距与尺寸刻度：所有风格/主题可继承，新增模板不写死设计取值。 */
 :root, [data-theme="light"]{
   --ui-font-size-10-5px:10.5px;
@@ -609,6 +638,8 @@
   --ui-font-size-34px:34px;
   --ui-font-size-36px:36px;
   --ui-font-size-38px:38px;
+  --ui-font-size-56px:56px;
+  --ui-font-size-72px:72px;
   --ui-font-weight-500:500;
   --ui-font-weight-550:550;
   --ui-font-weight-600:600;

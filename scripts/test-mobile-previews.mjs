@@ -231,7 +231,7 @@ try {
     assert.ok(styles.some((s) => s.id === item.style), '缺少手机系统风格：' + item.style);
     assert.ok(templates.some((t) => t.id === item.id && t.style === item.style), '缺少配套 APP 模板：' + item.id);
   }
-  assert.equal(styles.length, 21, '应保留原 15 套并新增 6 套风格');
+  assert.equal(styles.length, 22, '应保留原 15 套、6 套系统风格与 Dusk Glass');
   assert.equal(templates.length, original.length + expected.length + currentAdditions.length, '必须保留原模板、六个系统 APP 和新增 Web 模板');
   assert.equal(new Set(templates.map((template) => template.id)).size, templates.length, '模板 ID 不能重复');
   currentAdditions.forEach((id) => assert.ok(templates.some((template) => template.id === id), '新增模板丢失：' + id));
@@ -248,7 +248,7 @@ try {
     if (message.type() === 'error') report.errors.push({ type: 'console', message: message.text() });
   });
   await page.goto(base, { waitUntil: 'domcontentloaded' });
-  await page.waitForFunction(() => document.querySelectorAll('#styleSel option').length === 21);
+  await page.waitForFunction(() => document.querySelectorAll('#styleSel option').length === 22);
   report.inventory = { components: await page.locator('.card:not(.tcard)').count(), styles: styles.length, templates: templates.length };
   assert.equal(report.inventory.components, 167, '原组件画廊不能丢组件');
   await page.locator('[data-view="templates"]').click();

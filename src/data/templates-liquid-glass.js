@@ -47,7 +47,7 @@ const thumbValues = { revenue: ['revenue', 128430, 'currency'], audience: ['cust
 const card = ([key, name]) => `<article class="lg-module lg-${key}" data-module="${key}"><ui-tilt max="2.6" scale="1" glare="false"><ui-spotlight radius="250"><div class="lg-card-body"><header class="lg-card-head"><h2>${name}</h2><ui-button class="lg-open" variant="ghost" data-open="${key}">${icon('expand')}<span class="lg-sr">展开${name}</span></ui-button></header>${contents[key]}</div></ui-spotlight></ui-tilt></article>`;
 
 const liquidGlassDashboard = {
-  id: 'liquid-glass-dashboard', name: '液态玻璃后台', cat: 'Web 页面', frame: 'browser',
+  id: 'liquid-glass-dashboard', name: '液态玻璃后台', cat: 'Web 页面', frame: 'browser', style: 'dusk',
   url: 'luma.local/dashboard', exportDocument: true, example: './examples/liquid-glass-dashboard.html',
   imports: ["import { reduced, loop } from './src/lib/motion.js';"],
   brief: '悬浮导航、玻璃数据卡、原位详情、时间胶囊与键盘命令',
@@ -76,17 +76,24 @@ const liquidGlassDashboard = {
 <p class="lg-sr" data-status role="status" aria-live="polite"></p>
 </div>`,
   css: `
-.t-liquid-glass-dashboard{display:grid;grid-template-columns:auto minmax(0,1fr);height:100%;min-height:0;overflow:hidden;isolation:isolate;color:var(--ui-text);font-family:var(--ui-font);font-size:var(--ui-font-size-13px);line-height:var(--ui-line-height-1-5);background:radial-gradient(ellipse at 8% 0%,var(--ui-brand-soft),transparent 62%),radial-gradient(ellipse at 94% 100%,color-mix(in srgb,var(--ui-accent) 8%,var(--ui-bg)),transparent 55%),var(--ui-bg)}
+.t-liquid-glass-dashboard{display:grid;grid-template-columns:auto minmax(0,1fr);height:100%;min-height:0;overflow:hidden;position:relative;isolation:isolate;color:var(--ui-text);font-family:var(--ui-font);font-size:var(--ui-font-size-13px);line-height:var(--ui-line-height-1-5);background:radial-gradient(ellipse 70% 55% at 6% 0%,color-mix(in srgb,var(--ui-brand) 22%,var(--ui-brand-soft)) 0%,transparent 72%),radial-gradient(ellipse 75% 60% at 68% 46%,color-mix(in srgb,var(--ui-accent) 24%,var(--ui-bg)) 0%,transparent 74%),linear-gradient(170deg,color-mix(in srgb,var(--ui-brand) 14%,var(--ui-brand-soft)) 0%,color-mix(in srgb,var(--ui-accent) 20%,var(--ui-bg)) 50%,var(--ui-bg) 100%)}
+/* 晚霞底上的两道白色半透明光弧（纯装饰，只用白色透明度） */
+.t-liquid-glass-dashboard::before,.t-liquid-glass-dashboard::after{content:'';position:absolute;z-index:-1;pointer-events:none;border-radius:50%}
+.t-liquid-glass-dashboard::before{width:150%;aspect-ratio:1;left:-30%;top:30%;border-top:var(--ui-size-2px) solid rgba(255,255,255,.5);box-shadow:inset 0 var(--ui-space-32px) var(--ui-space-54px) calc(var(--ui-space-32px) * -1) rgba(255,255,255,.5)}
+.t-liquid-glass-dashboard::after{width:90%;aspect-ratio:1;right:-34%;top:-58%;border-bottom:var(--ui-size-2px) solid rgba(255,255,255,.42);box-shadow:inset 0 calc(var(--ui-space-28px) * -1) var(--ui-space-54px) calc(var(--ui-space-30px) * -1) rgba(255,255,255,.45)}
+.t-liquid-glass-dashboard[data-theme="dark"]::before,.t-liquid-glass-dashboard[data-theme="dark"]::after,[data-theme="dark"] .t-liquid-glass-dashboard::before,[data-theme="dark"] .t-liquid-glass-dashboard::after{opacity:.25}
 .t-liquid-glass-dashboard *{box-sizing:border-box}
 .t-liquid-glass-dashboard [hidden]{display:none!important}
 .t-liquid-glass-dashboard p{margin:0}
-.t-liquid-glass-dashboard h1,.t-liquid-glass-dashboard h2{margin:0;color:var(--ui-text);font-weight:var(--ui-font-weight-600)}
-.t-liquid-glass-dashboard h1{font-size:var(--ui-font-size-38px);line-height:var(--ui-line-height-1-2);letter-spacing:var(--ui-letter-spacing-n-06em)}
+.t-liquid-glass-dashboard h1,.t-liquid-glass-dashboard h2{margin:0;color:inherit;font-weight:var(--ui-font-weight-600)}
+.t-liquid-glass-dashboard .lg-number,.t-liquid-glass-dashboard ui-odometer,.t-liquid-glass-dashboard ui-count-up{font-variant-numeric:tabular-nums}
+.t-liquid-glass-dashboard h1{font-size:var(--ui-font-size-56px);line-height:var(--ui-line-height-1-15);font-weight:var(--ui-font-weight-700);letter-spacing:var(--ui-letter-spacing-n-04em)}
 .t-liquid-glass-dashboard h2{font-size:var(--ui-font-size-14px);line-height:var(--ui-line-height-1-3)}
 .t-liquid-glass-dashboard .lg-muted{color:var(--ui-sub);font-size:var(--ui-font-size-12px)}
 .t-liquid-glass-dashboard .lg-icon{display:block;flex:0 0 auto;width:var(--ui-size-22px);height:var(--ui-size-22px);fill:none;stroke:var(--ui-text);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .t-liquid-glass-dashboard .lg-sr{position:absolute!important;width:calc(var(--ui-size-2px) / 2);height:calc(var(--ui-size-2px) / 2);padding:0;margin:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-.t-liquid-glass-dashboard .lg-glass{background:color-mix(in srgb,var(--ui-panel) 90%,var(--ui-bg));border:var(--ui-border-w) solid var(--ui-line);border-radius:var(--ui-radius-lg);box-shadow:var(--ui-shadow);backdrop-filter:blur(max(var(--ui-blur),var(--ui-space-24px)));-webkit-backdrop-filter:blur(max(var(--ui-blur),var(--ui-space-24px)))}
+.t-liquid-glass-dashboard .lg-glass{background:var(--ui-panel);border:var(--ui-border-w) solid var(--ui-line);border-radius:var(--ui-radius-lg);box-shadow:var(--ui-shadow);backdrop-filter:blur(max(var(--ui-blur),var(--ui-space-24px))) saturate(140%);-webkit-backdrop-filter:blur(max(var(--ui-blur),var(--ui-space-24px))) saturate(140%)}
+.t-liquid-glass-dashboard .lg-main.lg-glass{background:color-mix(in srgb,var(--ui-panel) 55%,transparent)}
 .t-liquid-glass-dashboard .lg-side{align-self:start;width:calc(var(--ui-size-232px) - var(--ui-space-32px));margin:var(--ui-space-54px) var(--ui-space-16px) var(--ui-space-16px);padding:var(--ui-space-20px) var(--ui-space-10px) var(--ui-space-12px);z-index:3;transition:width calc(var(--ui-motion) * 3) var(--ui-ease)}
 .t-liquid-glass-dashboard .lg-brand{display:flex;align-items:center;gap:var(--ui-space-10px);padding:0 var(--ui-space-8px) var(--ui-space-24px)}
 .t-liquid-glass-dashboard .lg-brand-mark{display:grid;place-items:center;width:var(--ui-size-32px);height:var(--ui-size-32px);color:var(--ui-brand);font-size:var(--ui-font-size-30px)}
@@ -98,7 +105,11 @@ const liquidGlassDashboard = {
 .t-liquid-glass-dashboard .lg-nav-item .ui-btn{display:flex;width:100%;height:var(--ui-size-46px);padding:0 var(--ui-space-12px);justify-content:flex-start;gap:var(--ui-space-10px);background:transparent;color:var(--ui-sub);border:0;border-radius:var(--ui-radius);box-shadow:none;white-space:nowrap;font-size:var(--ui-font-size-13px);font-weight:var(--ui-font-weight-500)}
 .t-liquid-glass-dashboard .lg-nav-item .ui-btn::before{content:none}
 .t-liquid-glass-dashboard .lg-nav-item [aria-current="page"]{color:var(--ui-text);font-weight:var(--ui-font-weight-650)}
-.t-liquid-glass-dashboard .lg-capsule{position:absolute;top:0;left:0;pointer-events:none;width:100%;height:var(--ui-size-46px);border-radius:var(--ui-radius);background:var(--ui-panel-2);border:var(--ui-border-w) solid var(--ui-line);box-shadow:var(--ui-shadow-sm);transform-origin:center}
+.t-liquid-glass-dashboard .lg-capsule{position:absolute;top:0;left:0;pointer-events:none;width:100%;height:var(--ui-size-46px);border-radius:var(--ui-radius-pill);transform-origin:center;background:linear-gradient(180deg,color-mix(in srgb,rgba(255,255,255,1) 74%,transparent),color-mix(in srgb,rgba(255,255,255,1) 40%,transparent));border:var(--ui-border-w) solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 rgba(255,255,255,1),inset 0 -1px 0 color-mix(in srgb,var(--ui-brand) 14%,transparent),0 0 0 1px rgba(255,255,255,.28),0 var(--ui-space-10px) var(--ui-space-22px) calc(var(--ui-space-10px) * -1) color-mix(in srgb,var(--ui-brand) 40%,transparent);backdrop-filter:blur(var(--ui-space-14px));-webkit-backdrop-filter:blur(var(--ui-space-14px))}
+.t-liquid-glass-dashboard .lg-capsule::before{content:'';position:absolute;left:14%;right:14%;top:1px;height:42%;border-radius:inherit;background:linear-gradient(180deg,rgba(255,255,255,.8),rgba(255,255,255,0))}
+[data-theme="dark"] .t-liquid-glass-dashboard .lg-capsule::before,.t-liquid-glass-dashboard[data-theme="dark"] .lg-capsule::before{opacity:.22}
+[data-theme="dark"] .t-liquid-glass-dashboard .lg-capsule,.t-liquid-glass-dashboard[data-theme="dark"] .lg-capsule{background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.06));border-color:rgba(255,255,255,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 var(--ui-space-10px) var(--ui-space-22px) calc(var(--ui-space-10px) * -1) rgba(0,0,0,.5)}
+.t-liquid-glass-dashboard .lg-nav-item [aria-current="page"] .lg-icon{stroke:color-mix(in srgb,var(--ui-brand) 85%,var(--ui-brand-soft))}
 .t-liquid-glass-dashboard .lg-workspace{display:flex;align-items:center;gap:var(--ui-space-8px);padding:var(--ui-space-18px) var(--ui-space-4px) 0;margin-top:var(--ui-space-22px);border-top:var(--ui-border-w) solid var(--ui-line);font-size:var(--ui-font-size-11px)}
 .t-liquid-glass-dashboard .lg-workspace small{display:block;font-size:var(--ui-font-size-10px)}
 .t-liquid-glass-dashboard .lg-collapse{margin-left:auto}
@@ -115,7 +126,7 @@ const liquidGlassDashboard = {
 .t-liquid-glass-dashboard .lg-eyebrow{font-size:var(--ui-font-size-10px);letter-spacing:var(--ui-letter-spacing--09em);color:var(--ui-sub);margin-bottom:var(--ui-space-8px);font-weight:var(--ui-font-weight-650)}
 .t-liquid-glass-dashboard [data-subtitle]{margin-top:var(--ui-space-12px)}
 .t-liquid-glass-dashboard .lg-period{text-align:right;max-width:45%;position:relative;z-index:4}
-.t-liquid-glass-dashboard .lg-time-trigger .ui-btn{border-radius:var(--ui-radius-pill);background:var(--ui-panel);color:var(--ui-text);gap:var(--ui-space-8px);box-shadow:var(--ui-shadow-sm);height:var(--ui-size-46px);padding:0 var(--ui-space-18px)}
+.t-liquid-glass-dashboard .lg-time-trigger .ui-btn{border-radius:var(--ui-radius-pill);background:color-mix(in srgb,var(--ui-panel-2) 72%,transparent);border:var(--ui-border-w) solid var(--ui-line);color:var(--ui-text);gap:var(--ui-space-8px);box-shadow:var(--ui-shadow-sm);height:var(--ui-size-46px);padding:0 var(--ui-space-18px)}
 .t-liquid-glass-dashboard .lg-time-trigger .ui-btn::before{content:none}
 .t-liquid-glass-dashboard [data-period-note]{margin-top:var(--ui-space-8px);font-size:var(--ui-font-size-11px)}
 .t-liquid-glass-dashboard .lg-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--ui-space-24px);padding:var(--ui-space-24px) 0}
@@ -124,7 +135,7 @@ const liquidGlassDashboard = {
 .t-liquid-glass-dashboard .lg-metric > p .lg-icon{width:var(--ui-space-16px);height:var(--ui-space-16px);stroke:var(--ui-sub)}
 .t-liquid-glass-dashboard .lg-metric-value{display:flex;align-items:baseline;flex-wrap:wrap;font-size:var(--ui-font-size-34px);font-weight:var(--ui-font-weight-600);line-height:var(--ui-line-height-1-2);letter-spacing:var(--ui-letter-spacing-n-045em)}
 .t-liquid-glass-dashboard .lg-number{font-variant-numeric:tabular-nums;white-space:nowrap;display:inline-block;max-width:100%}
-.t-liquid-glass-dashboard .lg-delta{margin-left:var(--ui-space-10px);font-size:var(--ui-font-size-11px);font-weight:var(--ui-font-weight-600);color:var(--ui-text);letter-spacing:normal}
+.t-liquid-glass-dashboard .lg-delta{margin-left:var(--ui-space-10px);padding:var(--ui-space-3px) var(--ui-space-8px);border-radius:var(--ui-radius-pill);background:color-mix(in srgb,var(--ui-brand-soft) 70%,transparent);font-size:var(--ui-font-size-11px);font-weight:var(--ui-font-weight-700);color:var(--ui-brand);letter-spacing:normal}
 .t-liquid-glass-dashboard .lg-metric > small{display:block;margin-top:var(--ui-space-6px);font-size:var(--ui-font-size-11px)}
 .t-liquid-glass-dashboard .lg-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--ui-space-18px)}
 .t-liquid-glass-dashboard .lg-module{min-width:0;grid-column:span 3;position:relative;border-radius:var(--ui-radius-lg)}
@@ -135,7 +146,9 @@ const liquidGlassDashboard = {
 .t-liquid-glass-dashboard .lg-module ui-tilt{perspective:calc(var(--ui-size-232px) * 5)}
 .t-liquid-glass-dashboard .lg-module .ui-tilt{transition:transform calc(var(--ui-motion) * 2.7) var(--ui-ease);will-change:auto}
 .t-liquid-glass-dashboard .lg-module .ui-tilt.is-active{transition:transform var(--ui-motion) var(--ui-ease);will-change:transform}
-.t-liquid-glass-dashboard .lg-module .ui-spot{background:var(--ui-panel);color:var(--ui-text);border:var(--ui-border-w) solid var(--ui-line);border-radius:var(--ui-radius-lg);box-shadow:var(--ui-shadow-sm);backdrop-filter:blur(max(var(--ui-blur),var(--ui-space-24px)));-webkit-backdrop-filter:blur(max(var(--ui-blur),var(--ui-space-24px)))}
+.t-liquid-glass-dashboard .lg-module .ui-spot{background:var(--ui-panel);color:var(--ui-text);border:var(--ui-border-w) solid var(--ui-line);border-radius:var(--ui-radius-lg);box-shadow:var(--ui-shadow);backdrop-filter:blur(max(var(--ui-blur),var(--ui-space-24px))) saturate(140%);-webkit-backdrop-filter:blur(max(var(--ui-blur),var(--ui-space-24px))) saturate(140%)}
+.t-liquid-glass-dashboard .lg-module .ui-spot::before,.t-liquid-glass-dashboard .lg-detail .ui-spot::before{background:radial-gradient(var(--sp-r,260px) circle at var(--x,50%) var(--y,50%),rgba(255,255,255,.5),transparent 64%)}
+.t-liquid-glass-dashboard .lg-module .ui-spot::after,.t-liquid-glass-dashboard .lg-detail .ui-spot::after{background:radial-gradient(calc(var(--sp-r,260px) * .75) circle at var(--x,50%) var(--y,50%),rgba(255,255,255,1),transparent 72%)}
 .t-liquid-glass-dashboard .lg-module .ui-spot::before,.t-liquid-glass-dashboard .lg-module .ui-spot::after{transition:opacity calc(var(--ui-motion) * 2) var(--ui-ease)}
 .t-liquid-glass-dashboard .lg-module .ui-spot::after{padding:var(--ui-size-2px);mask:linear-gradient(rgba(255,255,255,1) 0 0) content-box,linear-gradient(rgba(255,255,255,1) 0 0);mask-composite:exclude}
 .t-liquid-glass-dashboard .lg-card-body{padding:var(--ui-space-18px);min-width:0}
@@ -144,22 +157,51 @@ const liquidGlassDashboard = {
 .t-liquid-glass-dashboard .lg-legend{display:flex;justify-content:space-between;gap:var(--ui-space-8px);color:var(--ui-sub);font-size:var(--ui-font-size-11px);margin-bottom:var(--ui-space-14px)}
 .t-liquid-glass-dashboard .lg-card-note{margin-top:var(--ui-space-14px)}
 .t-liquid-glass-dashboard .lg-goal-value{font-size:var(--ui-font-size-38px);font-weight:var(--ui-font-weight-600);line-height:var(--ui-line-height-1-2);margin:var(--ui-space-8px) 0;letter-spacing:var(--ui-letter-spacing-n-06em)}
-.t-liquid-glass-dashboard .lg-goal .ui-spot{background:var(--ui-brand);color:var(--ui-brand-ink);border-color:var(--ui-brand)}
-.t-liquid-glass-dashboard .lg-goal h2,.t-liquid-glass-dashboard .lg-goal .lg-muted,.t-liquid-glass-dashboard .lg-goal .lg-legend,.t-liquid-glass-dashboard .lg-goal .ui-progress__head,.t-liquid-glass-dashboard .lg-goal .lg-icon{color:var(--ui-brand-ink);stroke:var(--ui-brand-ink)}
+.t-liquid-glass-dashboard .lg-goal .ui-spot,.t-liquid-glass-dashboard .lg-detail.lg-goal .ui-spot{--lg-ink:color-mix(in srgb,rgba(255,255,255,1) 94%,var(--ui-brand-soft));--lg-ink-sub:color-mix(in srgb,rgba(255,255,255,1) 72%,transparent);background:radial-gradient(130% 75% at 50% -18%,color-mix(in srgb,var(--ui-brand) 72%,var(--ui-brand-soft)) 0%,transparent 62%),color-mix(in srgb,var(--ui-bg) 10%,rgba(0,0,0,1));color:var(--lg-ink);border-color:rgba(255,255,255,.08);box-shadow:inset 0 1px 0 color-mix(in srgb,var(--ui-brand-soft) 55%,transparent),0 var(--ui-space-32px) var(--ui-space-54px) calc(var(--ui-space-22px) * -1) rgba(0,0,0,.5)}
+.t-liquid-glass-dashboard .lg-goal .ui-spot::before{background:radial-gradient(var(--sp-r,260px) circle at var(--x,50%) var(--y,50%),color-mix(in srgb,var(--ui-brand-soft) 26%,transparent),transparent 64%)}
+.t-liquid-glass-dashboard .lg-goal .ui-spot::after{background:radial-gradient(calc(var(--sp-r,260px) * .75) circle at var(--x,50%) var(--y,50%),var(--ui-brand-soft),transparent 72%)}
+.t-liquid-glass-dashboard .lg-goal h2,.t-liquid-glass-dashboard .lg-goal .ui-progress__head{color:var(--lg-ink)}
+.t-liquid-glass-dashboard .lg-goal .lg-muted,.t-liquid-glass-dashboard .lg-goal .lg-legend{color:var(--lg-ink-sub)}
+.t-liquid-glass-dashboard .lg-goal .lg-icon{stroke:var(--lg-ink)}
+.t-liquid-glass-dashboard .lg-goal .lg-open .ui-btn{color:var(--lg-ink)}
 .t-liquid-glass-dashboard .lg-goal ui-progress{display:block;margin:var(--ui-space-20px) 0 var(--ui-space-12px)}
-.t-liquid-glass-dashboard .lg-goal .ui-progress__track{height:var(--ui-size-24px);border-radius:var(--ui-radius-sm);background:color-mix(in srgb,var(--ui-brand-ink) 16%,transparent);mask:repeating-linear-gradient(90deg,rgba(255,255,255,1) 0,rgba(255,255,255,1) calc(100% / 28 - var(--ui-size-2px)),transparent calc(100% / 28 - var(--ui-size-2px)),transparent calc(100% / 28))}
-.t-liquid-glass-dashboard .lg-goal .ui-progress__bar{background:var(--ui-brand-ink);border-radius:var(--ui-radius-sm)}
+.t-liquid-glass-dashboard .lg-goal .ui-progress__track{height:var(--ui-size-24px);border-radius:var(--ui-radius-sm);background:rgba(255,255,255,.12);mask:repeating-linear-gradient(90deg,rgba(255,255,255,1) 0,rgba(255,255,255,1) calc(100% / 28 - var(--ui-size-2px)),transparent calc(100% / 28 - var(--ui-size-2px)),transparent calc(100% / 28))}
+.t-liquid-glass-dashboard .lg-goal .ui-progress__bar{background:linear-gradient(90deg,color-mix(in srgb,var(--ui-accent) 45%,rgba(255,255,255,1)),color-mix(in srgb,var(--ui-brand) 22%,var(--ui-brand-soft)));border-radius:var(--ui-radius-sm);box-shadow:0 0 var(--ui-space-14px) color-mix(in srgb,var(--ui-brand-soft) 60%,transparent)}
 .t-liquid-glass-dashboard .lg-sources .ui-progress{margin-bottom:var(--ui-space-20px)}
 .t-liquid-glass-dashboard .lg-order-value{display:flex;align-items:baseline;gap:var(--ui-space-8px);font-size:var(--ui-font-size-30px);font-weight:var(--ui-font-weight-600);margin-bottom:var(--ui-space-8px)}
 .t-liquid-glass-dashboard .lg-orders ui-sparkline{margin-top:var(--ui-space-12px)}
 .t-liquid-glass-dashboard .lg-audience .ui-donut{justify-content:center;gap:var(--ui-space-12px)}
+.t-liquid-glass-dashboard .ui-donut circle:not(.s){stroke:color-mix(in srgb,var(--ui-sub) 14%,transparent)}
+.t-liquid-glass-dashboard .ui-donut circle.s{stroke-linecap:round;stroke-width:10}
+.t-liquid-glass-dashboard .ui-donut circle.s:nth-of-type(2){stroke:color-mix(in srgb,var(--ui-brand) 55%,var(--ui-brand-soft))}
+.t-liquid-glass-dashboard .ui-donut circle.s:nth-of-type(3){stroke:color-mix(in srgb,var(--ui-accent) 45%,rgba(255,255,255,1))}
+.t-liquid-glass-dashboard .ui-donut__lg li:nth-child(1) i{background:color-mix(in srgb,var(--ui-brand) 55%,var(--ui-brand-soft))!important}
+.t-liquid-glass-dashboard .ui-donut__lg li:nth-child(2) i{background:color-mix(in srgb,var(--ui-accent) 45%,rgba(255,255,255,1))!important}
 .t-liquid-glass-dashboard .lg-audience .ui-donut__lg{min-width:0;flex:1 1 100%;gap:var(--ui-space-6px)}
 .t-liquid-glass-dashboard .lg-audience .ui-donut__lg li{font-size:var(--ui-font-size-11px)}
+.t-liquid-glass-dashboard .lg-ranking .ui-spot{background:var(--ui-panel-2);backdrop-filter:none;-webkit-backdrop-filter:none;border-color:rgba(255,255,255,.9)}
+.t-liquid-glass-dashboard .lg-ranking .ui-spot::before{background:radial-gradient(var(--sp-r,260px) circle at var(--x,50%) var(--y,50%),color-mix(in srgb,var(--ui-brand-soft) 45%,transparent),transparent 64%)}
+.t-liquid-glass-dashboard .lg-ranking .ui-spot::after{background:radial-gradient(calc(var(--sp-r,260px) * .75) circle at var(--x,50%) var(--y,50%),var(--ui-brand-soft),transparent 72%)}
+.t-liquid-glass-dashboard .ui-table{border-collapse:separate;border-spacing:0 var(--ui-space-8px)}
+.t-liquid-glass-dashboard .ui-table th,.t-liquid-glass-dashboard .ui-table td{border-bottom:0}
+.t-liquid-glass-dashboard .ui-table tbody td{background:color-mix(in srgb,rgba(255,255,255,1) 70%,transparent)}
+[data-theme="dark"] .t-liquid-glass-dashboard .ui-table tbody td,.t-liquid-glass-dashboard[data-theme="dark"] .ui-table tbody td{background:rgba(255,255,255,.05)}
+.t-liquid-glass-dashboard .ui-table tbody td:first-child{border-radius:var(--ui-radius) 0 0 var(--ui-radius)}
+.t-liquid-glass-dashboard .ui-table tbody td:last-child{border-radius:0 var(--ui-radius) var(--ui-radius) 0}
 .t-liquid-glass-dashboard .ui-table caption,.t-liquid-glass-dashboard .ui-table th{font-size:var(--ui-font-size-11px)}
+@container (max-width:420px){
+.t-liquid-glass-dashboard .ui-table tbody td{background:none;border-radius:0}
+.t-liquid-glass-dashboard .ui-table tbody tr{background:color-mix(in srgb,rgba(255,255,255,1) 70%,transparent);border:0;border-radius:var(--ui-radius)}
+[data-theme="dark"] .t-liquid-glass-dashboard .ui-table tbody tr,.t-liquid-glass-dashboard[data-theme="dark"] .ui-table tbody tr{background:rgba(255,255,255,.05)}
+}
 .t-liquid-glass-dashboard .ui-table td{font-size:var(--ui-font-size-12px);overflow-wrap:anywhere}
 .t-liquid-glass-dashboard .ui-table th,.t-liquid-glass-dashboard .ui-table td{padding:var(--ui-space-8px) var(--ui-space-6px)}
-.t-liquid-glass-dashboard .ui-bar__plot{height:calc(var(--ui-size-72px) * 2);padding-top:var(--ui-space-18px)}
-.t-liquid-glass-dashboard .ui-bar__col i{width:min(80%,var(--ui-size-11px));border-radius:var(--ui-radius-pill);background:linear-gradient(var(--ui-brand),var(--ui-accent))}
+.t-liquid-glass-dashboard .ui-bar__plot{height:calc(var(--ui-size-72px) * 2);padding-top:var(--ui-space-18px);background:none;border-bottom:0}
+.t-liquid-glass-dashboard .ui-bar__col::before{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:min(80%,var(--ui-size-11px));height:100%;border-radius:var(--ui-radius-pill);background:color-mix(in srgb,var(--ui-sub) 12%,transparent)}
+.t-liquid-glass-dashboard .ui-bar__col i{width:min(80%,var(--ui-size-11px));border-radius:var(--ui-radius-pill);background:linear-gradient(180deg,color-mix(in srgb,var(--ui-brand) 22%,var(--ui-brand-soft)),color-mix(in srgb,var(--ui-accent) 45%,rgba(255,255,255,1)));box-shadow:0 var(--ui-space-8px) var(--ui-space-16px) calc(var(--ui-space-8px) * -1) color-mix(in srgb,var(--ui-brand) 55%,transparent)}
+.t-liquid-glass-dashboard .ui-bar__row div{background:color-mix(in srgb,var(--ui-sub) 16%,transparent)}
+.t-liquid-glass-dashboard .ui-bar__row div i,.t-liquid-glass-dashboard .ui-progress__bar{background:linear-gradient(90deg,color-mix(in srgb,var(--ui-brand) 22%,var(--ui-brand-soft)),color-mix(in srgb,var(--ui-accent) 45%,rgba(255,255,255,1)))}
+.t-liquid-glass-dashboard .ui-progress__track{background:color-mix(in srgb,var(--ui-sub) 16%,transparent)}
 .t-liquid-glass-dashboard .ui-bar__col i::after{content:none}
 .t-liquid-glass-dashboard .ui-bar__x span{font-size:var(--ui-font-size-10px)}
 .t-liquid-glass-dashboard .lg-footer{display:flex;align-items:center;justify-content:space-between;gap:var(--ui-space-10px);margin-top:var(--ui-space-20px);font-size:var(--ui-font-size-11px)}
@@ -167,11 +209,14 @@ const liquidGlassDashboard = {
 .t-liquid-glass-dashboard .lg-footer .lg-icon{width:var(--ui-space-14px);height:var(--ui-space-14px);stroke:var(--ui-sub)}
 .t-liquid-glass-dashboard .lg-dock{position:absolute;left:50%;bottom:var(--ui-space-16px);transform:translateX(-50%);z-index:6;display:flex;align-items:center;gap:var(--ui-space-12px);padding:var(--ui-space-8px) var(--ui-space-12px);border-radius:var(--ui-radius-lg)}
 .t-liquid-glass-dashboard .lg-dock-nav{display:flex;position:relative;gap:var(--ui-space-6px);align-items:center}
-.t-liquid-glass-dashboard .lg-dock .lg-nav-item .ui-btn{width:var(--ui-size-46px);height:var(--ui-size-46px);justify-content:center;padding:var(--ui-space-10px)}
+.t-liquid-glass-dashboard .lg-dock-nav,.t-liquid-glass-dashboard .lg-dock{align-items:flex-end}
+.t-liquid-glass-dashboard .lg-dock .lg-nav-item .ui-btn{width:var(--lg-dock-size,var(--ui-size-46px));height:var(--lg-dock-size,var(--ui-size-46px));justify-content:center;padding:0;transition:width var(--ui-motion) var(--ui-ease),height var(--ui-motion) var(--ui-ease)}
+.t-liquid-glass-dashboard .lg-dock .lg-nav-item .lg-icon,.t-liquid-glass-dashboard .lg-dock .lg-dock-search .lg-icon{width:calc(var(--lg-dock-size,var(--ui-size-46px)) * .48);height:calc(var(--lg-dock-size,var(--ui-size-46px)) * .48)}
+.t-liquid-glass-dashboard .lg-dock .lg-dock-search .ui-btn{width:var(--lg-dock-size,var(--ui-size-46px));height:var(--lg-dock-size,var(--ui-size-46px));padding:0;display:grid;place-items:center;transition:width var(--ui-motion) var(--ui-ease),height var(--ui-motion) var(--ui-ease)}
 .t-liquid-glass-dashboard .lg-dock .lg-capsule{width:var(--ui-size-46px)}
 .t-liquid-glass-dashboard .lg-tip{position:absolute;bottom:calc(100% + var(--ui-space-16px));left:50%;transform:translate(-50%,var(--ui-space-4px));opacity:0;pointer-events:none;white-space:nowrap;color:var(--ui-text);background:var(--ui-panel);border:var(--ui-border-w) solid var(--ui-line);box-shadow:var(--ui-shadow-sm);border-radius:var(--ui-radius);padding:var(--ui-space-8px) var(--ui-space-10px);font-size:var(--ui-font-size-11px);transition:opacity var(--ui-motion) var(--ui-ease),transform var(--ui-motion) var(--ui-ease)}
 .t-liquid-glass-dashboard .lg-dock .ui-btn:hover .lg-tip,.t-liquid-glass-dashboard .lg-dock .ui-btn:focus-visible .lg-tip{opacity:1;transform:translate(-50%,0)}
-.t-liquid-glass-dashboard .lg-current-dot{position:absolute;bottom:var(--ui-space-3px);left:50%;transform:translateX(-50%);width:var(--ui-size-5px);height:var(--ui-size-5px);border-radius:var(--ui-radius-pill);background:var(--ui-text);opacity:0}
+.t-liquid-glass-dashboard .lg-current-dot{position:absolute;bottom:var(--ui-space-3px);left:50%;transform:translateX(-50%);width:var(--ui-size-5px);height:var(--ui-size-5px);border-radius:var(--ui-radius-pill);background:var(--ui-brand);opacity:0}
 .t-liquid-glass-dashboard .lg-dock [aria-current="page"] .lg-current-dot{opacity:1}
 .t-liquid-glass-dashboard .ui-btn:focus-visible,.t-liquid-glass-dashboard .ui-cmd-trigger:focus-visible,.t-liquid-glass-dashboard .lg-scroll:focus-visible{outline:var(--ui-size-2px) solid var(--ui-text);outline-offset:var(--ui-space-3px);box-shadow:var(--ui-ring)}
 .t-liquid-glass-dashboard .lg-stage{position:relative;min-width:0}
@@ -198,10 +243,11 @@ const liquidGlassDashboard = {
 .t-liquid-glass-dashboard .lg-detail-kpi > strong{display:block;margin-top:var(--ui-space-8px);font-size:var(--ui-font-size-34px);font-weight:var(--ui-font-weight-600);line-height:var(--ui-line-height-1-2);letter-spacing:var(--ui-letter-spacing-n-045em)}
 .t-liquid-glass-dashboard .lg-detail-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--ui-space-16px)}
 .t-liquid-glass-dashboard .lg-detail-stats .lg-detail-kpi{padding:var(--ui-space-16px);background:var(--ui-panel-2);border-radius:var(--ui-radius-lg)}
-.t-liquid-glass-dashboard .lg-detail.lg-goal .ui-spot{background:var(--ui-brand);color:var(--ui-brand-ink)}
-.t-liquid-glass-dashboard .lg-detail.lg-goal h3,.t-liquid-glass-dashboard .lg-detail.lg-goal .ui-progress__head{color:var(--ui-brand-ink)}
-.t-liquid-glass-dashboard .lg-detail.lg-goal .lg-subpanel{background:color-mix(in srgb,var(--ui-brand) 92%,var(--ui-brand-ink));border-color:var(--ui-brand-ink)}
-.t-liquid-glass-dashboard .lg-detail.lg-goal .lg-detail-close .ui-btn{background:transparent;color:var(--ui-brand-ink);border-color:var(--ui-brand-ink)}
+.t-liquid-glass-dashboard .lg-detail.lg-goal h2,.t-liquid-glass-dashboard .lg-detail.lg-goal h3,.t-liquid-glass-dashboard .lg-detail.lg-goal .ui-progress__head,.t-liquid-glass-dashboard .lg-detail.lg-goal strong{color:var(--lg-ink)}
+.t-liquid-glass-dashboard .lg-detail.lg-goal .lg-muted,.t-liquid-glass-dashboard .lg-detail.lg-goal .lg-eyebrow,.t-liquid-glass-dashboard .lg-detail.lg-goal .lg-legend{color:var(--lg-ink-sub)}
+.t-liquid-glass-dashboard .lg-detail.lg-goal .lg-subpanel{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)}
+.t-liquid-glass-dashboard .lg-detail.lg-goal .lg-detail-close .ui-btn{background:rgba(255,255,255,.08);color:var(--lg-ink);border:var(--ui-border-w) solid rgba(255,255,255,.2)}
+.t-liquid-glass-dashboard .lg-detail.lg-goal .lg-icon{stroke:var(--lg-ink)}
 .t-liquid-glass-dashboard .lg-thumbnails{display:flex;gap:var(--ui-space-8px);padding:var(--ui-space-10px);overflow:auto;min-width:0;scrollbar-width:thin}
 .t-liquid-glass-dashboard .lg-thumb{flex:1 0 0;min-width:0}
 .t-liquid-glass-dashboard .lg-thumb .ui-btn{display:flex;align-items:center;justify-content:flex-start;width:100%;height:auto;min-height:var(--ui-size-68px);padding:var(--ui-space-10px);gap:var(--ui-space-10px);background:var(--ui-panel);color:var(--ui-text);border:var(--ui-border-w) solid var(--ui-line);border-radius:var(--ui-radius);box-shadow:var(--ui-shadow-sm);text-align:left}
@@ -214,22 +260,24 @@ const liquidGlassDashboard = {
 .t-liquid-glass-dashboard .lg-time-trigger .ui-btn{width:100%}
 .t-liquid-glass-dashboard .lg-time-box.lg-expanded .lg-time-trigger{opacity:0;pointer-events:none;transform:scale(.8)}
 .t-liquid-glass-dashboard .lg-goo-scene,.t-liquid-glass-dashboard .lg-filter-options{position:absolute;top:0;right:0;height:var(--ui-size-46px);width:calc(var(--ui-size-72px) * 4 + var(--ui-space-12px) * 3)}
-.t-liquid-glass-dashboard .lg-goo-scene{pointer-events:none;opacity:.6}
-.t-liquid-glass-dashboard .lg-goo-base,.t-liquid-glass-dashboard .lg-goo-blob{position:absolute;top:0;right:0;height:var(--ui-size-46px);width:var(--ui-size-72px);border-radius:var(--ui-radius-pill);background:var(--ui-panel);transition:transform calc(var(--ui-motion) * 4) var(--ui-spring),opacity calc(var(--ui-motion) * 3) var(--ui-ease)}
+.t-liquid-glass-dashboard .lg-goo-scene{pointer-events:none;opacity:1}
+.t-liquid-glass-dashboard .lg-goo-base,.t-liquid-glass-dashboard .lg-goo-blob{position:absolute;top:0;right:0;height:var(--ui-size-46px);width:var(--ui-size-72px);border-radius:var(--ui-radius-pill);background:color-mix(in srgb,rgba(255,255,255,1) 82%,var(--ui-brand-soft));transition:transform calc(var(--ui-motion) * 4) var(--ui-spring),opacity calc(var(--ui-motion) * 3) var(--ui-ease),background calc(var(--ui-motion) * 2) var(--ui-ease)}
+.t-liquid-glass-dashboard .lg-goo-blob.lg-on{background:color-mix(in srgb,var(--ui-brand) 90%,var(--ui-brand-soft))}
+[data-theme="dark"] .t-liquid-glass-dashboard :is(.lg-goo-base,.lg-goo-blob):not(.lg-on),.t-liquid-glass-dashboard[data-theme="dark"] :is(.lg-goo-base,.lg-goo-blob):not(.lg-on){background:color-mix(in srgb,var(--ui-panel-2) 80%,rgba(255,255,255,1))}
 .t-liquid-glass-dashboard .lg-goo-base{width:100%;max-width:calc(var(--ui-size-72px) + var(--ui-size-40px))}
 .t-liquid-glass-dashboard .lg-goo-blob{opacity:0;transform:scale(.76)}
 .t-liquid-glass-dashboard .lg-time-box.lg-expanded .lg-goo-base{opacity:0;transform:scale(.6)}
 .t-liquid-glass-dashboard .lg-time-box.lg-expanded .lg-goo-blob{opacity:1}
 .t-liquid-glass-dashboard .lg-filter-options{z-index:2;pointer-events:none}
 .t-liquid-glass-dashboard .lg-filter-option{position:absolute;top:0;right:0;width:var(--ui-size-72px);height:var(--ui-size-46px);opacity:0;visibility:hidden;transform:scale(.76);transition:transform calc(var(--ui-motion) * 4) var(--ui-spring),opacity calc(var(--ui-motion) * 2) var(--ui-ease),visibility 0s calc(var(--ui-motion) * 4)}
-.t-liquid-glass-dashboard .lg-filter-option .ui-btn{width:100%;height:100%;padding:0 var(--ui-space-8px);background:var(--ui-panel);color:var(--ui-text);border:var(--ui-border-w) solid var(--ui-line);border-radius:var(--ui-radius-pill);box-shadow:var(--ui-shadow-sm);font-size:var(--ui-font-size-12px)}
+.t-liquid-glass-dashboard .lg-filter-option .ui-btn{width:100%;height:100%;padding:0 var(--ui-space-8px);background:transparent;color:var(--ui-text);border:var(--ui-border-w) solid rgba(255,255,255,.6);border-radius:var(--ui-radius-pill);box-shadow:inset 0 1px 0 rgba(255,255,255,.7);font-size:var(--ui-font-size-12px);font-weight:var(--ui-font-weight-650)}
 .t-liquid-glass-dashboard .lg-filter-option .ui-btn::before{content:none}
 .t-liquid-glass-dashboard .lg-time-box.lg-expanded .lg-filter-option{visibility:visible;opacity:1;pointer-events:auto;transition-delay:0s}
 .t-liquid-glass-dashboard .lg-time-box.lg-expanded [data-slot="3"]{transform:translateX(calc((var(--ui-size-72px) + var(--ui-space-12px)) * -3)) scale(1)}
 .t-liquid-glass-dashboard .lg-time-box.lg-expanded [data-slot="2"]{transform:translateX(calc((var(--ui-size-72px) + var(--ui-space-12px)) * -2)) scale(1)}
 .t-liquid-glass-dashboard .lg-time-box.lg-expanded [data-slot="1"]{transform:translateX(calc((var(--ui-size-72px) + var(--ui-space-12px)) * -1)) scale(1)}
 .t-liquid-glass-dashboard .lg-time-box.lg-expanded [data-slot="0"]{transform:translateX(0) scale(1)}
-.t-liquid-glass-dashboard .lg-filter-option [aria-selected="true"]{background:var(--ui-panel-2);font-weight:var(--ui-font-weight-700);border-color:var(--ui-text)}
+.t-liquid-glass-dashboard .lg-filter-option [aria-selected="true"]{background:transparent;color:var(--ui-brand-ink);font-weight:var(--ui-font-weight-700);border-color:color-mix(in srgb,var(--ui-brand-soft) 60%,transparent)}
 .t-liquid-glass-dashboard.lg-sidebar-collapsed .lg-side{width:var(--ui-size-72px)}
 .t-liquid-glass-dashboard.lg-sidebar-collapsed .lg-brand{justify-content:center;padding-inline:0}
 .t-liquid-glass-dashboard.lg-sidebar-collapsed .lg-brand-copy,.t-liquid-glass-dashboard.lg-sidebar-collapsed .lg-side-label,.t-liquid-glass-dashboard.lg-sidebar-collapsed .lg-workspace ui-avatar{display:none}
@@ -401,17 +449,26 @@ const liquidGlassDashboard = {
     }
     const dock = $('.lg-dock');
     const dockItems = [...dock.querySelectorAll('ui-button')];
-    function magnifyDock(item) {
-      const active = dockItems.indexOf(item);
-      dockItems.forEach((button, index) => {
-        const scale = active < 0 ? 1 : index === active ? 1.45 : Math.abs(index - active) === 1 ? 1.18 : 1;
-        button.querySelector('.lg-icon').style.transform = `scale(${scale})`;
+    // Dock 放大：按光标到每个图标中心的水平距离连续计算尺寸，当前图标最大，相邻图标随距离递减。
+    function magnifyDock(clientX = null) {
+      const base = parseFloat(getComputedStyle(root).getPropertyValue('--ui-size-46px')) || 46;
+      const reach = base * 2.1; // 只影响当前图标与左右相邻各一个
+      dockItems.forEach((item) => {
+        const button = item.querySelector('button');
+        if (!button) return;
+        let size = base;
+        if (clientX !== null) {
+          const r = button.getBoundingClientRect();
+          const distance = Math.abs(clientX - (r.left + r.width / 2));
+          const f = distance < reach ? (1 + Math.cos(Math.PI * distance / reach)) / 2 : 0;
+          size = base * (1 + 0.5 * f);
+        }
+        item.style.setProperty('--lg-dock-size', size.toFixed(1) + 'px');
       });
     }
-    listen(dock, 'pointerover', (event) => {
+    listen(dock, 'pointermove', (event) => {
       if (event.pointerType === 'touch') return;
-      const item = event.target.closest('ui-button');
-      if (item && dock.contains(item) && !item.contains(event.relatedTarget)) magnifyDock(item);
+      magnifyDock(event.clientX);
     });
     listen(dock, 'pointerleave', () => magnifyDock(null));
     function moveCapsules(instant = false) {
@@ -535,6 +592,8 @@ const liquidGlassDashboard = {
       timeButton.tabIndex = open ? -1 : 0;
       $('.lg-filter-options').toggleAttribute('inert', !open);
       $('.lg-filter-options').setAttribute('aria-hidden', String(!open));
+      const selectedSlot = $(`.lg-filter-option[data-period="${state.period}"]`)?.dataset.slot;
+      $$('.lg-goo-blob').forEach((blob) => blob.classList.toggle('lg-on', blob.dataset.slot === selectedSlot));
       $$('.lg-filter-option').forEach((option) => {
         const button = option.querySelector('button');
         const current = option.dataset.period === state.period;
@@ -758,9 +817,10 @@ const liquidGlassDashboard = {
     return dispose;
   },
   ai: `【页面目标】呈现本地经营概览，不接入真实客户或交易。
+【视觉】固定使用 Dusk Glass 晚霞液态玻璃风格（data-style="dusk"）：大面积暖桃 → 灰粉 → 浅杏模糊渐变底并叠两道白色半透明光弧；主面板一层玻璃、模块再叠一层（白色 45-60% 磨砂、blur 28px + saturate 140%、1px 半透明白描边、顶部内侧细高光、圆角 24px）；产品榜单用 --ui-panel-2 实底卡、行间用留白不用分割线；目标追踪为近黑深色卡、顶部铜色光晕；铜橙用于当前项与标签；柱状图圆头细柱、暖桃 → 灰玫瑰竖向渐变，未达成部分用浅灰半透明轨道；页面大标题 56px，数字一律等宽。
 【整体结构】从上到下安排悬浮岛导航、顶栏与时间胶囊、三项经营指标、收入趋势 / 客户结构 / 目标追踪 / 产品表现 / 收入来源 / 订单动态六个数据模块及底部图标 Dock。
 【响应式】按 @container tpl 将桌面多列收为平板两列与手机单列。
-【操作逻辑】点侧栏或 Dock 图标切换页面，并让当前项玻璃胶囊沿移动方向拉长、到位回弹；桌面侧栏按钮收起或展开文字。悬停数据卡时柔和光斑跟随光标、边框局部提亮、倾斜不超过 4 度；移出复原。点数据卡或展开按钮原位显示对应详情，其余五模块收为底部缩略条；点缩略图切换详情；关闭或 Esc 沿原路收回并归还焦点。点时间胶囊分裂出今日 / 本周 / 本月 / 本季，选择后融回并同时更新全部指标和图表，不整页刷新。模板内按 K / Ctrl+K 或点搜索打开命令面板；输入实时过滤并高亮，上下键选择、Enter 跳转到页面 / 模块 / 周期，Esc 关闭。Dock 悬停时当前与相邻图标联动放大，显示名称，当前页保留下方圆点。
+【操作逻辑】点侧栏或 Dock 图标切换页面，并让当前项玻璃胶囊沿移动方向拉长、到位回弹；桌面侧栏按钮收起或展开文字。悬停数据卡时柔和光斑跟随光标、边框局部提亮、倾斜不超过 4 度；移出复原。点数据卡或展开按钮原位显示对应详情，其余五模块收为底部缩略条；点缩略图切换详情；关闭或 Esc 沿原路收回并归还焦点。点时间胶囊分裂出今日 / 本周 / 本月 / 本季，选择后融回并同时更新全部指标和图表，不整页刷新。模板内按 K / Ctrl+K 或点搜索打开命令面板；输入实时过滤并高亮，上下键选择、Enter 跳转到页面 / 模块 / 周期，Esc 关闭。Dock 悬停时按光标距离连续放大：最近的图标最大，相邻图标随距离递减，上方显示名称，当前页保留下方铜色圆点。点时间胶囊时选项以液态融合动画分裂，当前选项为铜色胶囊。
 【状态】所有数字是固定本地示例，直接就绪；空搜索显示未匹配提示。没有外部接口、网络加载或真实交易错误，不用虚构在线结果。
 【无障碍】所有按钮具备名称与可见焦点；时间范围支持方向键、Home / End、Enter / Space 和 Esc；命令面板具备焦点陷阱，关闭后还给触发器；状态变化播报。减少动效时直接显示终态，循环离开视口 / 标签页隐藏时暂停，卸载时清理。
 【约束】只用 var(--ui-*)，不使用 iframe，不引入外部资源。`,
@@ -768,7 +828,7 @@ const liquidGlassDashboard = {
     purpose: '把经营概览与数据钻取放在同一个原生页面里。',
     when: ['经营数据演示', 'SaaS 运营后台', '需要保留上下文的数据钻取'],
     avoid: ['真实交易处理', '需要后端权限控制的生产后台'],
-    tips: ['所有数据都是固定本地演示数据', '画廊跟随当前风格与明暗，不强制暖桃配色']
+    tips: ['所有数据都是固定本地演示数据', '固定推荐风格 data-style="dusk"，画廊与复制代码只跟随全站明暗，不跟随全站风格', '铜橙文字用压暗后的 --ui-brand；亮铜色只用 color-mix 做图形与底色']
   }
 };
 

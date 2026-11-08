@@ -74,7 +74,7 @@ function assertFailedRun(run) {
   assert.equal(run.report.passed, false, '旧 passed=true 不得残留或被误认为本轮成功');
   assert.notEqual(run.report.runId, 'stale-fixture', '报告必须属于本轮而不是 stale fixture');
   assert.equal(run.report.collected, 0, '首个记录写入前的故障不能虚报已完成组合');
-  assert.equal(run.report.expected, 378, '负例不得缩小 21×2×3×3 矩阵');
+  assert.equal(run.report.expected, 396, '负例不得缩小 22×2×3×3 矩阵');
   assert.equal(run.report.integrity.missing.length, run.report.expected, '必须明确列出未完成组合');
   assert.ok(run.report.errors.length > 0, '必须保留真实异常原因');
 }
@@ -198,7 +198,7 @@ chromium.launch = async (...args) => {
   return { preload, observations };
 }
 
-// 已知负例用最小静态卡片保留真实外壳事件与元数据，避免运行 378 次重型演示。
+// 已知负例用最小静态卡片保留真实外壳事件与元数据，避免运行 396 次重型演示。
 // 不用于任何正例，也不伪装模板 init；真实产品仍由 mobile-clean 和完整矩阵验收。
 function negativeMatrixApp(source) {
   source = replaceOnce(source, 'function cardHTML(item) {', `function cardHTML(item) {
@@ -402,8 +402,8 @@ tests.set('matrix-inventory-shrink', async () => {
     assert.equal(run.record.signal, null);
     assert.ok(run.record.exitCode !== 0, '删掉风格后自缩到 360 的矩阵不得假绿');
     assert.equal(run.report?.passed, false, '负例不得把缩小后的规模冒充完整验收');
-    assert.equal(run.report.styles, 20, '必须如实记录负例实际库存，不能虚报 21');
-    assert.ok(run.report.expected >= 378, '21/378 是独立契约下限，不能随 styles.length 缩小');
+    assert.equal(run.report.styles, 21, '必须如实记录负例实际库存，不能虚报 22');
+    assert.ok(run.report.expected >= 396, '22/396 是独立契约下限，不能随 styles.length 缩小');
     assert.equal(run.report.collected, 0, '库存检查应在浏览器矩阵开始前阻断');
     assert.ok(run.report.errors.some((error) => error.stage === 'inventory'), '必须保存独立库存断言的失败原因');
     assert.ok(run.report.inventory.missing.includes('flyme'), '必须指出缺失的契约风格 ID');
@@ -418,7 +418,7 @@ tests.set('matrix-inventory-duplicate', async () => {
   assert.equal(run.record.signal, null);
   assert.ok(run.record.exitCode !== 0);
   assert.equal(run.report?.passed, false);
-  assert.equal(run.report.expected, 378);
+  assert.equal(run.report.expected, 396);
   assert.equal(run.report.collected, 0);
   assert.ok(run.report.inventory.duplicates.includes('originos'), '唯一 ID 必须独立检查，不能只看风格数量');
   assert.ok(run.report.errors.some((error) => error.stage === 'inventory'));
@@ -434,10 +434,10 @@ tests.set('matrix-inventory-expand', async () => {
     const run = await runScript(name, 'test-accessibility.mjs', url, fixture);
     evidence.cases.push(run.record);
     assert.equal(run.record.signal, null);
-    assert.ok(run.record.exitCode !== 0, '在第 22 套风格注入的负例必须实际被遍历，不能截断到原 21 套');
+    assert.ok(run.record.exitCode !== 0, '在第 23 套风格注入的负例必须实际被遍历，不能截断到原 22 套');
     assert.equal(run.report?.passed, false);
-    assert.equal(run.report.styles, 22);
-    assert.equal(run.report.expected, 22 * 2 * 3 * 3, '库存扩充后仍生成全量矩阵');
+    assert.equal(run.report.styles, 23);
+    assert.equal(run.report.expected, 23 * 2 * 3 * 3, '库存扩充后仍生成全量矩阵');
     assert.equal(run.report.workerSettlements.length, 3);
     assert.equal(run.report.errors.filter((error) => error.stage === 'axe' && error.combination?.style === extra && error.message.includes('expanded style reached')).length, 3);
     assert.ok(run.report.integrity.missing.some((key) => key.includes('/' + extra + '/')));
@@ -454,7 +454,7 @@ tests.set('matrix-view-noop', async () => {
     assert.equal(run.record.signal, null);
     assert.ok(run.record.exitCode !== 0, '静默 view 失效不得把同一实际画廊标成三个视图并假绿');
     assert.equal(run.report?.passed, false);
-    assert.equal(run.report.expected, 378);
+    assert.equal(run.report.expected, 396);
     assert.ok(run.report.errors.some((error) => error.stage === 'actual-state' && error.observed?.view !== error.combination?.view), '必须保存请求视图与实际渲染视图不符的证据');
     assert.ok(run.report.collected < run.report.expected, '未生效组合不能计入已确认覆盖');
   });
@@ -468,9 +468,9 @@ tests.set('matrix-style-noop', async () => {
     const run = await runScript(name, 'test-accessibility.mjs', url, fixture);
     evidence.cases.push(run.record);
     assert.equal(run.record.signal, null);
-    assert.ok(run.record.exitCode !== 0, '静默 style 失效不得把实际 aurora 冒充 21 套风格并假绿');
+    assert.ok(run.record.exitCode !== 0, '静默 style 失效不得把实际 aurora 冒充 22 套风格并假绿');
     assert.equal(run.report?.passed, false);
-    assert.equal(run.report.expected, 378);
+    assert.equal(run.report.expected, 396);
     assert.ok(run.report.errors.some((error) => error.stage === 'actual-state' && error.observed?.style !== error.combination?.style), '必须同时读回 html 风格与选择器，而非仅记录所选值');
     assert.ok(run.report.collected < run.report.expected);
   });
@@ -516,7 +516,7 @@ tests.set('matrix-theme-noop', async () => {
     assert.equal(run.record.signal, null);
     assert.ok(run.record.exitCode !== 0, '静默 theme 失效不得把实际 light 重复标成明暗两套并假绿');
     assert.equal(run.report?.passed, false);
-    assert.equal(run.report.expected, 378);
+    assert.equal(run.report.expected, 396);
     assert.ok(run.report.errors.some((error) => error.stage === 'actual-state' && error.observed?.theme !== error.combination?.theme), '必须保存请求主题与实际 html 主题不符的证据');
     assert.ok(run.report.collected < run.report.expected);
   });
@@ -540,7 +540,7 @@ document.head.append(negativeColors);
     assert.ok(run.record.exitCode !== 0, '属性已变化但计算颜色冻结时也必须阻断，不得只看标签值');
     assert.equal(run.report?.passed, false);
     assert.ok(run.report.errors.some((error) => error.stage === 'actual-state' && error.observed?.mismatches.some((issue) => issue.startsWith('computed '))), '必须保存实际计算颜色与目标 token 的不符证据');
-    assert.equal(run.report.expected, 378);
+    assert.equal(run.report.expected, 396);
     assert.ok(run.report.collected < run.report.expected);
   });
 });
