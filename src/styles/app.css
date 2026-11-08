@@ -19,6 +19,21 @@ html[data-style="glass"][data-theme="dark"] body{
     var(--ui-bg);
   background-attachment:fixed;
 }
+html[data-style="dusk"] body{
+  background:
+    radial-gradient(1200px 640px at 6% -8%, #e4c0a6 0%, transparent 62%),
+    radial-gradient(1000px 620px at 70% 46%, #d4b8ac 0%, transparent 66%),
+    radial-gradient(1200px 520px at 40% 112%, #ebd7cc 0%, transparent 64%),
+    var(--ui-bg);
+  background-attachment:fixed;
+}
+html[data-style="dusk"][data-theme="dark"] body{
+  background:
+    radial-gradient(1100px 560px at 6% -8%, #3b2519 0%, transparent 62%),
+    radial-gradient(1000px 600px at 76% 50%, #2e2023 0%, transparent 66%),
+    var(--ui-bg);
+  background-attachment:fixed;
+}
 
 /* ---------- 顶栏 ---------- */
 .top{
@@ -168,6 +183,12 @@ main{min-width:0;container-type:inline-size;container-name:gallery}
 .sdemo[data-style="glass"][data-theme="dark"]{background:
   radial-gradient(240px 160px at 10% 0%, #22346b 0%, transparent 70%),
   radial-gradient(240px 180px at 100% 30%, #4a1f52 0%, transparent 70%), var(--ui-bg)}
+.sdemo[data-style="dusk"]{background:
+  radial-gradient(260px 170px at 8% 0%, #e4c0a6 0%, transparent 72%),
+  radial-gradient(260px 190px at 90% 50%, #d4b8ac 0%, transparent 72%), var(--ui-bg)}
+.sdemo[data-style="dusk"][data-theme="dark"]{background:
+  radial-gradient(260px 170px at 8% 0%, #3b2519 0%, transparent 72%),
+  radial-gradient(260px 190px at 90% 50%, #2e2023 0%, transparent 72%), var(--ui-bg)}
 .sdemo[data-style="cyber"][data-theme="dark"]{background:
   linear-gradient(rgba(0,234,255,.06) 1px, transparent 1px) 0 0/22px 22px,
   linear-gradient(90deg, rgba(0,234,255,.06) 1px, transparent 1px) 0 0/22px 22px, var(--ui-bg)}

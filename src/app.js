@@ -231,7 +231,7 @@ function fnSource(fn) {
 
 function tplAI(t) {
   return t.ai +
-    (t.style ? '\n【推荐主题】data-style="' + t.style + '" data-theme="light"（默认）；深色改为 data-theme="dark"。系统 APP 使用自己的风格灵感，不随全站风格选择改变；预览仅跟随全站明暗，交互状态不重置。' : '') +
+    (t.style ? '\n【推荐主题】data-style="' + t.style + '" data-theme="light"（默认）；深色改为 data-theme="dark"。该模板使用自己的推荐风格，不随全站风格选择改变；预览仅跟随全站明暗，交互状态不重置。' : '') +
     '\n【依赖组件】' + t.uses.join('、') +
     '\n【组件库】ui-catalog 零运行时依赖 Web Components：引入 tokens.css + components/index.js；' +
     (t.style ? '局部容器明确设置推荐 data-style 与 data-theme；' : '换风格只改 <html> 上的 data-style / data-theme；') + '模板样式只能用 var(--ui-*) 变量';
@@ -285,7 +285,8 @@ function tplFrame(t) {
     const local = t.style ? ' data-template-style="' + t.style + '" data-style="' + t.style + '" data-theme="' + state.theme + '"' : '';
     return '<div class="tphone"' + local + '><div class="tphone__sb" aria-hidden="true"><span>9:41</span><span>▂▄▆ 5G ▭</span></div>' + t.html + '</div>';
   }
-  return '<div class="tbrowser' + (t.fit ? ' tbrowser--fit' : '') + '"><div class="tbrowser__bar" aria-hidden="true"><i></i><i></i><i></i><span>' + esc(t.url || 'example.com') + '</span></div>' +
+  const local = t.style ? ' data-template-style="' + t.style + '" data-style="' + t.style + '" data-theme="' + state.theme + '"' : '';
+  return '<div class="tbrowser' + (t.fit ? ' tbrowser--fit' : '') + '"' + local + '><div class="tbrowser__bar" aria-hidden="true"><i></i><i></i><i></i><span>' + esc(t.url || 'example.com') + '</span></div>' +
     '<div class="tbrowser__vp"><div class="tbrowser__page" data-page>' + t.html + '</div></div></div>';
 }
 
@@ -438,7 +439,7 @@ function applyStyle(id) {
 function applyTheme() {
   document.documentElement.setAttribute('data-theme', state.theme);
   /* 只更新局部变量，不重建模板，保留筛选、勾选、连接与滚动状态。 */
-  main.querySelectorAll('.tphone[data-template-style]').forEach(function (phone) { phone.setAttribute('data-theme', state.theme); });
+  main.querySelectorAll('[data-template-style]').forEach(function (phone) { phone.setAttribute('data-theme', state.theme); });
   themeBtn.textContent = state.theme === 'light' ? '🌙 暗色' : '☀️ 亮色';
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute('content', getComputedStyle(document.documentElement).getPropertyValue('--ui-bg').trim());

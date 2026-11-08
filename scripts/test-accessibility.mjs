@@ -22,11 +22,11 @@ const arg = (flag, fallback) => {
 const widths = [360, 820, 1440];
 const themes = ['light', 'dark'];
 const views = ['gallery', 'styles', 'templates'];
-// 独立于可删减的 styles 元数据：当前 SPEC 的 21 套 / 378 组合是下限。
-const minimumStyles = 21;
-const minimumCombinations = 378;
+// 独立于可删减的 styles 元数据：当前 SPEC 的 22 套 / 396 组合是下限。
+const minimumStyles = 22;
+const minimumCombinations = 396;
 const requiredStyles = ['aurora', 'brutal', 'glass', 'mono', 'neumorph', 'clay', 'material', 'cyber',
-  'paper', 'retro', 'nord', 'luxury', 'bauhaus', 'candy', 'terminal', 'miui', 'coui', 'oneui', 'harmonyos', 'originos', 'flyme'];
+  'paper', 'retro', 'nord', 'luxury', 'bauhaus', 'candy', 'terminal', 'miui', 'coui', 'oneui', 'harmonyos', 'originos', 'flyme', 'dusk'];
 const sourceIds = styles.map((style) => style?.id);
 const styleIds = [...new Set([...requiredStyles, ...sourceIds.filter((id) => typeof id === 'string')])];
 const key = (record) => [record.view, record.width, record.style, record.theme].join('/');
@@ -153,7 +153,7 @@ async function worker(state) {
     state.stage = 'inventory';
     state.inventory = await page.locator('#styleSel').evaluate((select) => [...select.options].map((option) => option.value));
     assert.equal(new Set(state.inventory).size, state.inventory.length, '页面风格选择器 ID 不能重复');
-    assert.ok(state.inventory.length >= minimumStyles, '页面风格库存也必须至少有 21 套');
+    assert.ok(state.inventory.length >= minimumStyles, '页面风格库存也必须至少有 22 套');
     assert.deepEqual([...state.inventory].sort(), [...sourceIds].sort(), '真实页面必须提供准确的全部风格 ID');
     state.stage = 'axe-load';
     await page.addScriptTag({ path: require.resolve('axe-core/axe.min.js') });
@@ -248,7 +248,7 @@ async function collectRecords() {
   report.failures = records.filter((record) => record.violations.length || record.consoleErrors.length || record.geometry.scrollWidth > record.geometry.width + 1);
   report.failureCount = report.failures.length;
   try {
-    assert.ok(counts.size >= minimumCombinations, '独立覆盖下限：至少 378 个已确认唯一组合');
+    assert.ok(counts.size >= minimumCombinations, '独立覆盖下限：至少 396 个已确认唯一组合');
     assert.equal(records.length, expected, '验收组合不能遗漏');
     assert.equal(counts.size, expected, '验收组合不能重复');
     assert.equal(report.integrity.missing.length + report.integrity.unexpected.length, 0, '必须覆盖准确的验收组合');
@@ -279,11 +279,11 @@ try {
   base = url.replace(/\/+$/, '') + '/';
   report.base = base;
   stage = 'inventory';
-  assert.ok(styles.length >= minimumStyles, '独立库存下限：至少保留 21 套风格');
+  assert.ok(styles.length >= minimumStyles, '独立库存下限：至少保留 22 套风格');
   assert.deepEqual(report.inventory.missing, [], '契约风格 ID 不得丢失');
   assert.deepEqual(report.inventory.duplicates, [], '风格 ID 不能重复');
   assert.deepEqual(report.inventory.invalid, [], '风格 ID 必须合法，不得猜修非法源值');
-  assert.ok(expected >= minimumCombinations, '独立矩阵下限：至少 378 个组合');
+  assert.ok(expected >= minimumCombinations, '独立矩阵下限：至少 396 个组合');
   stage = 'launch';
   browser = await chromium.launch();
   const settled = await Promise.allSettled(report.workers.map(worker));

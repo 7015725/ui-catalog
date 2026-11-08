@@ -3,12 +3,12 @@
 [![test](https://github.com/7015725/ui-catalog/actions/workflows/test.yml/badge.svg)](https://github.com/7015725/ui-catalog/actions/workflows/test.yml)
 ![零依赖](https://img.shields.io/badge/依赖-0-brightgreen)
 ![组件](https://img.shields.io/badge/组件-167-4f7cff)
-![风格](https://img.shields.io/badge/UI%20风格-21-8b5cf6)
+![风格](https://img.shields.io/badge/UI%20风格-22-8b5cf6)
 ![模板](https://img.shields.io/badge/界面模板-20-f59e0b)
 ![无障碍](https://img.shields.io/badge/WCAG-AA-15803d)
 [![MIT](https://img.shields.io/badge/license-MIT-lightgrey)](./LICENSE)
 
-一套**零运行时依赖**的原生 Web Components 组件库：**167 个组件 · 21 套 UI 风格（各含浅色 / 深色）· 20 个界面模板**，
+一套**零运行时依赖**的原生 Web Components 组件库：**167 个组件 · 22 套 UI 风格（各含浅色 / 深色）· 20 个界面模板**，
 每个组件和模板都配有「预览 / AI 提示词 / 设计说明 / 代码」，可以直接把提示词交给 AI Agent 生成同风格界面。
 
 🔗 **在线预览：[7015725.github.io/ui-catalog](https://7015725.github.io/ui-catalog/)**　·　回归测试页：[test.html](https://7015725.github.io/ui-catalog/test.html)
@@ -19,7 +19,7 @@
 
 <table>
 <tr>
-<td width="50%"><b>21 套 UI 风格</b>：同一套组件，只切换 <code>data-style</code> / <code>data-theme</code><br><img src="docs/screenshots/styles.webp" alt="UI 风格页（已有风格截图）"></td>
+<td width="50%"><b>22 套 UI 风格</b>：同一套组件，只切换 <code>data-style</code> / <code>data-theme</code><br><img src="docs/screenshots/styles.webp" alt="UI 风格页（已有风格截图）"></td>
 <td width="50%"><b>深色 + 赛博风格</b>：视觉效果分类<br><img src="docs/screenshots/dark.webp" alt="深色模式"></td>
 </tr>
 <tr>
@@ -47,7 +47,7 @@
 仓库是公开的，可以直接通过 jsDelivr CDN 引用。引入一个样式文件 + 一个脚本，就能用全部组件：
 
 ```html
-<!-- 1. 设计变量（颜色 / 圆角 / 阴影；当前 main 含 21 套风格，固定版本以发布内容为准） -->
+<!-- 1. 设计变量（颜色 / 圆角 / 阴影；当前 main 含 22 套风格，固定版本以发布内容为准） -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/7015725/ui-catalog@v1.2.0/src/styles/tokens.css">
 <!-- 2. 注册全部组件 -->
 <script type="module" src="https://cdn.jsdelivr.net/gh/7015725/ui-catalog@v1.2.0/src/components/index.js"></script>
@@ -183,13 +183,13 @@ docs/screenshots/          README 用的截图与动图
 
 ### 液态玻璃后台入口与操作
 
-顶栏「界面模板」→「Web 页面」→「液态玻璃后台」（`liquid-glass-dashboard`），也可搜索「液态玻璃」。原生预览复用库组件，跟随全局风格与明暗，不使用 iframe。
+顶栏「界面模板」→「Web 页面」→「液态玻璃后台」（`liquid-glass-dashboard`），也可搜索「液态玻璃」。原生预览复用库组件，固定使用专属风格 `dusk`（Dusk Glass 晚霞液态玻璃），只跟随全站明暗，不使用 iframe。
 
-- 悬浮岛侧栏与底部 Dock 联动切换页面；桌面侧栏可收起与展开。
+- 悬浮岛侧栏与底部 Dock 联动切换页面；当前项玻璃胶囊沿移动方向拉长、到位回弹；Dock 按光标距离连续放大当前与相邻图标；桌面侧栏可收起与展开。
 - 收入趋势、客户结构、目标追踪、产品表现、收入来源、订单动态六个模块可原位展开；其它模块收为缩略条，支持切换详情及关闭 / Esc 收回。
-- 时间胶囊选择今日 / 本周 / 本月 / 本季，同步更新本地示例指标和图表；方向键、Home / End、Enter / Space 与 Esc 可完成选择。
+- 时间胶囊以液态融合（metaball）动画分裂为今日 / 本周 / 本月 / 本季，当前项为铜色胶囊，选中后其余选项融回，同步更新本地示例指标和图表；方向键、Home / End、Enter / Space 与 Esc 可完成选择。
 - 搜索按钮或模板区域 K / Ctrl+K 打开命令面板，实时过滤并高亮；上下键选择、Enter 跳转、Esc 关闭并归还焦点。
-- 「代码」导出可独立运行的完整 HTML，包含当前风格、明暗、容器查询与本地动效导入；迁移时调整 `src/styles/tokens.css`、`src/components/index.js` 和 `src/lib/motion.js` 三条资源路径。
+- 「代码」导出可独立运行的完整 HTML，包含专属风格 `dusk`、当前明暗、容器查询与本地动效导入；迁移时调整 `src/styles/tokens.css`、`src/components/index.js` 和 `src/lib/motion.js` 三条资源路径。
 - 卡片的「打开原始单页」链接保留最初的独立 HTML：内嵌 CSS、JS、图标和 Manrope 字体及许可，不依赖 CDN；它不跟随画廊换肤。
 
 全部数字和订单均为固定本地示例，不请求外部接口，不读取真实经营数据。
@@ -270,7 +270,7 @@ docs/screenshots/          README 用的截图与动图
 新增浮层组件时，直接复用 `new Layer()`：`setContent(html)` / `show(anchor, placement, offset)` /
 `hide()` / `toggle()`，placement 形如 `bottom-start`、`top-center`。
 
-## 内置风格（21 套）
+## 内置风格（22 套）
 
 | data-style | 名称 | 特征 |
 |---|---|---|
@@ -295,9 +295,10 @@ docs/screenshots/          README 用的截图与动图
 | `harmonyos` | HarmonyOS 风格灵感 | 节制蓝色、设备层级、拇指操作 |
 | `originos` | OriginOS 风格灵感 | 不同跨度模块、日期条、原子日程 |
 | `flyme` | Flyme 风格灵感 | 大留白、细分隔、低装饰与青绿 |
+| `dusk` | Dusk Glass 晚霞液态玻璃 | 暖桃晚霞底、半透明白磨砂玻璃、铜橙强调；液态玻璃后台的专属风格 |
 
 每套都有浅色 / 深色两份变量，并且都经过对比度校验：正文、次要文字、品牌色文字、语义色对面板背景均 ≥ 4.5:1（WCAG AA），
-`test.html` 的对比度用例从风格元数据遍历全部 21 × 2 组合，新增六种还覆盖实际背景、面板与品牌浅底的次要文字/品牌色/按钮文字；改坏 token 会直接报红。
+`test.html` 的对比度用例从风格元数据遍历全部 22 × 2 组合，新增六种还覆盖实际背景、面板与品牌浅底的次要文字/品牌色/按钮文字；改坏 token 会直接报红。
 
 `--ui-on-color` 是「实心语义色（ok / warn / danger 做底色）上的文字色」：浅色主题为白色、深色主题为近黑色，
 靠 CSS 变量继承就近生效，所以深色页面里嵌一块浅色预览也不会取错。
@@ -395,7 +396,7 @@ register('ui-toast', UIToast, '.ui-toast{background:var(--ui-panel);border:var(-
 
 ## 测试
 
-零运行时依赖回归测试页：`/test.html`（210 条用例）。保留 1.1.0 的 95 条基线用例（含颜色白名单、冒泡事件、模板、Canvas、键盘与焦点、无障碍和动效清理），并补充系统 APP、液态玻璃后台的真实操作、独立代码出口、局部风格隔离及全部风格的对比度断言。
+零运行时依赖回归测试页：`/test.html`（212 条用例）。保留 1.1.0 的 95 条基线用例（含颜色白名单、冒泡事件、模板、Canvas、键盘与焦点、无障碍和动效清理），并补充系统 APP、液态玻璃后台的真实操作、独立代码出口、局部风格隔离及全部风格的对比度断言。
 
 自动化测试需要 **Playwright + Chromium + axe-core**，仅为开发测试依赖；本地启动和页面运行仍无需 `npm install` 或构建。
 
@@ -417,7 +418,7 @@ npm run test:a11y    # 全风格/明暗/屏宽/视图矩阵（含 best-practice�
 
 - **167 个组件**全部可渲染、可交互；画廊逐个点击所有控件 + 键盘操作，无报错
 - **20 个界面模板**：保留原 19 个，新增液态玻璃后台的模块钻取、周期选择、命令搜索、响应式与焦点归还回归
-- **210 条回归用例**已在本地通过，保留原有用例；提交前另跑 `npm run test:mobile`、`npm run test:liquid` 与完整 `npm run test:a11y`
+- **212 条回归用例**已在本地通过，保留原有用例；提交前另跑 `npm run test:mobile`、`npm run test:liquid` 与完整 `npm run test:a11y`
 - **响应式**：原 15 套风格的既有 360 / 820 / 1440 验证保留；新增 6 个系统 APP 覆盖 320 / 390 / 768 / 1440，内容独立滚动
 - **无障碍验收**：按 `docs/SPEC.md` 检查全部风格与明暗、键盘、可访问名称、触控目标、pressed/live 状态及 axe-core（包含 best-practice）
 - **动效**：全部尊重 `prefers-reduced-motion` 与 `data-motion="reduce"`；动画循环离开视口 / 标签页隐藏时暂停，组件移除时清理
