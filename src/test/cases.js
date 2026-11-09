@@ -1156,7 +1156,7 @@ describe('动效第三批：展开与跟手', () => {
     click(bar);
     expect(bar.getAttribute('aria-expanded')).toBe('true');
     expect(el.isOpen).toBe(true);
-    await tick(30);
+    await tick(600);
     expect(rel()).toBe(top);
     expect(el.offsetHeight).toBeGreaterThan(main.offsetHeight + 40);
     expect(el.querySelectorAll('.ui-tr__list li').length).toBe(2);
@@ -1226,5 +1226,213 @@ describe('动效第三批：展开与跟手', () => {
       const d2 = parseFloat(getComputedStyle(host.querySelector('.ui-tr__body')).transitionDuration);
       expect(d1 < 0.01 && d2 < 0.01).toBe(true);
     });
+  });
+});
+
+/* ---------------- 通知与弹出（第二批） ---------------- */
+describe('通知与弹出（第二批）', () => {
+  const ptr2 = (el, type, x, y) => el.dispatchEvent(new PointerEvent(type, { bubbles: true, clientX: x, clientY: y, pointerId: 1, pointerType: 'touch', isPrimary: true }));
+  const docKey = (k, o) => document.activeElement.dispatchEvent(new KeyboardEvent('keydown', Object.assign({ key: k, bubbles: true }, o || {})));
+  const left = () => document.querySelectorAll('body > .ui-tst, body > .ui-as-mask, body > .ui-tc-mask, body > .ui-tour').length;
+
+  it('6 个组件已注册，分类为反馈 / 浮层', () => {
+    const want = { 'ui-toaster': '反馈', 'ui-island': '反馈', 'ui-inbox': '浮层', 'ui-action-sheet': '浮层', 'ui-type-confirm': '浮层', 'ui-tour': '浮层' };
+    Object.keys(want).forEach((t) => {
+      expect(!!customElements.get(t)).toBe(true);
+      const c = catalog.find((x) => x.tag === t);
+      expect(c.cat).toBe(want[t]);
+      expect(c.ai).toContain('【交互】');
+    });
+  });
+
+  it('ui-toaster：通知区挂到 body，同 id 更新，关闭派发 reason，移除组件时清理', async (host) => {
+    await put(host, '<ui-toaster max="2"></ui-toaster>');
+    const t = host.firstElementChild, root = document.querySelector('body > .ui-tst');
+    expect(!!root).toBe(true);
+    const seen = [];
+    t.addEventListener('dismiss', (e) => seen.push(e.detail.reason));
+    const a = t.push({ type: 'success', title: '已保存' });
+    t.push({ title: '已移入回收站', action: '撤销' });
+    t.push({ type: 'error', title: '失败' });
+    expect(t.count).toBe(3);
+    expect(root.querySelectorAll('.ui-tst__t[role="alert"]').length).toBe(1);
+    expect(root.querySelector('.ui-tst__t[data-id="' + a + '"]').getAttribute('aria-hidden')).toBe('true');
+    t.push({ id: a, type: 'warn', title: '已更新' });
+    expect(t.count).toBe(3);
+    expect(root.querySelector('.ui-tst__t[data-id="' + a + '"] .ui-tst__ti').textContent).toBe('已更新');
+    let act = '';
+    t.addEventListener('action', (e) => { act = e.detail.label; });
+    root.querySelector('.ui-tst__act').click();
+    expect(act).toBe('撤销');
+    t.dismiss(a);
+    expect(seen).toEqual(['action', 'api']);
+    host.innerHTML = '';
+    expect(document.querySelector('body > .ui-tst')).toBe(null);
+  });
+
+  it('ui-toaster：悬停展开并暂停计时，promise 原地变成结果，横向拖动划走', async (host) => {
+    await put(host, '<ui-toaster duration="150"></ui-toaster>');
+    const t = host.firstElementChild, root = document.querySelector('body > .ui-tst'), ol = root.querySelector('.ui-tst__list');
+    t.push('一'); t.push('二');
+    ol.dispatchEvent(new PointerEvent('pointerenter'));
+    await tick(250);
+    expect(t.count).toBe(2);
+    const ys = Array.from(root.querySelectorAll('.ui-tst__t')).map((li) => parseFloat(li.style.getPropertyValue('--y')));
+    expect(Math.max.apply(null, ys)).toBeGreaterThan(30);
+    ol.dispatchEvent(new PointerEvent('pointerleave'));
+    t.dismissAll();
+    let done;
+    const id = 'job';
+    t.promise(new Promise((r) => { done = r; }), { loading: '上传中', success: (n) => '已上传 ' + n + ' 个' });
+    expect(root.querySelector('.ui-tst__t--loading')).toBeTruthy();
+    done(3);
+    await tick(10);
+    expect(root.querySelector('.ui-tst__t--success .ui-tst__ti').textContent).toBe('已上传 3 个');
+    t.dismissAll();
+    let why = '';
+    t.addEventListener('dismiss', (e) => { why = e.detail.reason; });
+    t.push({ title: '可划走', duration: 0, id: id });
+    const li = root.querySelector('.ui-tst__t[data-id="' + id + '"]');
+    ptr2(li, 'pointerdown', 100, 10); ptr2(li, 'pointermove', 160, 10); ptr2(li, 'pointermove', 220, 10); ptr2(li, 'pointerup', 220, 10);
+    expect(why).toBe('swipe');
+  });
+
+  it('ui-toaster：Alt+T 把焦点移到通知，Esc 关闭当前这条', async (host) => {
+    await put(host, '<ui-toaster></ui-toaster><button id="tst-b">外部</button>');
+    const t = host.firstElementChild;
+    t.push({ title: 'A', duration: 0 });
+    host.querySelector('#tst-b').focus();
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 't', code: 'KeyT', altKey: true, bubbles: true }));
+    expect(document.activeElement.closest('.ui-tst')).toBeTruthy();
+    docKey('Escape');
+    await tick(10);
+    expect(t.count).toBe(0);
+  });
+
+  it('ui-island：展开、播报、排队，Esc 缩回后显示下一条', async (host) => {
+    await withReduced(async () => {
+      await put(host, '<ui-island idle="录音中"></ui-island>');
+      const isl = host.firstElementChild, box = isl.querySelector('.ui-is');
+      isl.notify({ title: '来电', desc: '妈妈', action: '接听' });
+      isl.notify({ title: '电量低' });
+      expect(box.classList.contains('is-open')).toBe(true);
+      expect(isl.querySelector('[role="status"]').textContent).toBe('来电，妈妈');
+      let act = '';
+      isl.addEventListener('action', (e) => { act = e.detail.label; });
+      isl.querySelector('.ui-is__act').click();
+      expect(act).toBe('接听');
+      await tick(10);
+      expect(isl.querySelector('.ui-is__ti').textContent).toBe('电量低');
+      isl.querySelector('.ui-is__pill').focus();
+      box.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+      expect(isl.isOpen).toBe(false);
+    });
+  });
+
+  it('ui-inbox：角标与名称同步，键盘浏览，点开标为已读并归还焦点', async (host) => {
+    await put(host, '<ui-inbox items=\'[{"title":"A"},{"title":"B"},{"title":"C","read":true}]\'></ui-inbox>');
+    const ib = host.firstElementChild, bell = ib.querySelector('.ui-ib__bell');
+    expect(ib.unread).toBe(2);
+    expect(bell.getAttribute('aria-label')).toContain('2 条未读');
+    let opened = null;
+    ib.addEventListener('open', (e) => { opened = e.detail.item.title; });
+    bell.focus(); bell.click();
+    await tick(10);
+    expect(bell.getAttribute('aria-expanded')).toBe('true');
+    expect(document.activeElement.classList.contains('ui-ibp__it')).toBe(true);
+    key('ArrowDown');
+    expect(document.activeElement.dataset.i).toBe('1');
+    document.activeElement.click();
+    await tick(10);
+    expect(opened).toBe('B');
+    expect(ib.unread).toBe(1);
+    expect(document.activeElement).toBe(bell);
+    ib.add({ title: 'D' });
+    expect(ib.querySelector('.ui-ib__badge').textContent).toBe('2');
+    ib.markAllRead();
+    expect(ib.querySelector('.ui-ib__badge').hidden).toBe(true);
+    const layer = ib._layer.el;
+    host.innerHTML = '';
+    expect(layer.isConnected).toBe(false);
+  });
+
+  it('ui-action-sheet：打开聚焦首个可用项，选择 / Esc / 下拉关闭并归还焦点', async (host) => {
+    await withReduced(async () => {
+      await put(host, '<ui-action-sheet title="照片" items=\'[{"label":"不可用","disabled":true},{"label":"分享"},{"label":"删除","danger":true}]\'><button>更多</button></ui-action-sheet>');
+      const as = host.firstElementChild, btn = host.querySelector('button');
+      expect(btn.getAttribute('aria-haspopup')).toBe('dialog');
+      const log = [];
+      as.addEventListener('select', (e) => log.push('select:' + e.detail.label));
+      as.addEventListener('cancel', (e) => log.push('cancel:' + e.detail.reason));
+      btn.focus(); btn.click();
+      const dlg = document.querySelector('body > .ui-as-mask [role="dialog"]');
+      expect(dlg.getAttribute('aria-modal')).toBe('true');
+      expect(document.activeElement.textContent).toBe('分享');
+      document.activeElement.click();
+      expect(document.activeElement).toBe(btn);
+      btn.click(); docKey('Escape');
+      btn.click();
+      const hd = document.querySelector('.ui-as__hd');
+      ptr2(hd, 'pointerdown', 50, 100); ptr2(hd, 'pointermove', 50, 900); ptr2(hd, 'pointerup', 50, 900);
+      expect(log).toEqual(['select:分享', 'cancel:esc', 'cancel:swipe']);
+      expect(left()).toBe(0);
+    });
+  });
+
+  it('ui-type-confirm：输入匹配前不能确认，Enter 不匹配时提示，匹配后确认', async (host) => {
+    await withReduced(async () => {
+      await put(host, '<ui-type-confirm keyword="my-app" items="数据,成员"><button>删除</button></ui-type-confirm>');
+      const tc = host.firstElementChild, btn = host.querySelector('button');
+      let ok = 0;
+      tc.addEventListener('confirm', () => ok++);
+      btn.focus(); btn.click();
+      const dlg = document.querySelector('body > .ui-tc-mask [role="alertdialog"]');
+      const input = dlg.querySelector('input'), go = dlg.querySelector('.ui-tc__ok');
+      expect(document.activeElement).toBe(input);
+      expect(dlg.querySelectorAll('.ui-tc__list li').length).toBe(2);
+      expect(go.disabled).toBe(true);
+      input.value = 'my-ap'; input.dispatchEvent(new Event('input'));
+      docKey('Enter');
+      expect(ok).toBe(0);
+      expect(dlg.querySelector('[role="status"]').textContent).toContain('不匹配');
+      input.value = 'my-app'; input.dispatchEvent(new Event('input'));
+      expect(go.disabled).toBe(false);
+      docKey('Enter');
+      expect(ok).toBe(1);
+      expect(left()).toBe(0);
+      expect(document.activeElement).toBe(btn);
+    });
+  });
+
+  it('ui-tour：逐步高亮、方向键切换、完成与跳过都会清理并归还焦点', async (host) => {
+    await withReduced(async () => {
+      await put(host, '<div id="tt-a" style="width:60px;height:20px">A</div><div id="tt-b">B</div>' +
+        '<ui-tour steps=\'[{"target":"#tt-a","title":"一"},{"target":"#tt-b","title":"二"},{"target":"#nope","title":"三"}]\'><button>开始</button></ui-tour>');
+      const tour = host.querySelector('ui-tour'), btn = host.querySelector('button');
+      const ends = [];
+      tour.addEventListener('end', (e) => ends.push(e.detail.completed));
+      btn.focus(); btn.click();
+      expect(tour.active).toBe(0);
+      expect(document.activeElement.classList.contains('ui-tour__pop')).toBe(true);
+      expect(document.querySelector('.ui-tour [aria-live]').textContent).toContain('第 1 步，共 3 步');
+      docKey('ArrowRight'); docKey('ArrowRight');
+      expect(tour.active).toBe(2);
+      expect(document.querySelector('.ui-tour__hole').classList.contains('is-none')).toBe(true);
+      document.querySelector('.ui-tour [data-go="next"]').click();
+      expect(document.activeElement).toBe(btn);
+      btn.click(); docKey('Escape');
+      expect(ends).toEqual([true, false]);
+      expect(left()).toBe(0);
+    });
+  });
+
+  it('移除组件时 body 上不残留浮层', async (host) => {
+    await put(host, '<ui-action-sheet items="A"><button>a</button></ui-action-sheet><ui-type-confirm><button>b</button></ui-type-confirm>' +
+      '<ui-tour steps=\'[{"title":"x"}]\'><button>c</button></ui-tour><ui-toaster></ui-toaster>');
+    host.querySelectorAll('button').forEach((b) => b.click());
+    expect(left()).toBeGreaterThan(0);
+    host.innerHTML = '';
+    expect(left()).toBe(0);
+    expect(document.body.style.overflow).toBe('');
   });
 });

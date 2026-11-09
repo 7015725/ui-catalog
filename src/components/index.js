@@ -33,6 +33,7 @@ import { UITilt, UISpotlight, UIGradientBorder, UIAurora, UIGradientText, UIPatt
 import * as M2 from './motion2.js';
 import * as M3 from './motion3.js';
 import * as M4 from './motion4.js';
+import * as N2 from './notify.js';
 import * as E2 from './effects2.js';
 import * as E3 from './effects3.js';
 import './fun.js';
