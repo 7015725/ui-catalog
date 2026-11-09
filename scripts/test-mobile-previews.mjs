@@ -250,7 +250,7 @@ try {
   await page.goto(base, { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => document.querySelectorAll('#styleSel option').length === 22);
   report.inventory = { components: await page.locator('.card:not(.tcard)').count(), styles: styles.length, templates: templates.length };
-  assert.equal(report.inventory.components, 167, '原组件画廊不能丢组件');
+  assert.equal(report.inventory.components, 173, '原组件画廊不能丢组件');
   await page.locator('[data-view="templates"]').click();
   await page.locator('#nav [data-cat="系统 APP"]').click();
   await page.waitForFunction(() => document.querySelectorAll('.tcard').length === 6);
