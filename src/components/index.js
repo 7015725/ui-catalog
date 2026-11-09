@@ -32,6 +32,7 @@ import { UIReveal, UITypewriter, UICountUp, UIMarquee, UITextAnim, UIRipple, UIF
 import { UITilt, UISpotlight, UIGradientBorder, UIAurora, UIGradientText, UIPattern, UIBlob, UIParticles, UIMagnetic, UIShine } from './effects.js';
 import * as M2 from './motion2.js';
 import * as M3 from './motion3.js';
+import * as M4 from './motion4.js';
 import * as E2 from './effects2.js';
 import * as E3 from './effects3.js';
 import './fun.js';

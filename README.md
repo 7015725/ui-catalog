@@ -2,13 +2,13 @@
 
 [![test](https://github.com/7015725/ui-catalog/actions/workflows/test.yml/badge.svg)](https://github.com/7015725/ui-catalog/actions/workflows/test.yml)
 ![零依赖](https://img.shields.io/badge/依赖-0-brightgreen)
-![组件](https://img.shields.io/badge/组件-167-4f7cff)
+![组件](https://img.shields.io/badge/组件-173-4f7cff)
 ![风格](https://img.shields.io/badge/UI%20风格-22-8b5cf6)
 ![模板](https://img.shields.io/badge/界面模板-20-f59e0b)
 ![无障碍](https://img.shields.io/badge/WCAG-AA-15803d)
 [![MIT](https://img.shields.io/badge/license-MIT-lightgrey)](./LICENSE)
 
-一套**零运行时依赖**的原生 Web Components 组件库：**167 个组件 · 22 套 UI 风格（各含浅色 / 深色）· 20 个界面模板**，
+一套**零运行时依赖**的原生 Web Components 组件库：**173 个组件 · 22 套 UI 风格（各含浅色 / 深色）· 20 个界面模板**，
 每个组件和模板都配有「预览 / AI 提示词 / 设计说明 / 代码」，可以直接把提示词交给 AI Agent 生成同风格界面。
 
 🔗 **在线预览：[7015725.github.io/ui-catalog](https://7015725.github.io/ui-catalog/)**　·　回归测试页：[test.html](https://7015725.github.io/ui-catalog/test.html)
@@ -23,7 +23,7 @@
 <td width="50%"><b>深色 + 赛博风格</b>：视觉效果分类<br><img src="docs/screenshots/dark.webp" alt="深色模式"></td>
 </tr>
 <tr>
-<td><b>动效</b>：30 个动画组件，全部尊重「减少动态效果」<br><img src="docs/screenshots/motion.webp" alt="动效演示"></td>
+<td><b>动效</b>：36 个动画组件，全部尊重「减少动态效果」<br><img src="docs/screenshots/motion.webp" alt="动效演示"></td>
 <td><b>视觉效果</b>：30 个，颜色随风格自动变化<br><img src="docs/screenshots/effects.webp" alt="视觉效果演示"></td>
 </tr>
 </table>
@@ -38,7 +38,7 @@
 | 导航 | 8 | 标签页、步骤条、顶部导航（容器窄时折叠）、侧边菜单、目录锚点 |
 | 反馈 | 11 | 提示条、进度、环形进度、结果页、通知、倒计时、公告横幅 |
 | 浮层 | 12 | 对话框、抽屉、下拉菜单、命令面板（Ctrl/⌘ + K）、右键菜单、气泡确认 |
-| 动效 | 30 | 滚动入场、打字机、数字滚动、卡片堆叠、翻牌、弹性拖拽、图标变形… |
+| 动效 | 36 | 滚动入场、打字机、数字滚动、卡片堆叠、翻牌、弹性拖拽、图标变形、叠放展开、横向手风琴、放大坞、下拉摘要… |
 | 视觉 | 30 | 3D 倾斜、光标聚光、流光边框、极光、粒子、镭射卡、前后对比、放大镜… |
 | 趣味 | 15 | 刮刮卡、大转盘、老虎机、3D 骰子、抛硬币、翻页时钟、翻牌配对、迷你钢琴、拆礼盒、拉绳台灯、播放器、天气卡、便利贴墙、虚拟摇杆 |
 
@@ -133,6 +133,7 @@ src/
     effects.js             视觉：ui-tilt / spotlight / gradient-border / aurora / gradient-text / pattern / blob / particles / magnetic / shine
     motion2.js             动效：scramble / rotating-text / odometer / draw-svg / morph-icon / like-button / daynight / parallax / scroll-progress / card-stack
     motion3.js             动效：expand / orbit / ping / swap / hover / split-flap / checkmark / scroll-hint / spring-drag / grid-wave
+    motion4.js             动效：stack-expand / checklist / h-accordion / tray / dock / pull-summary（展开与跟手）
     effects2.js            视觉：glass-card / neon-text / grain / mesh-gradient / glitch / holo / wave / starfield / grid-beam / border-beam
     effects3.js            视觉：meteors / image-compare / lens / image-filter / text-3d / gooey / cursor-trail / cube / ribbon / snow
     fun.js                 趣味：scratch / lucky-wheel / slot-machine / dice / flip-clock / pull-lamp / coin-flip / memory-game / piano / gift-box / music-player / weather / battery / sticky-notes / joystick
@@ -146,6 +147,7 @@ src/
     catalog-more3.js       第四批组件元数据
     catalog-motion.js      「动效」「视觉」第一批（各 10 个）
     catalog-motion2.js     「动效」「视觉」第二批（各 20 个）
+    catalog-motion3.js     「动效」第三批：展开与跟手类交互（6 个）
     catalog-fun.js         「趣味」分类 + 趣味控件（25 个）
     styles.js              风格预设的元信息（含代表色 swatch）
     style-guides.js        每套风格的 AI 提示词 + 设计说明（风格页展示；提示词末尾自动附上从 tokens.css 实时读取的变量值）
@@ -222,7 +224,7 @@ docs/screenshots/          README 用的截图与动图
 
 ## 动效与视觉效果
 
-「动效」「视觉」两个分类各 30 个组件，统一遵守三条规则：
+「动效」36 个、「视觉」30 个组件，统一遵守三条规则：
 
 1. **尊重减少动效**：系统开启「减少动态效果」，或页面 `<html data-motion="reduce">`（顶栏「✨ 动效」按钮）时，
    CSS 动画瞬间完成、JS 动画直接给出最终状态（打字机显示第一句、数字直接显示终值、粒子静止、撒花不播放）；
@@ -396,7 +398,7 @@ register('ui-toast', UIToast, '.ui-toast{background:var(--ui-panel);border:var(-
 
 ## 测试
 
-零运行时依赖回归测试页：`/test.html`（212 条用例）。保留 1.1.0 的 95 条基线用例（含颜色白名单、冒泡事件、模板、Canvas、键盘与焦点、无障碍和动效清理），并补充系统 APP、液态玻璃后台的真实操作、独立代码出口、局部风格隔离及全部风格的对比度断言。
+零运行时依赖回归测试页：`/test.html`（222 条用例）。保留 1.1.0 的 95 条基线用例（含颜色白名单、冒泡事件、模板、Canvas、键盘与焦点、无障碍和动效清理），并补充系统 APP、液态玻璃后台的真实操作、独立代码出口、局部风格隔离及全部风格的对比度断言。
 
 自动化测试需要 **Playwright + Chromium + axe-core**，仅为开发测试依赖；本地启动和页面运行仍无需 `npm install` 或构建。
 
@@ -416,9 +418,9 @@ npm run test:a11y    # 全风格/明暗/屏宽/视图矩阵（含 best-practice�
 
 ## 当前状态
 
-- **167 个组件**全部可渲染、可交互；画廊逐个点击所有控件 + 键盘操作，无报错
+- **173 个组件**全部可渲染、可交互；画廊逐个点击所有控件 + 键盘操作，无报错
 - **20 个界面模板**：保留原 19 个，新增液态玻璃后台的模块钻取、周期选择、命令搜索、响应式与焦点归还回归
-- **212 条回归用例**已在本地通过，保留原有用例；提交前另跑 `npm run test:mobile`、`npm run test:liquid` 与完整 `npm run test:a11y`
+- **222 条回归用例**已在本地通过，保留原有用例；提交前另跑 `npm run test:mobile`、`npm run test:liquid` 与完整 `npm run test:a11y`
 - **响应式**：原 15 套风格的既有 360 / 820 / 1440 验证保留；新增 6 个系统 APP 覆盖 320 / 390 / 768 / 1440，内容独立滚动
 - **无障碍验收**：按 `docs/SPEC.md` 检查全部风格与明暗、键盘、可访问名称、触控目标、pressed/live 状态及 axe-core（包含 best-practice）
 - **动效**：全部尊重 `prefers-reduced-motion` 与 `data-motion="reduce"`；动画循环离开视口 / 标签页隐藏时暂停，组件移除时清理

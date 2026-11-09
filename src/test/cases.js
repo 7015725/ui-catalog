@@ -1076,3 +1076,155 @@ describe('Canvas 绘制组件', () => {
     host.removeAttribute('data-theme');
   });
 });
+
+/* ---------------- 动效第三批：展开 / 跟手类交互 ---------------- */
+import { catalog } from './../data/catalog.js';
+
+describe('动效第三批：展开与跟手', () => {
+  const ptr = (el, type, x, y) => el.dispatchEvent(new PointerEvent(type, { bubbles: true, clientX: x, clientY: y, pointerId: 1, pointerType: 'touch', isPrimary: true }));
+
+  it('6 个新组件已注册并登记到「动效」分类', () => {
+    const tags = ['ui-stack-expand', 'ui-checklist', 'ui-h-accordion', 'ui-tray', 'ui-dock', 'ui-pull-summary'];
+    tags.forEach((t) => expect(!!customElements.get(t)).toBe(true));
+    const rec = catalog.filter((c) => tags.includes(c.tag));
+    expect(rec.length).toBe(6);
+    rec.forEach((c) => { expect(c.cat).toBe('动效'); expect(c.ai).toContain('【约束】'); });
+  });
+
+  it('ui-stack-expand：收起只显示 max 个 + 剩余数，点击展开 / 收回并派发 toggle', async (host) => {
+    await put(host, '<ui-stack-expand max="3" items="甲,乙,丙,丁,戊"></ui-stack-expand>');
+    const el = host.firstElementChild, btn = el.querySelector('.ui-sx');
+    expect(el.querySelectorAll('.ui-sx__it.is-extra').length).toBe(2);
+    expect(el.querySelector('.ui-sx__more').textContent).toBe('+2');
+    expect(btn.textContent).toContain('共 5 人');
+    const seen = [];
+    el.addEventListener('toggle', (e) => seen.push(e.detail.open));
+    click(btn);
+    expect(btn.getAttribute('aria-expanded')).toBe('true');
+    click(btn);
+    expect(btn.classList.contains('is-open')).toBe(false);
+    expect(seen).toEqual([true, false]);
+  });
+
+  it('ui-stack-expand：非法 JSON 不抛错，渲染为空', async (host) => {
+    await put(host, '<ui-stack-expand items="[oops"></ui-stack-expand>');
+    expect(host.querySelectorAll('.ui-sx__it').length).toBe(0);
+  });
+
+  it('ui-checklist：勾选推进填充宽度，全部完成时提亮并派发 complete', async (host) => {
+    await put(host, '<ui-checklist items="一,二,三,四" done="0"></ui-checklist>');
+    const el = host.firstElementChild, box = el.querySelector('.ui-cl');
+    expect(box.style.getPropertyValue('--pct')).toBe('25%');
+    let native = 0, done = 0, last = null;
+    el.addEventListener('change', (e) => { if (!e.detail) native++; else last = e.detail; });
+    el.addEventListener('complete', () => done++);
+    const boxes = el.querySelectorAll('input');
+    [1, 2, 3].forEach((i) => boxes[i].click());
+    expect(box.style.getPropertyValue('--pct')).toBe('100%');
+    expect(box.classList.contains('is-done')).toBe(true);
+    expect(done).toBe(1);
+    expect(native).toBe(0);
+    expect(last.count).toBe(4);
+    expect(el.querySelector('[role="status"]').textContent).toBe('全部完成');
+    boxes[0].click();
+    expect(box.classList.contains('is-done')).toBe(false);
+    expect(el.value).toEqual([1, 2, 3]);
+  });
+
+  it('ui-h-accordion：点一条展开其余收窄，再点收回；方向键移动焦点', async (host) => {
+    await put(host, '<ui-h-accordion items="A,B,C"></ui-h-accordion>');
+    const el = host.firstElementChild, btns = el.querySelectorAll('.ui-ha__btn');
+    expect(el.active).toBe(-1);
+    click(btns[1]);
+    expect(el.active).toBe(1);
+    expect(btns[1].getAttribute('aria-expanded')).toBe('true');
+    expect(btns[0].getAttribute('aria-expanded')).toBe('false');
+    click(btns[1]);
+    expect(el.active).toBe(-1);
+    btns[2].focus();
+    key('ArrowRight');
+    expect(document.activeElement).toBe(btns[0]);
+    key('End');
+    expect(document.activeElement).toBe(btns[2]);
+  });
+
+  it('ui-tray：展开托盘时主卡片位置不变', async (host) => {
+    await put(host, '<ui-tray summary="明细" items="运费:12,优惠:-5"><b>主卡片</b></ui-tray>');
+    const el = host.firstElementChild, main = el.querySelector('.ui-tr__main'), bar = el.querySelector('.ui-tr__bar');
+    const rel = () => main.getBoundingClientRect().top - el.getBoundingClientRect().top;
+    const top = rel();
+    click(bar);
+    expect(bar.getAttribute('aria-expanded')).toBe('true');
+    expect(el.isOpen).toBe(true);
+    await tick(30);
+    expect(rel()).toBe(top);
+    expect(el.offsetHeight).toBeGreaterThan(main.offsetHeight + 40);
+    expect(el.querySelectorAll('.ui-tr__list li').length).toBe(2);
+  });
+
+  it('ui-dock：按距离放大、松手选中最近图标；键盘可选中', async (host) => {
+    host.style.width = '600px';
+    await put(host, '<ui-dock items="🏠 首页,🔍 搜索,💬 消息,📁 文件,⚙️ 设置"></ui-dock>');
+    const el = host.firstElementChild, root = el.querySelector('.ui-dk'), btns = el.querySelectorAll('.ui-dk__it');
+    await tick(30);
+    const r = btns[2].getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+    let got = null;
+    el.addEventListener('select', (e) => { got = e.detail.label; });
+    ptr(root, 'pointerdown', x, y);
+    await tick(40);
+    const sz = (i) => parseFloat(btns[i].style.getPropertyValue('--sz'));
+    expect(sz(2)).toBeGreaterThan(sz(1));
+    expect(sz(1)).toBeGreaterThan(sz(0));
+    ptr(root, 'pointerup', x, y);
+    expect(got).toBe('消息');
+    expect(btns[2].getAttribute('aria-pressed')).toBe('true');
+    expect(btns[2].style.getPropertyValue('--sz')).toBe('');
+    btns[2].focus();
+    key('ArrowRight');
+    expect(document.activeElement).toBe(btns[3]);
+    document.activeElement.click();
+    expect(el.value).toBe(3);
+    host.style.width = '';
+  });
+
+  it('ui-pull-summary：下拉跟手、超过阈值吸附展开；Esc 收起并归还焦点', async (host) => {
+    await put(host, '<ui-pull-summary summary="今日" items="订单:12,退款:1"><p>正文</p></ui-pull-summary>');
+    const el = host.firstElementChild, head = el.querySelector('.ui-ps__head'), cap = el.querySelector('.ui-ps__cap');
+    const dim = el.querySelector('.ui-ps__dim');
+    await tick(20);
+    const h0 = head.offsetHeight;
+    ptr(head, 'pointerdown', 100, 10);
+    ptr(head, 'pointermove', 100, 40);
+    expect(head.offsetHeight).toBeGreaterThan(h0);
+    expect(Number(dim.style.opacity)).toBeGreaterThan(0);
+    ptr(head, 'pointermove', 100, 400);
+    ptr(head, 'pointerup', 100, 400);
+    expect(el.isOpen).toBe(true);
+    expect(cap.getAttribute('aria-expanded')).toBe('true');
+    cap.focus();
+    key('Escape');
+    expect(el.isOpen).toBe(false);
+    expect(document.activeElement).toBe(cap);
+    expect(Number(dim.style.opacity)).toBe(0);
+  });
+
+  it('ui-dock / ui-pull-summary 移除时断开 ResizeObserver，插回后重新挂上', async (host) => {
+    await put(host, '<ui-dock items="A,B"></ui-dock><ui-pull-summary items="a:1"></ui-pull-summary>');
+    const els = Array.from(host.children);
+    await tick(10);
+    els.forEach((e) => expect(!!e._ro).toBe(true));
+    els.forEach((e) => e.remove());
+    els.forEach((e) => expect(e._ro).toBe(null));
+    els.forEach((e) => host.appendChild(e));
+    els.forEach((e) => expect(!!e._ro).toBe(true));
+  });
+
+  it('减少动效：进度清单与托盘的过渡被压到几乎为 0', async (host) => {
+    await withReduced(async () => {
+      await put(host, '<ui-checklist items="一,二"></ui-checklist><ui-tray items="a:1"><b>x</b></ui-tray>');
+      const d1 = parseFloat(getComputedStyle(host.querySelector('.ui-cl__fill')).transitionDuration);
+      const d2 = parseFloat(getComputedStyle(host.querySelector('.ui-tr__body')).transitionDuration);
+      expect(d1 < 0.01 && d2 < 0.01).toBe(true);
+    });
+  });
+});
